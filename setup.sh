@@ -105,7 +105,7 @@ sudo update-locale LANG=zh_CN.UTF-8 LANGUAGE=zh_CN
 # Use deb-get to install 3rd party apps.
 # https://github.com/wimpysworld/deb-get
 echo "Install deb-get."
-curl -sL https://cdn.jsdelivr.net/gh/wimpysworld/deb-get/deb-get | sudo -E bash -s install deb-get
+curl -sL "$([[ ${GITHUB_PROXY} != False ]] && echo "${GITHUB_PROXY}")https://raw.githubusercontent.com/wimpysworld/deb-get/main/deb-get" | sudo -E bash -s install deb-get
 deb-get update
 deb-get install \
   bat \
@@ -134,7 +134,7 @@ deb-get upgrade
 # Use zap to install AppImage
 # https://github.com/srevinsaju/zap
 echo "Install zap"
-curl https://cdn.jsdelivr.net/gh/srevinsaju/zap/install.sh | bash -s
+curl "$([[ ${GITHUB_PROXY} != False ]] && echo "${GITHUB_PROXY}")https://raw.githubusercontent.com/srevinsaju/zap/main/install.sh" | bash -s
 zap install joplin
 zap install --github --from localsend/localsend
 zap install --github --from lyswhut/lx-music-desktop
@@ -180,7 +180,7 @@ NPM_REGISTRY_MIRROR=https://registry.npmmirror.com
 
 # https://github.com/nvm-sh/nvm
 log "Install nvm."
-curl https://cdn.jsdelivr.net/gh/nvm-sh/nvm@0.39.3/install.sh | bash
+curl "$([[ ${GITHUB_PROXY} != False ]] && echo "${GITHUB_PROXY}")https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.3/install.sh" | bash
 
 export NVM_DIR="${HOME}/.nvm"
 # shellcheck source=/dev/null
