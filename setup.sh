@@ -168,7 +168,7 @@ install_github_releases_apps() {
 
   if [[ "${VERSION_LATEST}" != "${VERSION_INSTALLED}" ]]; then
     echo "Install ${PACKAGE_NAME} ${VERSION_LATEST}."
-    wget -O "/tmp/${PACKAGE_NAME}.deb" "$([[ ${GITHUB_PROXY} != False ]] && echo "${GITHUB_PROXY}")$(curl "${API_URL}" | jq -r ".assets[].browser_download_url" | grep "${PATTERN}") | head -n 1)"
+    wget -O "/tmp/${PACKAGE_NAME}.deb" "$([[ ${GITHUB_PROXY} != False ]] && echo "${GITHUB_PROXY}")$(curl "${API_URL}" | jq -r ".assets[].browser_download_url" | grep "${PATTERN}" | head -n 1)"
     sudo dpkg -i "/tmp/${PACKAGE_NAME}.deb"
   else
     echo "${PACKAGE_NAME} ${VERSION_LATEST} is lastest."
