@@ -47,5 +47,6 @@ log "Downloaded Ubuntu setup scripts."
 
 log "Installing Ubuntu setup scripts…"
 7z x -o/tmp /tmp/ubuntu-setup.zip
-bash /tmp/ubuntu-setup-main/main.sh
+cd /tmp/ubuntu-setup-main || exit
+bash ./main.sh
 log "Installed Ubuntu setup scripts."

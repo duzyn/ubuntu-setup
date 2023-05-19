@@ -1,7 +1,7 @@
 # ubuntu-setup
 
-Installation: 
+Installation:
 
 ```bash
-curl https://cdn.jsdelivr.net/gh/duzyn/ubuntu-setup/setup.sh | bash
+DEBUG=1 wget -O - https://cdn.jsdelivr.net/gh/duzyn/ubuntu-setup/setup.sh | bash
 ```
