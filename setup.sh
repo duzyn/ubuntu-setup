@@ -76,6 +76,7 @@ sudo apt-get install -y \
   sed \
   software-properties-common \
   tar \
+  ugrep \
   unzip \
   wget \
   zip
@@ -396,4 +397,4 @@ log "Run vtoyboot"
 sudo bash "vtoyboot/vtoyboot-${VTOY_VERSION}/vtoyboot.sh"
 
 
-# TODO freemind, fsearch, axure
+# TODO freemind, axure, 
