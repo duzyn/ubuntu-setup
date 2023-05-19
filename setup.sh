@@ -176,14 +176,13 @@ install_github_releases_apps() {
   fi
 }
 
-# TODO
-# install_github_releases_apps vercel/hyper hyper amd64.deb
-# install_github_releases_apps jgm/pandoc pandoc amd64.deb
-# install_github_releases_apps dbeaver/dbeaver dbeaver-ce amd64.deb
-# install_github_releases_apps Zettlr/Zettlr zettlr amd64.deb
-# install_github_releases_apps jgraph/drawio-desktop draw.io .deb
-# install_github_releases_apps shiftkey/desktop github-desktop .deb
-# install_github_releases_apps lyswhut/lx-music-desktop lx-music-desktop x64.deb
+install_github_releases_apps vercel/hyper hyper amd64.deb
+install_github_releases_apps jgm/pandoc pandoc amd64.deb
+install_github_releases_apps dbeaver/dbeaver dbeaver-ce amd64.deb
+install_github_releases_apps Zettlr/Zettlr zettlr amd64.deb
+install_github_releases_apps jgraph/drawio-desktop draw.io .deb
+install_github_releases_apps shiftkey/desktop github-desktop .deb
+install_github_releases_apps lyswhut/lx-music-desktop lx-music-desktop x64.deb
 
 
 # Install 3rd party .AppImage apps from GitHub Releases
