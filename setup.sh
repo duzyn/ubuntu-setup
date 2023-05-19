@@ -109,7 +109,7 @@ sudo update-locale LANG=zh_CN.UTF-8 LANGUAGE=zh_CN
 echo "Install deb-get."
 if [[ ${GITHUB_PROXY} != False ]]; then
   curl -sL "${GITHUB_PROXY}https://raw.githubusercontent.com/wimpysworld/deb-get/main/deb-get" | \
-    sed -i "s#(https://raw\.githubusercontent\.com)#${GITHUB_PROXY}$1#g" | \
+    perl -pi -e "s#(https://raw\.githubusercontent\.com)#\${GITHUB_PROXY}$1#g" | \
     sudo -E bash -s install deb-get
 else
   curl -sL "https://raw.githubusercontent.com/wimpysworld/deb-get/main/deb-get" | \
