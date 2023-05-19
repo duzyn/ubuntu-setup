@@ -107,7 +107,14 @@ sudo update-locale LANG=zh_CN.UTF-8 LANGUAGE=zh_CN
 # Use deb-get to install 3rd party apps.
 # https://github.com/wimpysworld/deb-get
 echo "Install deb-get."
-curl -sL "$([[ ${GITHUB_PROXY} != False ]] && echo "${GITHUB_PROXY}")https://raw.githubusercontent.com/wimpysworld/deb-get/main/deb-get" | sudo -E bash -s install deb-get
+if [[ ${GITHUB_PROXY} != False ]]; then
+  curl -sL "${GITHUB_PROXY}https://raw.githubusercontent.com/wimpysworld/deb-get/main/deb-get" | \
+    sed -i "s#(https://raw\.githubusercontent\.com)#${GITHUB_PROXY}$1#g" | \
+    sudo -E bash -s install deb-get
+else
+  curl -sL "https://raw.githubusercontent.com/wimpysworld/deb-get/main/deb-get" | \
+    sudo -E bash -s install deb-get
+fi
 deb-get update
 deb-get install \
   bat \
