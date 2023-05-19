@@ -120,7 +120,6 @@ deb-get install \
   bat \
   code \
   copyq \
-  dbeaver-ce \
   deb-get \
   draw.io \
   fd \
