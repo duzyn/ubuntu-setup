@@ -62,7 +62,6 @@ sudo apt-get install -y \
   coreutils \
   curl \
   ffmpeg \
-  gdebi \
   git \
   gzip \
   gpg \
@@ -108,13 +107,27 @@ echo "Install deb-get."
 curl -sL https://cdn.jsdelivr.net/gh/wimpysworld/deb-get/deb-get | sudo -E bash -s install deb-get
 deb-get update
 deb-get install \
+  bat \
   code \
+  copyq \
   dbeaver-ce \
+  deb-get \
   draw.io \
+  fd \
+  flameshot \
+  fsearch \
+  github-desktop \
   google-chrome-stable \
+  hyper \
   microsoft-edge-stable \
+  motrix \
+  obs-studio \
+  onedriver \
   pandoc \
-  zettlr \
+  peazip \
+  texworks \
+  yq \
+  zettlr
 deb-get upgrade
 
 # Use zap to install AppImage
@@ -145,20 +158,20 @@ if ! dpkg -s "sogoupinyin" &> /dev/null; then
   # Another URL: https://archive.ubuntukylin.com/software/pool/partner/sogoupinyin_2.4.0.3469_amd64.deb
   echo "Install Sogou Pinyin."
   wget -O sogou-pinyin.deb https://ime-sec.gtimg.com/202305181446/a3a810d5bc1e188c23d3601fa8a71b0b/pc/dl/gzindex/1680521603/sogoupinyin_4.2.1.145_amd64.deb
-  sudo gdebi -n sogou-pinyin.deb
+  sudo dpkg -i sogou-pinyin.deb
 fi
 
 
 if ! dpkg -s "freedownloadmanager" &> /dev/null; then
   log "Install Free Download Manager."
   wget -O freedownloadmanager.deb https://dn3.freedownloadmanager.org/6/latest/freedownloadmanager.deb
-  sudo gdebi -n freedownloadmanager.deb
+  sudo dpkg -i freedownloadmanager.deb
 fi
 
 if ! dpkg -s "gfie" &> /dev/null; then
   log "Install Greenfish Icon Editor Pro."
   wget -O gfie.deb http://greenfishsoftware.org/dl/gfie/gfie-4.2.deb
-  sudo gdebi -n gfie.deb
+  sudo dpkg -i gfie.deb
 fi
 
 NVM_NODEJS_ORG_MIRROR=https://npmmirror.com/mirrors/node/
@@ -251,47 +264,47 @@ sudo apt-get install -y \
 if ! dpkg -s "ukylin-wine" &> /dev/null; then
   log "Install Wine."
   wget -O ukylin-wine.deb http://archive.ubuntukylin.com/software/pool/partner/ukylin-wine_70.6.3.25_amd64.deb
-  sudo gdebi -n ukylin-wine.deb
+  sudo dpkg -i ukylin-wine.deb
 fi
 
 if ! dpkg -s "ukylin-wechat" &> /dev/null; then
   log "Install WeChat."
   wget -O ukylin-wechat.deb http://archive.ubuntukylin.com/software/pool/partner/ukylin-wechat_3.0.0_amd64.deb
-  sudo gdebi -n ukylin-wechat.deb
+  sudo dpkg -i ukylin-wechat.deb
 fi
 
 # https://www.ubuntukylin.com/applications/108-cn.html
 if ! dpkg -s "ukylin-wxwork" &> /dev/null; then
   log "Install WeChat Work."
   wget -O ukylin-wxwork.deb http://archive.ubuntukylin.com/software/pool/partner/ukylin-wxwork_1.0_amd64.deb
-  sudo gdebi -n ukylin-wxwork.deb
+  sudo dpkg -i ukylin-wxwork.deb
 fi
 
 # https://www.ubuntukylin.com/applications/119-cn.html
 if ! dpkg -s "ukylin-tencentmeeting" &> /dev/null; then
   log "Install Tencent Meeting."
   wget -O ukylin-tencentmeeting.deb http://archive.ubuntukylin.com/software/pool/partner/ukylin-tencentmeeting_1.0_amd64.deb
-  sudo gdebi -n ukylin-tencentmeeting.deb
+  sudo dpkg -i ukylin-tencentmeeting.deb
 fi
 
 # https://www.ubuntukylin.com/applications/119-cn.html
 if ! dpkg -s "ukylin-ps6" &> /dev/null; then
   log "Install Photoshop."
   wget -O ukylin-ps6.deb http://archive.ubuntukylin.com/software/pool/partner/ukylin-ps6_1.0_amd64.deb
-  sudo gdebi -n ukylin-ps6.deb
+  sudo dpkg -i ukylin-ps6.deb
 fi
 
 # https://www.ubuntukylin.com/applications/119-cn.html
 if ! dpkg -s "xunlei" &> /dev/null; then
   log "Install Xunlei."
   wget -O xunlei.deb https://archive.ubuntukylin.com/software/pool/partner/com.xunlei.download_1.0.0.1_amd64.deb
-  sudo gdebi -n xunlei.deb
+  sudo dpkg -i xunlei.deb
 fi
 
 if dpkg -s "wps-office" &> /dev/null; then
   log "Install WPS."
   wget -O wps-office.deb https://archive.ubuntukylin.com/software/pool/partner/wps-office_11.1.0.11698_amd64.deb
-  sudo gdebi -n wps-office.deb
+  sudo dpkg -i wps-office.deb
 
   # # Install symbol fonts.
   # if [ ! -f "wps_symbol_fonts.zip" ]; then
@@ -361,6 +374,8 @@ if [[ "${TOR_BROWSER_INSTALLED_VERSION}" != "${TOR_BROWSER_LATEST_VERSION}" ]]; 
   # TODO REMOVE THIS
   tar -xf tor-browser.tar.xz
   cp -r tor-browser "${HOME}/"
+  chmod +x "${HOME}/tor-browser/start-tor-browser.desktop"
+  "${HOME}/tor-browser/start-tor-browser.desktop" --register-app
 
   echo "${TOR_BROWSER_LATEST_VERSION}" > "${HOME}/.tor-browser/VERSION"
 fi
