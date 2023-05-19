@@ -42,6 +42,7 @@ echo "Install some base packages."
 sudo apt-get update
 sudo apt-get install -y \
   apt-transport-https \
+  aria2 \
   build-essential \
   bzip2 \
   ca-certificates \
@@ -94,7 +95,7 @@ sudo update-locale LANG=zh_CN.UTF-8 LANGUAGE=zh_CN
 # https://google.cn/chrome
 if ! dpkg -s "google-chrome-stable" &> /dev/null; then
   echo "Install Google Chrome."
-  wget -O /tmp/google-chrome.deb https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
+  aria2c -o /tmp/google-chrome.deb https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
   sudo dpkg -i /tmp/google-chrome.deb
 else
   echo "Google Chrome is installed."
@@ -168,7 +169,7 @@ install_github_releases_apps() {
 
   if [[ "${VERSION_LATEST}" != "${VERSION_INSTALLED}" ]]; then
     echo "Install ${PACKAGE_NAME} ${VERSION_LATEST}."
-    wget -O "/tmp/${PACKAGE_NAME}.deb" "$([[ ${GITHUB_PROXY} != False ]] && echo "${GITHUB_PROXY}")$(curl "${API_URL}" | jq -r ".assets[].browser_download_url" | grep "${PATTERN}" | head -n 1)"
+    aria2c -o "/tmp/${PACKAGE_NAME}.deb" "$([[ ${GITHUB_PROXY} != False ]] && echo "${GITHUB_PROXY}")$(curl "${API_URL}" | jq -r ".assets[].browser_download_url" | grep "${PATTERN}" | head -n 1)"
     sudo dpkg -i "/tmp/${PACKAGE_NAME}.deb"
   else
     echo "${PACKAGE_NAME} ${VERSION_LATEST} is lastest."
@@ -203,7 +204,7 @@ install_appimage_apps() {
     [[ -e "${HOME}/Desktop/${PACKAGE_NAME}.AppImage" ]] && rm -f "${HOME}/Desktop/${PACKAGE_NAME}.AppImage"
     
     echo "Install ${PACKAGE_NAME} ${VERSION_LATEST}."
-    wget -O "/tmp/${PACKAGE_NAME}.AppImage" "$([[ ${GITHUB_PROXY} != False ]] && echo "${GITHUB_PROXY}")$(curl "${API_URL}" | jq -r ".assets[].browser_download_url" | grep .AppImage | head -n 1)"
+    aria2c -o "/tmp/${PACKAGE_NAME}.AppImage" "$([[ ${GITHUB_PROXY} != False ]] && echo "${GITHUB_PROXY}")$(curl "${API_URL}" | jq -r ".assets[].browser_download_url" | grep .AppImage | head -n 1)"
     cp "/tmp/${PACKAGE_NAME}.AppImage" "${HOME}/Desktop"
     chmod +x "${HOME}/Desktop/${PACKAGE_NAME}.AppImage"
 
@@ -233,7 +234,7 @@ if ! dpkg -s "sogoupinyin" &> /dev/null; then
 
   # Another URL: https://archive.ubuntukylin.com/software/pool/partner/sogoupinyin_2.4.0.3469_amd64.deb
   echo "Install Sogou Pinyin."
-  wget -O /tmp/sogou-pinyin.deb https://ime-sec.gtimg.com/202305181446/a3a810d5bc1e188c23d3601fa8a71b0b/pc/dl/gzindex/1680521603/sogoupinyin_4.2.1.145_amd64.deb
+  aria2c -o /tmp/sogou-pinyin.deb https://ime-sec.gtimg.com/202305181446/a3a810d5bc1e188c23d3601fa8a71b0b/pc/dl/gzindex/1680521603/sogoupinyin_4.2.1.145_amd64.deb
   sudo dpkg -i /tmp/sogou-pinyin.deb
 else
   echo "Sogou Pinyin is installed."
@@ -243,7 +244,7 @@ fi
 # Free Download Manager
 if ! dpkg -s "freedownloadmanager" &> /dev/null; then
   echo "Install Free Download Manager."
-  wget -O /tmp/freedownloadmanager.deb https://dn3.freedownloadmanager.org/6/latest/freedownloadmanager.deb
+  aria2c -o /tmp/freedownloadmanager.deb https://dn3.freedownloadmanager.org/6/latest/freedownloadmanager.deb
   sudo dpkg -i /tmp/freedownloadmanager.deb
 else
   echo "Free Download Manager is installed."
@@ -253,7 +254,7 @@ fi
 # Greenfish Icon Editor Pro
 if ! dpkg -s "gfie" &> /dev/null; then
   echo "Install Greenfish Icon Editor Pro."
-  wget -O gfie.deb http://greenfishsoftware.org/dl/gfie/gfie-4.2.deb
+  aria2c -o gfie.deb http://greenfishsoftware.org/dl/gfie/gfie-4.2.deb
   sudo dpkg -i gfie.deb
 else
   echo "Greenfish Icon Editor Pro is installed."
@@ -327,7 +328,6 @@ initexmf --set-config-value \[MPM\]RemoteRepository=https://mirrors.ustc.edu.cn/
 echo "Install some extra apps."
 sudo apt-get install -y \
   android-sdk-platform-tools \
-  aria2 \
   audacity \
   bat \
   calibre \
@@ -357,7 +357,7 @@ sudo apt-get install -y \
 # Wine
 if ! dpkg -s "ukylin-wine" &> /dev/null; then
   echo "Install Wine."
-  wget -O ukylin-wine.deb http://archive.ubuntukylin.com/software/pool/partner/ukylin-wine_70.6.3.25_amd64.deb
+  aria2c -o ukylin-wine.deb http://archive.ubuntukylin.com/software/pool/partner/ukylin-wine_70.6.3.25_amd64.deb
   sudo dpkg -i ukylin-wine.deb
 else
   echo "Wine is installed."
@@ -366,7 +366,7 @@ fi
 # WeChat
 if ! dpkg -s "ukylin-wechat" &> /dev/null; then
   echo "Install WeChat."
-  wget -O ukylin-wechat.deb http://archive.ubuntukylin.com/software/pool/partner/ukylin-wechat_3.0.0_amd64.deb
+  aria2c -o ukylin-wechat.deb http://archive.ubuntukylin.com/software/pool/partner/ukylin-wechat_3.0.0_amd64.deb
   sudo dpkg -i ukylin-wechat.deb
 else
   echo "WeChat is installed."
@@ -375,7 +375,7 @@ fi
 # WeChat Work
 if ! dpkg -s "ukylin-wxwork" &> /dev/null; then
   echo "Install WeChat Work."
-  wget -O ukylin-wxwork.deb http://archive.ubuntukylin.com/software/pool/partner/ukylin-wxwork_1.0_amd64.deb
+  aria2c -o ukylin-wxwork.deb http://archive.ubuntukylin.com/software/pool/partner/ukylin-wxwork_1.0_amd64.deb
   sudo dpkg -i ukylin-wxwork.deb
 else
   echo "WeChat Work is installed."
@@ -384,7 +384,7 @@ fi
 # Tencent Meeting
 if ! dpkg -s "ukylin-tencentmeeting" &> /dev/null; then
   echo "Install Tencent Meeting."
-  wget -O ukylin-tencentmeeting.deb http://archive.ubuntukylin.com/software/pool/partner/ukylin-tencentmeeting_1.0_amd64.deb
+  aria2c -o ukylin-tencentmeeting.deb http://archive.ubuntukylin.com/software/pool/partner/ukylin-tencentmeeting_1.0_amd64.deb
   sudo dpkg -i ukylin-tencentmeeting.deb
 else
   echo "Tencent Meeting is installed."
@@ -393,7 +393,7 @@ fi
 # Photoshop CS6
 if ! dpkg -s "ukylin-ps6" &> /dev/null; then
   echo "Install Photoshop CS6."
-  wget -O ukylin-ps6.deb http://archive.ubuntukylin.com/software/pool/partner/ukylin-ps6_1.0_amd64.deb
+  aria2c -o ukylin-ps6.deb http://archive.ubuntukylin.com/software/pool/partner/ukylin-ps6_1.0_amd64.deb
   sudo dpkg -i ukylin-ps6.deb
 else
   echo "Photoshop CS6 is installed."
@@ -402,7 +402,7 @@ fi
 # Xunlei
 if ! dpkg -s "xunlei" &> /dev/null; then
   echo "Install Xunlei."
-  wget -O xunlei.deb https://archive.ubuntukylin.com/software/pool/partner/com.xunlei.download_1.0.0.1_amd64.deb
+  aria2c -o xunlei.deb https://archive.ubuntukylin.com/software/pool/partner/com.xunlei.download_1.0.0.1_amd64.deb
   sudo dpkg -i xunlei.deb
 else
   echo "Xunlei is installed."
@@ -411,7 +411,7 @@ fi
 # WPS
 if dpkg -s "wps-office" &> /dev/null; then
   echo "Install WPS."
-  wget -O wps-office.deb https://archive.ubuntukylin.com/software/pool/partner/wps-office_11.1.0.11698_amd64.deb
+  aria2c -o wps-office.deb https://archive.ubuntukylin.com/software/pool/partner/wps-office_11.1.0.11698_amd64.deb
   sudo dpkg -i wps-office.deb
 else
   echo "WPS is installed."
@@ -475,7 +475,7 @@ if [[ "${TOR_BROWSER_INSTALLED_VERSION}" != "${TOR_BROWSER_LATEST_VERSION}" ]]; 
   [[ -d "${HOME}/tor-browser" ]] && rm -rf "${HOME}/tor-browser"
 
   echo "Install Tor Browser."
-  wget -O tor-browser.tar.xz "$([[ ${GITHUB_PROXY} != False ]] && echo "${GITHUB_PROXY}")https://github.com/TheTorProject/gettorbrowser/releases/download/linux64-${TOR_BROWSER_LATEST_VERSION}/tor-browser-linux64-${TOR_BROWSER_LATEST_VERSION}_ALL.tar.xz"
+  aria2c -o tor-browser.tar.xz "$([[ ${GITHUB_PROXY} != False ]] && echo "${GITHUB_PROXY}")https://github.com/TheTorProject/gettorbrowser/releases/download/linux64-${TOR_BROWSER_LATEST_VERSION}/tor-browser-linux64-${TOR_BROWSER_LATEST_VERSION}_ALL.tar.xz"
 
   # 7z x -otor-browser tor-browser.tar.xz
   # 7z x -otor-browser tor-browser/tor-browser.tar
@@ -507,7 +507,7 @@ VTOY_API_URL=https://api.github.com/repos/ventoy/vtoyboot/releases/latest
 VTOY_VERSION=$(curl "${VTOY_API_URL}" | jq -r ".tag_name" | tr -d "v")
 
 echo "Download vtoyboot ${VTOY_VERSION}."
-wget -O "vtoyboot.iso" "$([[ ${GITHUB_PROXY} != False ]] && echo "${GITHUB_PROXY}")$(curl "${VTOY_API_URL}" | jq -r ".assets[].browser_download_url" | grep .iso | head -n 1)"
+aria2c -o "vtoyboot.iso" "$([[ ${GITHUB_PROXY} != False ]] && echo "${GITHUB_PROXY}")$(curl "${VTOY_API_URL}" | jq -r ".assets[].browser_download_url" | grep .iso | head -n 1)"
 echo "Run vtoyboot"
 7z x -ovtoyboot vtoyboot.iso
 7z x -ovtoyboot vtoyboot/*.tar.gz
