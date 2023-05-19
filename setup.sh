@@ -215,8 +215,8 @@ install_appimage_apps() {
   fi
 }
 
-install_appimage_apps laurent22/joplin
-install_appimage_apps localsend/localsend
+install_appimage_apps laurent22/joplin joplin
+install_appimage_apps localsend/localsend localsend
 
 
 # Sogou pinyin
