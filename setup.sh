@@ -149,7 +149,7 @@ if ! dpkg -s "fsearch-stable" &> /dev/null; then
   echo "Install FSearch."
   sudo add-apt-repository ppa:christian-boxdoerfer/fsearch-stable
   sudo apt-get update
-  sudo apt-get -y fsearch-stable
+  sudo apt-get -y fsearch
 else
   echo "FSearch is installed."
 fi
