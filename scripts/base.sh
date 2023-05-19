@@ -7,6 +7,7 @@ log "Installing some base packages…"
   ca-certificates \
   coreutils \
   curl \
+  ffmpeg \
   gdebi \
   git \
   gzip \
@@ -15,6 +16,7 @@ log "Installing some base packages…"
   libfuse2 \
   lsb-release \
   man-db \
+  p7zip \
   p7zip-full \
   patch \
   proxychains4 \
