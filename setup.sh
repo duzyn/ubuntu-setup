@@ -57,14 +57,16 @@ echo "Install some base packages."
 sudo apt-get update
 sudo apt-get install -y \
   apt-transport-https \
+  build-essential \
   bzip2 \
   ca-certificates \
   coreutils \
   curl \
   ffmpeg \
+  file \
   git \
-  gzip \
   gpg \
+  gzip \
   jq \
   libfuse2 \
   lsb-release \
@@ -72,11 +74,11 @@ sudo apt-get install -y \
   p7zip \
   p7zip-full \
   patch \
+  procps \
   proxychains4 \
   sed \
   software-properties-common \
   tar \
-  ugrep \
   unzip \
   wget \
   zip
