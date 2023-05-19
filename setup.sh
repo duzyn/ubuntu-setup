@@ -145,7 +145,7 @@ fi
 
 # FSearch
 # https://github.com/cboxdoerfer/fsearch
-if ! dpkg -s "fsearch-stable" &> /dev/null; then
+if ! dpkg -s "fsearch" &> /dev/null; then
   echo "Install FSearch."
   sudo add-apt-repository ppa:christian-boxdoerfer/fsearch-stable
   sudo apt-get update
