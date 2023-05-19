@@ -8,7 +8,6 @@ sudo apt-get install -y \
   calibre \
   copyq \
   digikam \
-  ffmpeg \
   filezilla \
   flameshot \
   freecad \
