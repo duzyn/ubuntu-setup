@@ -15,8 +15,8 @@ set -o nounset
 # Catch the error in case mysqldump fails (but gzip succeeds) in `mysqldump | gzip`
 set -o pipefail
 
-export DEBUG=0
-if [[ ${DEBUG} != 0 ]]; then
+DEBUG=False
+if [[ ${DEBUG} != False ]]; then
   # Turn on traces, useful while debugging but commented out by default
   set -o xtrace
 fi
