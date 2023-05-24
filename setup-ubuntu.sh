@@ -120,8 +120,7 @@ sudo apt-get install -y \
     fonts-noto-color-emoji \
     fonts-open-sans \
     fonts-roboto \
-    fonts-ubuntu \
-    ttf-mscorefonts-installer
+    fonts-ubuntu
 
 # Locale
 log "Installing Chinese language pack..."
