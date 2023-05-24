@@ -1,18 +1,29 @@
 # ubuntu-setup
 
-Installation:
+1. Make an unattended install Ubuntu ISO file:
 
-```bash
-wget -O- https://raw.githubusercontent.com/duzyn/ubuntu-setup/main/setup.sh | bash
-```
+   ```bash
+   bash build.iso
+   ```
 
-You can use these environment variables (optional):
+2. Create a VirtualBox virtual machine:
 
-- UBUNTU_SETUP_DEBUG: on
-- UBUNTU_SETUP_PROXY: on
-- UBUNTU_SETUP_LOCALE: zh_CN|en_US|en_GB, etc.
-- UBUNTU_SETUP_TOKEN: {GitHub Personal Token}
+   ```bash
+   bash build.iso
+   ```
 
-```bash
-wget -O- https://ghproxy.com/raw.githubusercontent.com/duzyn/ubuntu-setup/main/setup.sh | bash
-```
+3. Setting up in Ubuntu:
+
+   ```bash
+   wget -O- https://raw.githubusercontent.com/duzyn/ubuntu-setup/main/setup-ubuntu.sh | bash
+   # Or
+   wget -O- https://ghproxy.com/raw.githubusercontent.com/duzyn/ubuntu-setup/main/setup.sh | bash
+   ```
+
+4. You can use environment variables (optional), see [config.sh](./config.sh):
+
+    example:
+
+    ```bash
+    DEBUG=true USERNAME=john PASSWORD=xxxyyyzzz bash build.iso
+    ```
