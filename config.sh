@@ -19,7 +19,7 @@ elif [[ "$(uname -a)" =~ "Darwin" ]]; then
 fi
 
 # Arguments given to the download router.
-: "${ISO_URL:="https://mirrors.ustc.edu.cn/ubuntu-cdimage/xubuntu/releases/20.04.6/release/xubuntu-20.04.6-desktop-amd64.iso"}"
+: "${ISO_URL:="https://www.releases.ubuntu.com/20.04.6/ubuntu-20.04.6-desktop-amd64.iso"}"
 : "${SOURCE_ISO="$(basename "$ISO_URL")"}"
 
 # Virtual machine
@@ -32,10 +32,10 @@ fi
 : "${VBOX_HDD_FORMAT=VDI}"
 
 # Hardcoded host information.
-: "${USERNAME:="xubuntu"}"
-: "${PASSWORD:="xubuntu"}"
-: "${FULLNAME:="xubuntu"}"
-: "${HOST:="xubuntu"}"
-: "${DOMAIN:="xubuntu.guest.virtualbox.org"}"
-: "${LOCALE:="zh_CN"}"
-: "${TIMEZONE:="Asia/Shanghai"}"
+: "${USERNAME:="ubuntu"}"
+: "${PASSWORD:="ubuntu"}"
+: "${FULLNAME:="ubuntu"}"
+: "${HOST:="ubuntu"}"
+: "${DOMAIN:="ubuntu.guest.virtualbox.org"}"
+: "${LOCALE:="en_US"}"
+: "${TIMEZONE:="America/Nome"}"

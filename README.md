@@ -25,5 +25,10 @@
     example:
 
     ```bash
-    DEBUG=true USERNAME=john PASSWORD=xxxyyyzzz bash build.iso
+    ISO_URL=https://mirrors.ustc.edu.cn/ubuntu-cdimage/xubuntu/releases/20.04.6/release/xubuntu-20.04.6-desktop-amd64.iso LOCALE=zh_CN TIMEZONE="Asia/Shanghai" bash build-iso.iso
+
+    ```
+
+    ```bash
+    DEBUG=true USERNAME=john PASSWORD=xxxyyyzzz bash build-iso.iso
     ```
