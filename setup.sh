@@ -41,7 +41,7 @@ function die() {
 TMPDIR="$(mktemp -d)"
 
 if [[ "$TOKEN" == "false" ]]; then
-    HEADER=""
+    unset HEADER
 else
     HEADER="--header 'Authorization: token ${TOKEN}'"
 fi
