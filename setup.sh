@@ -15,9 +15,9 @@ set -o pipefail
 : "${DEBUG="false"}"
 [[ "$DEBUG" == "true" ]] && set -o xtrace
 #  Configurations
-: "${PROXY="true"}"
+: "${PROXY="false"}"
 # set a github auth token (e.g a PAT ) in TOKEN to get a bigger rate limit
-: "${TOKEN="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"}"
+: "${TOKEN="false"}"
 
 # SCRIPT_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" &>/dev/null && pwd -P)
 
@@ -35,6 +35,7 @@ function die() {
 }
 
 TMPDIR="$(mktemp -d)"
+[[ "$TOKEN" != "false" ]] && HEADER="--header 'Authorization: token ${TOKEN}'"
 
 export DEBIAN_FRONTEND=noninteractive
 
@@ -75,6 +76,9 @@ if [[ -f /etc/apt/sources.list ]]; then
 fi
 
 sudo apt-get update
+
+log "# Insatlling BCM4360 wifi driver..."
+sudo apt-get install -y dkms bcmwl-kernel-source
 
 log "Installing some base packages..."
 sudo apt-get install -y \
@@ -208,7 +212,7 @@ install_github_releases_apps() {
     PACKAGE_NAME=$2
     PATTERN=$3
     API_URL=https://api.github.com/repos/${REPO_NAME}/releases/latest
-    VERSION_LATEST=$(wget --header "Authorization: token ${TOKEN}" -O- "${API_URL}" | \
+    VERSION_LATEST=$(wget "$HEADER" -O- "${API_URL}" | \
         jq -r ".tag_name" | tr -d "v")
 
     if dpkg -s "${PACKAGE_NAME}" &>/dev/null; then
@@ -223,7 +227,7 @@ install_github_releases_apps() {
     else
         log "Installing ${PACKAGE_NAME} ${VERSION_LATEST}..."
         wget -O "$TPMDIR/${PACKAGE_NAME}.deb" \
-            "${GITHUB_PROXY}$(wget --header "Authorization: token ${TOKEN}" -O- "${API_URL}" | \
+            "${GITHUB_PROXY}$(wget "$HEADER" -O- "${API_URL}" | \
                 jq -r ".assets[].browser_download_url" | grep "${PATTERN}" | head -n 1)"
         sudo gdebi -n "$TPMDIR/${PACKAGE_NAME}.deb"
     fi
@@ -243,7 +247,7 @@ install_appimage_apps() {
     REPO_NAME=$1
     PACKAGE_NAME=$2
     API_URL=https://api.github.com/repos/${REPO_NAME}/releases/latest
-    VERSION_LATEST=$(wget --header "Authorization: token ${TOKEN}" -O- "${API_URL}" | \
+    VERSION_LATEST=$(wget "$HEADER" -O- "${API_URL}" | \
         jq -r ".tag_name" | tr -d "v")
 
     if [[ -e "${HOME}/.${PACKAGE_NAME}/VERSION" ]]; then
@@ -262,7 +266,7 @@ install_appimage_apps() {
 
         log "Installing ${PACKAGE_NAME} ${VERSION_LATEST}..."
         wget -O "$TPMDIR/${PACKAGE_NAME}.AppImage" \
-            "${GITHUB_PROXY}$(wget --header "Authorization: token ${TOKEN}" -O- "${API_URL}" | \
+            "${GITHUB_PROXY}$(wget "$HEADER" -O- "${API_URL}" | \
                 jq -r ".assets[].browser_download_url" | grep .AppImage | head -n 1)"
         cp "$TPMDIR/${PACKAGE_NAME}.AppImage" "${HOME}/Desktop"
         chmod +x "${HOME}/Desktop/${PACKAGE_NAME}.AppImage"
@@ -506,7 +510,7 @@ else
 fi
 
 # Tor Browser
-TOR_BROWSER_LATEST_VERSION=$(wget --header "Authorization: token ${TOKEN}" \
+TOR_BROWSER_LATEST_VERSION=$(wget "$HEADER" \
     -O- "https://api.github.com/repos/TheTorProject/gettorbrowser/releases/latest" | \
         jq -r ".tag_name" | sed "s/.*-//g")
 
@@ -550,12 +554,12 @@ sudo apt-get upgrade -y
 
 # Used for Ventoy VDisk boot
 VTOY_API_URL=https://api.github.com/repos/ventoy/vtoyboot/releases/latest
-VTOY_VERSION=$(wget --header "Authorization: token ${TOKEN}" \
+VTOY_VERSION=$(wget "$HEADER" \
     -O- "${VTOY_API_URL}" | jq -r ".tag_name" | tr -d "v")
 
 log "Downloading vtoyboot ${VTOY_VERSION}..."
 wget -O "$TPMDIR/vtoyboot.iso" \
-    "${GITHUB_PROXY}$(wget --header "Authorization: token ${TOKEN}" -O- "${VTOY_API_URL}" | \
+    "${GITHUB_PROXY}$(wget "$HEADER" -O- "${VTOY_API_URL}" | \
         jq -r ".assets[].browser_download_url" | grep .iso | head -n 1)"
 [[ -d "$TPMDIR/vtoyboot-tmp" ]] && rm -r "$TPMDIR/vtoyboot-tmp"
 7z x -o"$TPMDIR/vtoyboot-tmp" "$TPMDIR/vtoyboot.iso"

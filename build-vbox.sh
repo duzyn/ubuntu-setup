@@ -15,7 +15,17 @@ set -o pipefail
 
 SCRIPT_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" &>/dev/null && pwd -P)
 . "$SCRIPT_DIR/config.sh"
-BUILT_ISO="$SCRIPT_DIR/${SOURCE_ISO%.*}-custom.iso"
+
+# VirtualBox
+if [[ "$(uname -a)" =~ "WSL" ]]; then
+    VBOXMANAGE_CMD="/mnt/c/Program Files/Oracle/VirtualBox/VBoxManage.exe"
+elif [[ "$(uname -a)" =~ "Linux" ]]; then
+    VBOXMANAGE_CMD="/usr/bin/VBoxManage"
+elif [[ "$(uname -a)" =~ "Darwin" ]]; then
+    VBOXMANAGE_CMD="/Applications/VirtualBox.app/Contents/MacOS/VBoxManage"
+else
+    die "This script doesn't support the OS you are running."
+fi
 
 
 [[ ! -x "$(command -v date)" ]] && echo "date command not found." && exit 1
@@ -31,19 +41,16 @@ function die() {
     exit "$code"
 }
 
-
-# $BUILT_ISO is Linux Path, doesn't work on Windows, so use releative path instead.
 cd "$SCRIPT_DIR"
 
 # Manual: https://docs.oracle.com/en/virtualization/virtualbox/7.0/user/vboxmanage.html#vboxmanage
 if [[ "$("$VBOXMANAGE_CMD" list vms)" =~ $VBOX_NAME ]]; then
     log "You have created $VBOX_NAME, just boot it in VirtualBox."
 else
-    log "Creating Virtual Machine."
+    log "Creating Virtual Machine..."
     "$VBOXMANAGE_CMD" createvm \
         --name="$VBOX_NAME" \
         --ostype="$VBOX_OS_TYPE" \
-        --basefolder=. \
         --register
 
     # Using SSH in WSL, Linux guest VM's network should be configured to accept external request.
@@ -62,7 +69,7 @@ else
         --boot4=none
 
     "$VBOXMANAGE_CMD" createmedium disk \
-        --filename="$VBOX_NAME/$VBOX_NAME.${VBOX_HDD_FORMAT,,}" \
+        --filename="$DIST_DIR/$VBOX_NAME/$VBOX_NAME.${VBOX_HDD_FORMAT,,}" \
         --size="$VBOX_HDD_SIZE" \
         --format="$VBOX_HDD_FORMAT" \
         --variant=Fixed
@@ -75,7 +82,7 @@ else
         --port=0 \
         --device=0 \
         --type=hdd \
-        --medium="$VBOX_NAME/$VBOX_NAME.${VBOX_HDD_FORMAT,,}"
+        --medium="$DIST_DIR/$VBOX_NAME/$VBOX_NAME.${VBOX_HDD_FORMAT,,}"
     "$VBOXMANAGE_CMD" storagectl "$VBOX_NAME" \
         --name=IDE \
         --add=ide \
@@ -85,18 +92,16 @@ else
         --port=1 \
         --device=0 \
         --type=dvddrive \
-        --medium="$(basename "$BUILT_ISO")"
+        --medium="$DIST_DIR/$SOURCE_ISO"
 fi
-
 
 cd "$OLDPWD"
 
-# Start the virtual machine and the OS installation.  This will take
-# a while so this time it gets a GUI. Spin slowly until SSH is usable.
+# Start the virtual machine and the OS installation.
 if [[ "$("$VBOXMANAGE_CMD" list runningvms)" =~ $VBOX_NAME ]]; then
-    log "Virtual machine $VBOX_NAME is running."
+    log "Virtual machine $VBOX_NAME is running..."
 else
-    log "Starting Virtual machine $VBOX_NAME."
+    log "Starting Virtual machine $VBOX_NAME..."
     "$VBOXMANAGE_CMD" startvm "$VBOX_NAME" --type=gui
 fi
 
