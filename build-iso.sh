@@ -1,6 +1,9 @@
 #!/usr/bin/env bash
 # Based on https://github.com/devstructure/ubuntu and
 # https://github.com/covertsh/ubuntu-preseed-iso-generator
+# Ubuntu has discontinued preseed as of 20.04 according to this:
+# https://discourse.ubuntu.com/t/server-installer-plans-for-20-04-lts/13631
+
 
 # Exit on error. Append "|| true" if you expect an error.
 set -o errexit
@@ -14,8 +17,22 @@ set -o pipefail
 : "${DEBUG="false"}"
 [[ "$DEBUG" == "true" ]] && set -o xtrace
 
+# Arguments given to the download router.
+: "${ISO_URL:="https://www.releases.ubuntu.com/20.04.6/ubuntu-20.04.6-desktop-amd64.iso"}"
+: "${SOURCE_ISO:="$(basename "$ISO_URL")"}"
+
+: "${DIST_DIR="dist"}"
+
+# Hardcoded host information.
+: "${USERNAME:="ubuntu"}"
+: "${PASSWORD:="ubuntu"}"
+: "${FULL_NAME:="ubuntu"}"
+: "${HOST:="ubuntu"}"
+: "${DOMAIN:="ubuntu.guest.virtualbox.org"}"
+: "${LOCALE:="en_US"}"
+: "${TIMEZONE:="America/Nome"}"
+
 SCRIPT_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" &>/dev/null && pwd -P)
-. "$SCRIPT_DIR/config.sh"
 TMPDIR="$(mktemp -d)"
 
 [[ ! -x "$(command -v date)" ]] && echo "date command not found." && exit 1

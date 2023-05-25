@@ -18,6 +18,10 @@ set -o pipefail
 : "${PROXY="false"}"
 # set a github auth token (e.g a PAT ) in TOKEN to get a bigger rate limit
 : "${TOKEN="false"}"
+: "${APT_MIRROR:="mirrors.ustc.edu.cn"}"
+: "${GITHUB_PROXY:="https://ghproxy.com/"}"
+: "${NVM_NODEJS_ORG_MIRROR:="https://npmmirror.com/mirrors/node/"}"
+: "${NPM_REGISTRY_MIRROR:="https://registry.npmmirror.com"}"
 
 # SCRIPT_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" &>/dev/null && pwd -P)
 
@@ -39,18 +43,11 @@ TMPDIR="$(mktemp -d)"
 
 export DEBIAN_FRONTEND=noninteractive
 
-if [[ "${PROXY}" == "true" ]]; then
-    : "${APT_MIRROR:="mirrors.ustc.edu.cn"}"
-    : "${GITHUB_PROXY:="https://ghproxy.com/"}"
-    : "${NVM_NODEJS_ORG_MIRROR:="https://npmmirror.com/mirrors/node/"}"
-    : "${NPM_REGISTRY_MIRROR:="https://registry.npmmirror.com"}"
-elif [[ "${PROXY}" == "false" ]]; then
+if [[ "${PROXY}" == "false" ]]; then
     unset APT_MIRROR
     unset GITHUB_PROXY
     unset NVM_NODEJS_ORG_MIRROR
     unset NPM_REGISTRY_MIRROR
-else
-    die "Environment variable PROXY should be set to true or false."
 fi
 
 # Can't connect to freedownloadmanager repo
