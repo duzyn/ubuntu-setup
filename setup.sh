@@ -344,7 +344,7 @@ nvm install --lts
 
 if [[ -n "${NVM_NODEJS_ORG_MIRROR}" ]]; then
     if ! grep -q "NVM_NODEJS_ORG_MIRROR" "${HOME}/.bashrc"; then
-        log "export NVM_NODEJS_ORG_MIRROR=${NVM_NODEJS_ORG_MIRROR}" >>"${HOME}/.bashrc"
+        echo "export NVM_NODEJS_ORG_MIRROR=${NVM_NODEJS_ORG_MIRROR}" >>"${HOME}/.bashrc"
         log "NVM_NODEJS_ORG_MIRROR is set to ${NVM_NODEJS_ORG_MIRROR}"
     fi
 fi
@@ -352,7 +352,7 @@ fi
 touch "${HOME}/.npmrc"
 if [[ -n "${NPM_REGISTRY_MIRROR}" ]]; then
     if ! grep -q "registry" "${HOME}/.npmrc"; then
-        log "registry=${NPM_REGISTRY_MIRROR}" >>"${HOME}/.npmrc"
+        echo "registry=${NPM_REGISTRY_MIRROR}" >>"${HOME}/.npmrc"
         log "NPM_REGISTRY_MIRROR is set to ${NPM_REGISTRY_MIRROR}"
     fi
 fi
@@ -449,7 +449,7 @@ fi
 if ! dpkg -s "ukylin-tencentmeeting" &>/dev/null; then
     log "Installing Tencent Meeting..."
     wget -O "$TMPDIR/ukylin-tencentmeeting.deb" \
-        https://archive.ubuntukylin.com/software/pool/partner/ukylin-tencentmeeting_1.0_amd64...deb
+        https://archive.ubuntukylin.com/software/pool/partner/ukylin-tencentmeeting_1.0_amd64.deb
     sudo gdebi -n "$TMPDIR/ukylin-tencentmeeting.deb"
 else
     log "Tencent Meeting is installed..."
