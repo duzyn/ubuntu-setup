@@ -247,15 +247,15 @@ install_appimage_apps() {
             log "${PACKAGE_NAME} ${VERSION_LATEST} is lastest."
     else
         # Remove old version
-        [[ -e "${HOME}/Desktop/${PACKAGE_NAME}.AppImage" ]] && \
-            rm -f "${HOME}/Desktop/${PACKAGE_NAME}.AppImage"
+        [[ -e "${HOME}/${PACKAGE_NAME}.AppImage" ]] && \
+            rm -f "${HOME}/${PACKAGE_NAME}.AppImage"
 
         log "Installing ${PACKAGE_NAME} ${VERSION_LATEST}..."
         wget -O "$TMPDIR/${PACKAGE_NAME}.AppImage" \
             "${GITHUB_PROXY}$(wget -O- "${API_URL}" | \
                 jq -r ".assets[].browser_download_url" | grep .AppImage | head -n 1)"
-        cp "$TMPDIR/${PACKAGE_NAME}.AppImage" "${HOME}/Desktop"
-        chmod u+x "${HOME}/Desktop/${PACKAGE_NAME}.AppImage"
+        cp "$TMPDIR/${PACKAGE_NAME}.AppImage" "${HOME}"
+        chmod +x "${HOME}/${PACKAGE_NAME}.AppImage"
 
         # Record version
         [[ -d "${HOME}/.${PACKAGE_NAME}" ]] || mkdir "${HOME}/.${PACKAGE_NAME}"
