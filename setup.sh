@@ -306,8 +306,8 @@ fi
 # Greenfish Icon Editor Pro
 if ! dpkg -s "gfie" &>/dev/null; then
     log "Installing Greenfish Icon Editor Pro..."
-    wget -O gfie.deb http://greenfishsoftware.org/dl/gfie/gfie-4.2.deb
-    sudo gdebi -n gfie.deb
+    wget -O "$TMPDIR/gfie.deb" http://greenfishsoftware.org/dl/gfie/gfie-4.2.deb
+    sudo gdebi -n "$TMPDIR/gfie.deb"
 else
     log "Greenfish Icon Editor Pro is installed."
 fi
