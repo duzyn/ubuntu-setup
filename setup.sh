@@ -255,7 +255,7 @@ install_appimage_apps() {
             "${GITHUB_PROXY}$(wget -O- "${API_URL}" | \
                 jq -r ".assets[].browser_download_url" | grep .AppImage | head -n 1)"
         cp "$TMPDIR/${PACKAGE_NAME}.AppImage" "${HOME}/Desktop"
-        chmod +x "${HOME}/Desktop/${PACKAGE_NAME}.AppImage"
+        chmod u+x "${HOME}/Desktop/${PACKAGE_NAME}.AppImage"
 
         # Record version
         [[ -d "${HOME}/.${PACKAGE_NAME}" ]] || mkdir "${HOME}/.${PACKAGE_NAME}"
