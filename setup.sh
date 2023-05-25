@@ -157,10 +157,10 @@ if ! dpkg -s "microsoft-edge-stable" &>/dev/null; then
     wget -O- https://packages.microsoft.com/keys/microsoft.asc | \
         gpg --dearmor >"$TMPDIR/microsoft.gpg"
     sudo install -D -o root -g root -m 644 "$TMPDIR/microsoft.gpg" \
-        /usr/share/keyrings/microsoft...gpg
+        /usr/share/keyrings/microsoft.gpg
     echo "deb [arch=amd64 signed-by=/usr/share/keyrings/microsoft.gpg] \
         https://packages.microsoft.com/repos/edge stable main" | \
-            sudo tee /etc/apt/sources.list.d/microsoft-edge...list
+            sudo tee /etc/apt/sources.list.d/microsoft-edge.list
     sudo apt-get update
     sudo apt-get install -y microsoft-edge-stable
 else
@@ -172,7 +172,7 @@ if ! dpkg -s "code" &>/dev/null; then
     log "Installing Visual Studio Code..."
     echo "deb [arch=amd64 signed-by=/usr/share/keyrings/microsoft.gpg] \
         https://packages.microsoft.com/repos/vscode stable main" | \
-            sudo tee /etc/apt/sources.list.d/vscode...list
+            sudo tee /etc/apt/sources.list.d/vscode.list
     sudo apt-get update
     sudo apt-get install -y code
 else
@@ -324,12 +324,12 @@ else
 fi
 
 # Just: https://github.com/casey/just
-if ! dpkg -s "gfie" &>/dev/null; then
+if ! dpkg -s "just" &>/dev/null; then
     log "Installing Just..."
     wget -qO - 'https://proget.makedeb.org/debian-feeds/prebuilt-mpr.pub' | gpg --dearmor | \
-        sudo tee /usr/share/keyrings/prebuilt-mpr-archive-keyring...gpg 1>/dev/null
+        sudo tee /usr/share/keyrings/prebuilt-mpr-archive-keyring.gpg 1>/dev/null
     echo "deb [arch=amd64 signed-by=/usr/share/keyrings/prebuilt-mpr-archive-keyring.gpg] \
-        https://proget.makedeb.org prebuilt-mpr $(lsb_release -cs)" | sudo tee /etc/apt/sources.list.d/prebuilt-mpr...list
+        https://proget.makedeb.org prebuilt-mpr $(lsb_release -cs)" | sudo tee /etc/apt/sources.list.d/prebuilt-mpr.list
     sudo apt update
     sudo apt install -y just
 else
