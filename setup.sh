@@ -144,9 +144,9 @@ sudo update-locale LANG=zh_CN.UTF-8 LANGUAGE=zh_CN
 # Google Chrome: https://google.cn/chrome
 if ! dpkg -s "google-chrome-stable" &>/dev/null; then
     log "Installing Google Chrome..."
-    wget -O "$TPMDIR/google-chrome.deb" \
+    wget -O "$TMPDIR/google-chrome.deb" \
         https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
-    sudo gdebi -n "$TPMDIR/google-chrome.deb"
+    sudo gdebi -n "$TMPDIR/google-chrome.deb"
 else
     log "Google Chrome is installed."
 fi
@@ -155,8 +155,8 @@ fi
 if ! dpkg -s "microsoft-edge-stable" &>/dev/null; then
     log "Installing Microsoft Edge..."
     wget -O- https://packages.microsoft.com/keys/microsoft.asc | \
-        gpg --dearmor >"$TPMDIR/microsoft.gpg"
-    sudo install -D -o root -g root -m 644 "$TPMDIR/microsoft.gpg" \
+        gpg --dearmor >"$TMPDIR/microsoft.gpg"
+    sudo install -D -o root -g root -m 644 "$TMPDIR/microsoft.gpg" \
         /usr/share/keyrings/microsoft...gpg
     echo "deb [arch=amd64 signed-by=/usr/share/keyrings/microsoft.gpg] \
         https://packages.microsoft.com/repos/edge stable main" | \
@@ -223,10 +223,10 @@ install_github_releases_apps() {
             log "${PACKAGE_NAME} ${VERSION_LATEST} is lastest."
     else
         log "Installing ${PACKAGE_NAME} ${VERSION_LATEST}..."
-        wget -O "$TPMDIR/${PACKAGE_NAME}.deb" \
+        wget -O "$TMPDIR/${PACKAGE_NAME}.deb" \
             "${GITHUB_PROXY}$(wget "$HEADER" -O- "${API_URL}" | \
                 jq -r ".assets[].browser_download_url" | grep "${PATTERN}" | head -n 1)"
-        sudo gdebi -n "$TPMDIR/${PACKAGE_NAME}.deb"
+        sudo gdebi -n "$TMPDIR/${PACKAGE_NAME}.deb"
     fi
 }
 
@@ -262,10 +262,10 @@ install_appimage_apps() {
             rm -f "${HOME}/Desktop/${PACKAGE_NAME}.AppImage"
 
         log "Installing ${PACKAGE_NAME} ${VERSION_LATEST}..."
-        wget -O "$TPMDIR/${PACKAGE_NAME}.AppImage" \
+        wget -O "$TMPDIR/${PACKAGE_NAME}.AppImage" \
             "${GITHUB_PROXY}$(wget "$HEADER" -O- "${API_URL}" | \
                 jq -r ".assets[].browser_download_url" | grep .AppImage | head -n 1)"
-        cp "$TPMDIR/${PACKAGE_NAME}.AppImage" "${HOME}/Desktop"
+        cp "$TMPDIR/${PACKAGE_NAME}.AppImage" "${HOME}/Desktop"
         chmod +x "${HOME}/Desktop/${PACKAGE_NAME}.AppImage"
 
         # Record version
@@ -298,8 +298,8 @@ if ! dpkg -s "sogoupinyin" &>/dev/null; then
     log "Installing Sogou Pinyin..."
     wget -O- https://shurufa.sogou.com/linux | \
         grep -E "https://ime-sec.*?amd64.deb" -o | \
-            xargs wget -O "$TPMDIR/sogou-pinyin.deb"
-    sudo gdebi -n "$TPMDIR/sogou-pinyin.deb"
+            xargs wget -O "$TMPDIR/sogou-pinyin.deb"
+    sudo gdebi -n "$TMPDIR/sogou-pinyin.deb"
 else
     log "Sogou Pinyin is installed."
 fi
@@ -307,9 +307,9 @@ fi
 # Free Download Manager
 if ! dpkg -s "freedownloadmanager" &>/dev/null; then
     log "Installing Free Download Manager..."
-    wget -O "$TPMDIR/freedownloadmanager.deb" \
+    wget -O "$TMPDIR/freedownloadmanager.deb" \
         https://files2.freedownloadmanager.org/6/latest/freedownloadmanager.deb
-    sudo gdebi -n "$TPMDIR/freedownloadmanager.deb"
+    sudo gdebi -n "$TMPDIR/freedownloadmanager.deb"
 else
     log "Free Download Manager is installed."
 fi
@@ -429,9 +429,9 @@ sudo apt-get install -y \
 # Wine
 if ! dpkg -s "ukylin-wine" &>/dev/null; then
     log "Installing Wine..."
-    wget -O "$TPMDIR/ukylin-wine.deb" \
+    wget -O "$TMPDIR/ukylin-wine.deb" \
         https://archive.ubuntukylin.com/software/pool/partner/ukylin-wine_70.6.3.25_amd64.deb
-    sudo gdebi -n "$TPMDIR/ukylin-wine.deb"
+    sudo gdebi -n "$TMPDIR/ukylin-wine.deb"
 else
     log "Wine is installed."
 fi
@@ -439,9 +439,9 @@ fi
 # WeChat
 if ! dpkg -s "ukylin-wechat" &>/dev/null; then
     log "Installing WeChat..."
-    wget -O "$TPMDIR/ukylin-wechat.deb" \
+    wget -O "$TMPDIR/ukylin-wechat.deb" \
         https://archive.ubuntukylin.com/software/pool/partner/ukylin-wechat_3.0.0_amd64.deb
-    sudo gdebi -n "$TPMDIR/ukylin-wechat.deb"
+    sudo gdebi -n "$TMPDIR/ukylin-wechat.deb"
 else
     log "WeChat is installed."
 fi
@@ -449,9 +449,9 @@ fi
 # WeChat Work
 if ! dpkg -s "ukylin-wxwork" &>/dev/null; then
     log "Installing WeChat Work..."
-    wget -O "$TPMDIR/ukylin-wxwork.deb" \
+    wget -O "$TMPDIR/ukylin-wxwork.deb" \
         https://archive.ubuntukylin.com/software/pool/partner/ukylin-wxwork_1.0_amd64.deb
-    sudo gdebi -n "$TPMDIR/ukylin-wxwork.deb"
+    sudo gdebi -n "$TMPDIR/ukylin-wxwork.deb"
 else
     log "WeChat Work is installed."
 fi
@@ -459,9 +459,9 @@ fi
 # Tencent Meeting
 if ! dpkg -s "ukylin-tencentmeeting" &>/dev/null; then
     log "Installing Tencent Meeting..."
-    wget -O "$TPMDIR/ukylin-tencentmeeting.deb" \
+    wget -O "$TMPDIR/ukylin-tencentmeeting.deb" \
         https://archive.ubuntukylin.com/software/pool/partner/ukylin-tencentmeeting_1.0_amd64...deb
-    sudo gdebi -n "$TPMDIR/ukylin-tencentmeeting.deb"
+    sudo gdebi -n "$TMPDIR/ukylin-tencentmeeting.deb"
 else
     log "Tencent Meeting is installed..."
 fi
@@ -469,9 +469,9 @@ fi
 # Photoshop CS6
 if ! dpkg -s "ukylin-ps6" &>/dev/null; then
     log "Installing Photoshop CS6..."
-    wget -O "$TPMDIR/ukylin-ps6.deb" \
+    wget -O "$TMPDIR/ukylin-ps6.deb" \
         https://archive.ubuntukylin.com/software/pool/partner/ukylin-ps6_1.0_amd64.deb
-    sudo gdebi -n "$TPMDIR/ukylin-ps6.deb"
+    sudo gdebi -n "$TMPDIR/ukylin-ps6.deb"
 else
     log "Photoshop CS6 is installed."
 fi
@@ -480,9 +480,9 @@ fi
 # Xunlei
 if ! dpkg -s "com.xunlei.download" &>/dev/null; then
     log "Installing Xunlei..."
-    wget -O "$TPMDIR/xunlei.deb" \
+    wget -O "$TMPDIR/xunlei.deb" \
         https://archive.ubuntukylin.com/software/pool/partner/com.xunlei.download_1.0.0.1_amd64.deb
-    sudo gdebi -n "$TPMDIR/xunlei.deb"
+    sudo gdebi -n "$TMPDIR/xunlei.deb"
 else
     log "Xunlei is installed."
 fi
@@ -490,9 +490,9 @@ fi
 # WPS
 if ! dpkg -s "wps-office" &>/dev/null; then
     log "Installing WPS..."
-    wget -O "$TPMDIR/wps-office.deb" \
+    wget -O "$TMPDIR/wps-office.deb" \
         https://archive.ubuntukylin.com/software/pool/partner/wps-office_11.1.0.11698_amd64.deb
-    sudo gdebi -n "$TPMDIR/wps-office.deb"
+    sudo gdebi -n "$TMPDIR/wps-office.deb"
 else
     log "WPS is installed."
 fi
@@ -525,13 +525,13 @@ if [[ "${TOR_BROWSER_INSTALLED_VERSION}" != "${TOR_BROWSER_LATEST_VERSION}" ]]; 
     fi
 
     log "Installing Tor Browser..."
-    wget -O "$TPMDIR/tor-browser.tar.xz" \
+    wget -O "$TMPDIR/tor-browser.tar.xz" \
         "${GITHUB_PROXY}https://github.com/TheTorProject/gettorbrowser/releases/download/linux64-${TOR_BROWSER_LATEST_VERSION}/tor-browser-linux64-${TOR_BROWSER_LATEST_VERSION}_ALL.tar.xz"
 
-    [[ -d "$TPMDIR/tor-browser-tmp" ]] && rm -r "$TPMDIR/tor-browser-tmp"
-    7z x -o"$TPMDIR/tor-browser-tmp" "$TPMDIR/tor-browser.tar.xz"
-    7z x -o"$TPMDIR/tor-browser-tmp" "$TPMDIR/tor-browser-tmp/*.tar"
-    cp -r "$TPMDIR/tor-browser-tmp/tor-browser" "${HOME}/"
+    [[ -d "$TMPDIR/tor-browser-tmp" ]] && rm -r "$TMPDIR/tor-browser-tmp"
+    7z x -o"$TMPDIR/tor-browser-tmp" "$TMPDIR/tor-browser.tar.xz"
+    7z x -o"$TMPDIR/tor-browser-tmp" "$TMPDIR/tor-browser-tmp/*.tar"
+    cp -r "$TMPDIR/tor-browser-tmp/tor-browser" "${HOME}/"
 
     chmod +x "${HOME}/tor-browser/Browser/start-tor-browser"
     "${HOME}/tor-browser/Browser/start-tor-browser" --register-app
@@ -555,16 +555,16 @@ VTOY_VERSION=$(wget "$HEADER" \
     -O- "${VTOY_API_URL}" | jq -r ".tag_name" | tr -d "v")
 
 log "Downloading vtoyboot ${VTOY_VERSION}..."
-wget -O "$TPMDIR/vtoyboot.iso" \
+wget -O "$TMPDIR/vtoyboot.iso" \
     "${GITHUB_PROXY}$(wget "$HEADER" -O- "${VTOY_API_URL}" | \
         jq -r ".assets[].browser_download_url" | grep .iso | head -n 1)"
-[[ -d "$TPMDIR/vtoyboot-tmp" ]] && rm -r "$TPMDIR/vtoyboot-tmp"
-7z x -o"$TPMDIR/vtoyboot-tmp" "$TPMDIR/vtoyboot.iso"
-7z x -o"$TPMDIR/vtoyboot-tmp" "$TPMDIR/vtoyboot-tmp/*.tar.gz"
-7z x -o"$TPMDIR/vtoyboot-tmp" "$TPMDIR/vtoyboot-tmp/*.tar"
+[[ -d "$TMPDIR/vtoyboot-tmp" ]] && rm -r "$TMPDIR/vtoyboot-tmp"
+7z x -o"$TMPDIR/vtoyboot-tmp" "$TMPDIR/vtoyboot.iso"
+7z x -o"$TMPDIR/vtoyboot-tmp" "$TMPDIR/vtoyboot-tmp/*.tar.gz"
+7z x -o"$TMPDIR/vtoyboot-tmp" "$TMPDIR/vtoyboot-tmp/*.tar"
 
 log "Running vtoyboot..."
-cd "$TPMDIR/vtoyboot-tmp/vtoyboot-${VTOY_VERSION}" || exit
+cd "$TMPDIR/vtoyboot-tmp/vtoyboot-${VTOY_VERSION}" || exit
 sudo bash "./vtoyboot.sh"
 
 die "Completed! You can poweroff vbox, and copy the .vdi file to .vdi.vtoy file, and put it on Ventoy ISO scan folder." 0
