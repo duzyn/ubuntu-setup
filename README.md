@@ -23,13 +23,13 @@
     example:
 
     ```bash
-    DEBUG=true ISO_URL=https://mirrors.ustc.edu.cn/ubuntu-cdimage/xubuntu/releases/20.04.6/release/xubuntu-20.04.6-desktop-amd64.iso USERNAME=john PASSWORD=111111 FULL_NAME="John Doe" HOST=xubuntu DOMAIN=xubuntu.guest.virtualbox.org LOCALE=zh_CN TIMEZONE=Asia/Shanghai wget -O- https://github.com/duzyn/ubuntu-setup/raw/main/build-iso.sh | bash
+    wget -O- https://github.com/duzyn/ubuntu-setup/raw/main/build-iso.sh | DEBUG=true ISO_URL=https://mirrors.ustc.edu.cn/ubuntu-cdimage/xubuntu/releases/20.04.6/release/xubuntu-20.04.6-desktop-amd64.iso USERNAME=john PASSWORD=111111 FULL_NAME="John Doe" HOST=xubuntu DOMAIN=xubuntu.guest.virtualbox.org LOCALE=zh_CN TIMEZONE=Asia/Shanghai bash
     ```
 
     ```bash
-    DEBUG=true ISO_URL=https://mirrors.ustc.edu.cn/ubuntu-cdimage/xubuntu/releases/20.04.6/release/xubuntu-20.04.6-desktop-amd64.iso VBOX_NAME=xubuntu-20.04.6-desktop-amd64 VBOX_OS_TYPE=Ubuntu_64 VBOX_CPU_NUMBER=2 VBOX_MEMORY=2048 VBOX_VRAM=128 VBOX_HDD_SIZE=61440 VBOX_HDD_FORMAT=VDI wget -O- https://github.com/duzyn/ubuntu-setup/raw/main/build-vbox.sh | bash
+    wget -O- https://github.com/duzyn/ubuntu-setup/raw/main/build-vbox.sh | DEBUG=true ISO_URL=https://mirrors.ustc.edu.cn/ubuntu-cdimage/xubuntu/releases/20.04.6/release/xubuntu-20.04.6-desktop-amd64.iso VBOX_NAME=xubuntu-20.04.6-desktop-amd64 VBOX_OS_TYPE=Ubuntu_64 VBOX_CPU_NUMBER=2 VBOX_MEMORY=2048 VBOX_VRAM=128 VBOX_HDD_SIZE=61440 VBOX_HDD_FORMAT=VDI bash
     ```
 
     ```bash
-    DEBUG=true PROXY=true TOKEN=ghp_jGJPqA0E92ysHCU6H6ATuY4FSyVE12aAnLN wget -O- https://github.com/duzyn/ubuntu-setup/raw/main/setup-ubuntu.sh | bash
+    wget -O- https://github.com/duzyn/ubuntu-setup/raw/main/setup-ubuntu.sh | DEBUG=true PROXY=true TOKEN=ghp_jGJPqA0E92ysHCU6H6ATuY4FSyVE12aAnLN bash
     ```
