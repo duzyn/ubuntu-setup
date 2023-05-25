@@ -31,5 +31,5 @@
     ```
 
     ```bash
-    wget -O- https://github.com/duzyn/ubuntu-setup/raw/main/setup-ubuntu.sh | DEBUG=true PROXY=true TOKEN=ghp_jGJPqA0E92ysHCU6H6ATuY4FSyVE12aAnLN bash
+    wget -O- https://github.com/duzyn/ubuntu-setup/raw/main/setup-ubuntu.sh | DEBUG=true bash
     ```
