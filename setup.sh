@@ -39,7 +39,12 @@ function die() {
 }
 
 TMPDIR="$(mktemp -d)"
-[[ "$TOKEN" != "false" ]] && HEADER="--header 'Authorization: token ${TOKEN}'"
+
+if [[ "$TOKEN" == "false" ]]; then
+    HEADER=""
+else
+    HEADER="--header 'Authorization: token ${TOKEN}'"
+fi
 
 export DEBIAN_FRONTEND=noninteractive
 
