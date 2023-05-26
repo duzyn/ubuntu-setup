@@ -19,8 +19,6 @@ set -o pipefail
 : "${APT_MIRROR:="mirrors.ustc.edu.cn"}"
 : "${NPM_REGISTRY_MIRROR:="https://registry.npmmirror.com"}"
 
-# SCRIPT_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" &>/dev/null && pwd -P)
-
 [[ ! -x "$(command -v date)" ]] && echo "date command not found." && exit 1
 
 function log() {
@@ -146,24 +144,24 @@ sudo update-locale LANG="$LOCALE.UTF-8" LANGUAGE="$LOCALE"
 log "Installing nvm..."
 wget -qO- "https://ghproxy.com/raw.githubusercontent.com/nvm-sh/nvm/v0.39.3/install.sh" | sed -e "s|https://raw.githubusercontent.com|https://ghproxy.com/raw.githubusercontent.com|g" -e "s|https://github.com|https://ghproxy.com/github.com|g" | bash
 
-export NVM_DIR="${HOME}/.nvm"
+export NVM_DIR="$HOME/.nvm"
 # shellcheck source=/dev/null
-[ -s "${NVM_DIR}/nvm.sh" ] && \. "${NVM_DIR}/nvm.sh"
+[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
 # shellcheck source=/dev/null
-[ -s "${NVM_DIR}/bash_completion" ] && \. "${NVM_DIR}/bash_completion"
+[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"
 
 log "Installing latest version LTS nodejs..."
 nvm install --lts
 
-grep -q "NVM_NODEJS_ORG_MIRROR=" "${HOME}/.bashrc" || {
-    echo "export NVM_NODEJS_ORG_MIRROR=${NVM_NODEJS_ORG_MIRROR}" >>"${HOME}/.bashrc"
-    log "NVM_NODEJS_ORG_MIRROR is set to ${NVM_NODEJS_ORG_MIRROR}"
+grep -q "NVM_NODEJS_ORG_MIRROR=" "$HOME/.bashrc" || {
+    echo "export NVM_NODEJS_ORG_MIRROR=$NVM_NODEJS_ORG_MIRROR" >>"$HOME/.bashrc"
+    log "NVM_NODEJS_ORG_MIRROR is set to $NVM_NODEJS_ORG_MIRROR"
 }
 
-touch "${HOME}/.npmrc"
-grep -q "registry=" "${HOME}/.npmrc" || {
-    echo "registry=${NPM_REGISTRY_MIRROR}" >>"${HOME}/.npmrc"
-    log "NPM_REGISTRY_MIRROR is set to ${NPM_REGISTRY_MIRROR}"
+touch "$HOME/.npmrc"
+grep -q "registry=" "$HOME/.npmrc" || {
+    echo "registry=$NPM_REGISTRY_MIRROR" >>"$HOME/.npmrc"
+    log "NPM_REGISTRY_MIRROR is set to $NPM_REGISTRY_MIRROR"
 }
 
 log "Updating npm..."
@@ -267,17 +265,32 @@ sudo apt-get autoremove -y
 sudo apt-get upgrade -y
 
 # Used for Ventoy VDisk boot
-VTOY_VERSION=$(wget -qO- https://api.github.com/repos/ventoy/vtoyboot/releases/latest | jq -r ".tag_name" | tr -d "v")
+VTOY_LATEST_VERSION=$(wget -qO- https://api.github.com/repos/ventoy/vtoyboot/releases/latest | jq -r ".tag_name" | tr -d "v")
+VTOY_INSTALLED_VERSION=not_installed
+[[ -e "$HOME/.vtoyboot/VERSION" ]] && VTOY_INSTALLED_VERSION=$(cat "$HOME/.vtoyboot/VERSION")
 
-log "Downloading vtoyboot ${VTOY_VERSION}..."
-wget -qO "$TMPDIR/vtoyboot.iso" "$(wget -qO- https://api.github.com/repos/ventoy/vtoyboot/releases/latest | jq -r ".assets[].browser_download_url" | grep .iso | head -n 1)"
-[[ -d "$TMPDIR/vtoyboot-tmp" ]] && rm -r "$TMPDIR/vtoyboot-tmp"
-7z x -o"$TMPDIR/vtoyboot-tmp" "$TMPDIR/vtoyboot.iso"
-7z x -o"$TMPDIR/vtoyboot-tmp" "$TMPDIR/vtoyboot-tmp/*.tar.gz"
-7z x -o"$TMPDIR/vtoyboot-tmp" "$TMPDIR/vtoyboot-tmp/*.tar"
+[[ "$VTOY_INSTALLED_VERSION" != "$VTOY_LATEST_VERSION" ]] && {
+    # Remove old version.
+    [[ -d "$HOME/vtoyboot" ]] && {
+        rm -r "$HOME/vtoyboot"
+    }
+
+    # Install new version.
+    log "Downloading vtoyboot $VTOY_LATEST_VERSION..."
+    wget -qO "$TMPDIR/vtoyboot.iso" "$(wget -qO- https://api.github.com/repos/ventoy/vtoyboot/releases/latest | jq -r ".assets[].browser_download_url" | grep .iso | head -n 1)"
+    [[ -d "$TMPDIR/vtoyboot-tmp" ]] && rm -r "$TMPDIR/vtoyboot-tmp"
+    7z x -o"$TMPDIR/vtoyboot-tmp" "$TMPDIR/vtoyboot.iso"
+    7z x -o"$TMPDIR/vtoyboot-tmp" "$TMPDIR/vtoyboot-tmp/*.tar.gz"
+    7z x -o"$TMPDIR/vtoyboot-tmp" "$TMPDIR/vtoyboot-tmp/*.tar"
+    cp -r "$TMPDIR/vtoyboot-tmp/vtoyboot-$VTOY_LATEST_VERSION/*" "$HOME/vtoyboot"
+
+    # Record version
+    [[ -d "$HOME/.vtoyboot" ]] || mkdir "$HOME/.vtoyboot"
+    log "$VTOY_LATEST_VERSION" >"$HOME/.vtoyboot/VERSION"
+}
 
 log "Running vtoyboot..."
-cd "$TMPDIR/vtoyboot-tmp/vtoyboot-${VTOY_VERSION}" || exit
+cd "$HOME/vtoyboot" || die "No vtoyboot folder."
 sudo bash "./vtoyboot.sh"
 
 die "Completed! You can poweroff vbox, and copy the .vdi file to .vdi.vtoy file, and put it on Ventoy ISO scan folder." 0
