@@ -105,7 +105,6 @@ sudo apt-get install -y \
     die "To complete setup, restart your system. run sudo shutdown -r now" 0
 }
 
-flatpak install -y flathub com.github.micahflee.torbrowser-launcher
 flatpak install -y flathub com.jgraph.drawio.desktop
 flatpak install -y flathub io.dbeaver.DBeaverCommunity
 flatpak install -y flathub io.github.cboxdoerfer.FSearch
@@ -252,21 +251,21 @@ sudo apt-get install -y \
 }
 
 # WeChat
-[[ -n "$(dpkg -s ukylin-wechat)"]] || {
+[[ -n "$(dpkg -s ukylin-wechat)" ]] || {
     log "Installing WeChat..."
     wget -qO "$TMPDIR/ukylin-wechat.deb" https://archive.ubuntukylin.com/software/pool/partner/ukylin-wechat_3.0.0_amd64.deb
     sudo gdebi -n "$TMPDIR/ukylin-wechat.deb"
 }
 
 # WeChat Work
-[[ -n "$(dpkg -s ukylin-wxwork)"]] || {
+[[ -n "$(dpkg -s ukylin-wxwork)" ]] || {
     log "Installing WeChat Work..."
     wget -qO "$TMPDIR/ukylin-wxwork.deb" https://archive.ubuntukylin.com/software/pool/partner/ukylin-wxwork_1.0_amd64.deb
     sudo gdebi -n "$TMPDIR/ukylin-wxwork.deb"
 }
 
 # Tencent Meeting
-[[ -n "$(dpkg -s ukylin-tencentmeeting)"]] || {
+[[ -n "$(dpkg -s ukylin-tencentmeeting)" ]] || {
     log "Installing Tencent Meeting..."
     wget -qO "$TMPDIR/ukylin-tencentmeeting.deb" https://archive.ubuntukylin.com/software/pool/partner/ukylin-tencentmeeting_1.0_amd64.deb
     sudo gdebi -n "$TMPDIR/ukylin-tencentmeeting.deb"
@@ -274,7 +273,7 @@ sudo apt-get install -y \
 
 # Photoshop CS6
 # Rename or delete <PS6 path>/Required\Plug-Ins\ADM\ADMPlugin.apl
-[[ -n "$(dpkg -s ukylin-ps6)"]] || {
+[[ -n "$(dpkg -s ukylin-ps6)" ]] || {
     log "Installing Photoshop CS6..."
     wget -qO "$TMPDIR/ukylin-ps6.deb" https://archive.ubuntukylin.com/software/pool/partner/ukylin-ps6_1.0_amd64.deb
     sudo gdebi -n "$TMPDIR/ukylin-ps6.deb"
@@ -282,20 +281,20 @@ sudo apt-get install -y \
 
 # Some Chinese apps.
 # Xunlei
-[[ -n "$(dpkg -s com.xunlei.download)"]] || {
+[[ -n "$(dpkg -s com.xunlei.download)" ]] || {
     log "Installing Xunlei..."
     wget -qO "$TMPDIR/xunlei.deb" https://archive.ubuntukylin.com/software/pool/partner/com.xunlei.download_1.0.0.1_amd64.deb
     sudo gdebi -n "$TMPDIR/xunlei.deb"
 }
 
 # WPS
-[[ -n "$(dpkg -s wps-office)"]] || {
+[[ -n "$(dpkg -s wps-office)" ]] || {
     log "Installing WPS..."
     wget -qO "$TMPDIR/wps-office.deb" https://archive.ubuntukylin.com/software/pool/partner/wps-office_11.1.0.11698_amd64.deb
     sudo gdebi -n "$TMPDIR/wps-office.deb"
 }
 
-[[ -n "$(dpkg -s wps-fonts)"]] || {
+[[ -n "$(dpkg -s wps-fonts)" ]] || {
     log "Installing symbol fonts..."
     sudo add-apt-repository ppa:atareao/atareao 
     sudo apt-get update
