@@ -38,10 +38,6 @@ TMPDIR="$(mktemp -d)"
 
 export DEBIAN_FRONTEND=noninteractive
 
-# Can't connect to freedownloadmanager repo
-# [[ -f /etc/apt/sources.list.d/freedownloadmanager.list ]] && \
-#     sudo rm /etc/apt/sources.list.d/freedownloadmanager.list
-
 [[ -f /etc/apt/sources.list ]] && {
     log "APT mirror is set to $APT_MIRROR."
     sudo sed -i -e "s|//.*archive.ubuntu.com|//$APT_MIRROR|g" -e "s|security.ubuntu.com|$APT_MIRROR|g" -e "s|http:|https:|g" /etc/apt/sources.list
@@ -53,23 +49,7 @@ log "Insatlling BCM4360 wifi driver..."
 sudo apt-get install -y dkms bcmwl-kernel-source
 
 log "Installing some base packages..."
-sudo apt-get install -y \
-    apt-transport-https aria2 \
-    bat build-essential bzip2 \
-    ca-certificates coreutils curl \
-    fd-find ffmpeg file \
-    gdebi git gpg gzip \
-    jq \
-    libfuse2 lsb-release \
-    man-db \
-    net-tools \
-    p7zip p7zip-full patch procps proxychains4 \
-    ripgrep \
-    sed software-properties-common \
-    tar \
-    unzip \
-    wget \
-    zip
+sudo apt-get install -y apt-transport-https aria2 bat build-essential bzip2 ca-certificates coreutils curl fd-find ffmpeg file gdebi git gpg gzip jq libfuse2 lsb-release man-db net-tools p7zip p7zip-full patch procps proxychains4 ripgrep sed software-properties-common tar unzip wget zip
 
 # Google Chrome: https://google.cn/chrome
 [[ -x "$(command -v google-chrome)" ]] || {
@@ -107,7 +87,6 @@ sudo apt-get install -y \
 
 flatpak install -y flathub com.jgraph.drawio.desktop
 flatpak install -y flathub io.dbeaver.DBeaverCommunity
-flatpak install -y flathub io.github.cboxdoerfer.FSearch
 flatpak install -y flathub net.cozic.joplin_desktop
 flatpak install -y flathub net.xmind.XMind
 flatpak install -y flathub org.freedownloadmanager.Manager
@@ -115,28 +94,15 @@ flatpak install -y flathub org.localsend.localsend_app
 
 # Fonts
 log "Installing some fonts..."
-sudo apt-get install -y \
-    fonts-cascadia-code \
-    fonts-emojione \
-    fonts-firacode \
-    fonts-noto-color-emoji \
-    fonts-open-sans \
-    fonts-roboto \
-    fonts-ubuntu
+sudo apt-get install -y fonts-cascadia-code fonts-emojione fonts-firacode fonts-noto-color-emoji fonts-open-sans fonts-roboto fonts-ubuntu
 
 # Locale
 [[ $LOCALE == "zh_CN" ]] && {
     log "Installing Chinese language pack..."
-    sudo apt-get install -y \
-        language-pack-gnome-zh-hans \
-        language-pack-zh-hans \
+    sudo apt-get install -y language-pack-gnome-zh-hans language-pack-zh-hans
 
     log "Installing Chinese fonts..."
-    sudo apt-get install -y \
-        fonts-arphic-ukai \
-        fonts-arphic-uming \
-        fonts-noto-cjk \
-        fonts-noto-cjk-extra
+    sudo apt-get install -y fonts-arphic-ukai fonts-arphic-uming fonts-noto-cjk fonts-noto-cjk-extra
 }
 
 log "Change locale to $LOCALE."
@@ -216,30 +182,7 @@ initexmf --set-config-value \[MPM\]AutoInstall=1
 initexmf --set-config-value \[MPM\]RemoteRepository=https://mirrors.ustc.edu.cn/CTAN/systems/win32/miktex/tm/packages/
 
 log "Installing some extra apps..."
-sudo apt-get install -y \
-    android-sdk-platform-tools \
-    audacity \
-    calibre \
-    copyq \
-    digikam \
-    filezilla \
-    flameshot \
-    freecad \
-    ghostscript \
-    gimp \
-    handbrake \
-    inkscape \
-    mupdf \
-    mupdf-tools \
-    neofetch \
-    obs-studio \
-    openjdk-16-jdk \
-    openshot \
-    openvpn \
-    pdfarranger \
-    scrcpy \
-    scribus \
-    vlc
+sudo apt-get install -y android-sdk-platform-tools audacity calibre copyq digikam filezilla flameshot freecad ghostscript gimp handbrake inkscape mupdf mupdf-tools neofetch obs-studio openjdk-16-jdk openshot openvpn pdfarranger scrcpy scribus vlc
 
 # Some Windows apps
 # https://www.ubuntukylin.com/applications
@@ -272,7 +215,7 @@ sudo apt-get install -y \
 }
 
 # Photoshop CS6
-# Rename or delete <PS6 path>/Required\Plug-Ins\ADM\ADMPlugin.apl
+# Rename or delete <PS6 path>/Required/Plug-Ins/ADM/ADMPlugin.apl
 [[ -n "$(dpkg -s ukylin-ps6)" ]] || {
     log "Installing Photoshop CS6..."
     wget -qO "$TMPDIR/ukylin-ps6.deb" https://archive.ubuntukylin.com/software/pool/partner/ukylin-ps6_1.0_amd64.deb
