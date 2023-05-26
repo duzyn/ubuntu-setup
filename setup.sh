@@ -15,9 +15,9 @@ set -o pipefail
 : "${DEBUG="false"}"
 [[ "$DEBUG" == "true" ]] && set -o xtrace
 #  Configurations
-: "${LOCALE:="en_US"}"
-: "${APT_MIRROR:="archive.ubuntu.com"}"
-: "${NPM_REGISTRY_MIRROR:="https://registry.npmjs.org"}"
+: "${LOCALE:="zh_CN"}"
+: "${APT_MIRROR:="mirrors.ustc.edu.cn"}"
+: "${NPM_REGISTRY_MIRROR:="https://registry.npmmirror.com"}"
 
 # SCRIPT_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" &>/dev/null && pwd -P)
 
@@ -49,7 +49,7 @@ log "Insatlling BCM4360 wifi driver..."
 sudo apt-get install -y dkms bcmwl-kernel-source
 
 log "Installing some base packages..."
-sudo apt-get install -y apt-transport-https aria2 bat build-essential bzip2 ca-certificates coreutils curl fd-find ffmpeg file gdebi git gpg gzip jq libfuse2 lsb-release man-db net-tools p7zip p7zip-full patch procps proxychains4 ripgrep sed software-properties-common tar unzip wget zip
+sudo apt-get install -y apt-transport-https aria2 bat build-essential bzip2 ca-certificates coreutils curl fd-find ffmpeg file gcc g++ gdebi git gpg gzip jq libfuse2 lsb-release make man-db net-tools p7zip p7zip-full patch procps proxychains4 ripgrep sed software-properties-common tar unzip wget zip
 
 # Google Chrome: https://google.cn/chrome
 [[ -x "$(command -v google-chrome)" ]] || {
@@ -143,8 +143,24 @@ sudo update-locale LANG="$LOCALE.UTF-8" LANGUAGE="$LOCALE"
 }
 
 # Node, npm
-# https://github.com/nodesource/distributions/blob/master/README.md#debinstall
-wget -qO- https://deb.nodesource.com/setup_18.x | sudo -E bash - && sudo apt-get install -y nodejs
+[[ -n "$(command -v nvm)" ]] || {
+    log "Installing nvm..."
+    wget -qO- "https://ghproxy.com/raw.githubusercontent.com/nvm-sh/nvm/v0.39.3/install.sh" | sed -e "s|https://raw.githubusercontent.com|https://ghproxy.com/raw.githubusercontent.com|g" -e "s|https://github.com|https://ghproxy.com/github.com|g" | bash
+
+    export NVM_DIR="${HOME}/.nvm"
+    # shellcheck source=/dev/null
+    [ -s "${NVM_DIR}/nvm.sh" ] && \. "${NVM_DIR}/nvm.sh"
+    # shellcheck source=/dev/null
+    [ -s "${NVM_DIR}/bash_completion" ] && \. "${NVM_DIR}/bash_completion"
+}
+
+log "Installing latest version LTS nodejs..."
+nvm install --lts
+
+grep -q "NVM_NODEJS_ORG_MIRROR=" "${HOME}/.bashrc" || {
+    echo "export NVM_NODEJS_ORG_MIRROR=${NVM_NODEJS_ORG_MIRROR}" >>"${HOME}/.bashrc"
+    log "NVM_NODEJS_ORG_MIRROR is set to ${NVM_NODEJS_ORG_MIRROR}"
+}
 
 touch "${HOME}/.npmrc"
 grep -q "registry=" "${HOME}/.npmrc" || {
