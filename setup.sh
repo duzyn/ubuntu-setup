@@ -194,13 +194,13 @@ initexmf --set-config-value \[MPM\]AutoInstall=1
 initexmf --set-config-value \[MPM\]RemoteRepository=https://mirrors.ustc.edu.cn/CTAN/systems/win32/miktex/tm/packages/
 
 log "Installing some extra apps..."
-sudo apt-get install -y android-sdk-platform-tools audacity calibre copyq digikam filezilla flameshot freecad ghostscript gimp handbrake inkscape mupdf mupdf-tools neofetch obs-studio openjdk-16-jdk openshot openvpn pdfarranger pandoc scrcpy scribus vlc
+sudo apt-get install -y android-sdk-platform-tools audacity calibre copyq digikam filezilla flameshot freecad ghostscript gimp handbrake inkscape mupdf mupdf-tools neofetch obs-studio openjdk-16-jdk openshot openvpn pdfarranger pandoc plank scrcpy scribus vlc
 
 # Some Windows apps on Ubuntu Kylin
 # https://www.ubuntukylin.com/applications
 [[ -f /etc/apt/sources.list.d/ubuntukylin.list ]] || {
     log "Installing Ubuntu Kylin apps..."
-    sudo apt-key adv --keyserver keyserver.ubuntu.com --recv-keys D259B7555E1D3C58
+    sudo apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 56583E647FFA7DE7
     echo "deb http://archive.ubuntukylin.com/ubuntukylin focal-partner main" | sudo tee /etc/apt/sources.list.d/ubuntukylin.list
     sudo apt-get update
     sudo apt-get install -y ukylin-wine ukylin-wechat ukylin-wxwork ukylin-tencentmeeting ukylin-ps6 com.xunlei.download wps-office
