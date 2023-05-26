@@ -249,7 +249,7 @@ VTOY_INSTALLED_VERSION=not_installed
 
     # Record version
     [[ -d "$HOME/.vtoyboot" ]] || mkdir "$HOME/.vtoyboot"
-    log "$VTOY_LATEST_VERSION" >"$HOME/.vtoyboot/VERSION"
+    echo "$VTOY_LATEST_VERSION" >"$HOME/.vtoyboot/VERSION"
 }
 
 log "Running vtoyboot..."
