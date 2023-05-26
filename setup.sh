@@ -36,6 +36,9 @@ TMPDIR="$(mktemp -d)"
 
 export DEBIAN_FRONTEND=noninteractive
 
+# Can't connect to freedownloadmanager repo
+[[ -f /etc/apt/sources.list.d/freedownloadmanager.list ]] && sudo rm /etc/apt/sources.list.d/freedownloadmanager.list
+
 [[ -f /etc/apt/sources.list ]] && {
     log "APT mirror is set to $APT_MIRROR."
     sudo sed -i -e "s|//.*archive.ubuntu.com|//$APT_MIRROR|g" -e "s|security.ubuntu.com|$APT_MIRROR|g" -e "s|http:|https:|g" /etc/apt/sources.list
@@ -166,6 +169,12 @@ xdg-user-dirs-update --set VIDEOS ~/Videos
     sudo add-apt-repository -y ppa:christian-boxdoerfer/fsearch-stable
     sudo apt-get update
     sudo apt-get install -y fsearch
+}
+
+[[ -n "$(dpkg -s freedownloadmanager)" ]] || {
+    log "Installing Free Download Manager..."
+    wget -qO "$TPMDIR/freedownloadmanager.deb" https://files2.freedownloadmanager.org/6/latest/freedownloadmanager.deb
+    sudo gdebi -n "$TMPDIR/freedownloadmanager.deb"
 }
 
 # Node, npm
