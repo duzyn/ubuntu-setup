@@ -231,7 +231,7 @@ sudo apt-get install -y android-sdk-platform-tools audacity calibre copyq digika
     sudo apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 56583E647FFA7DE7
     echo "deb http://archive.ubuntukylin.com/ubuntukylin focal-partner main" | sudo tee /etc/apt/sources.list.d/ubuntukylin.list
     sudo apt-get update
-    sudo apt-get install -y ukylin-wine ukylin-wechat ukylin-wxwork ukylin-tencentmeeting ukylin-ps6 com.xunlei.download wps-office
+    sudo apt-get install -y sogoupinyin ukylin-wine ukylin-wechat ukylin-wxwork ukylin-tencentmeeting ukylin-ps6 com.xunlei.download wps-office
 }
 # Fix ADM  error when lauch ps6
 [[ -f "$HOME/.ukylin-wine/photoshop-cs6/drive_c/Program Files/Adobe/Photoshop CS6/Required/Plug-ins/ADM/ADMPlugin.apl" ]] && {
