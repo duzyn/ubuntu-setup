@@ -245,7 +245,7 @@ VTOY_INSTALLED_VERSION=not_installed
     7z x -o"$TMPDIR/vtoyboot-tmp" "$TMPDIR/vtoyboot.iso"
     7z x -o"$TMPDIR/vtoyboot-tmp" "$TMPDIR/vtoyboot-tmp/*.tar.gz"
     7z x -o"$TMPDIR/vtoyboot-tmp" "$TMPDIR/vtoyboot-tmp/*.tar"
-    cp -r "$TMPDIR/vtoyboot-tmp/vtoyboot-$VTOY_LATEST_VERSION/*" "$HOME/vtoyboot"
+    cp -r "$TMPDIR/vtoyboot-tmp/vtoyboot-$VTOY_LATEST_VERSION" "$HOME/vtoyboot"
 
     # Record version
     [[ -d "$HOME/.vtoyboot" ]] || mkdir "$HOME/.vtoyboot"
