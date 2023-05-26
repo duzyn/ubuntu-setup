@@ -169,6 +169,14 @@ sudo update-locale LANG="$LOCALE.UTF-8" LANGUAGE="$LOCALE"
     sudo apt install -y just
 }
 
+# FSearch: https://github.com/cboxdoerfer/fsearch
+[[ -n "$(command -v fsearch)" ]] || {
+    log "Installing FSearch..."
+    sudo add-apt-repository ppa:christian-boxdoerfer/fsearch-stable
+    sudo apt-get update
+    sudo apt-get install -y fsearch
+}
+
 # Node, npm
 # https://github.com/nodesource/distributions/blob/master/README.md#debinstall
 wget -qO- https://deb.nodesource.com/setup_18.x | sudo -E bash - && sudo apt-get install -y nodejs
