@@ -89,7 +89,7 @@ flatpak install -y flathub com.jgraph.drawio.desktop
 flatpak install -y flathub io.dbeaver.DBeaverCommunity
 flatpak install -y flathub net.cozic.joplin_desktop
 flatpak install -y flathub net.xmind.XMind
-flatpak install -y flathub org.freedownloadmanager.Manager
+# flatpak install -y flathub org.freedownloadmanager.Manager
 flatpak install -y flathub org.localsend.localsend_app
 
 # Fonts
