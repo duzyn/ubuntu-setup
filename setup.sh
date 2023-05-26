@@ -83,6 +83,7 @@ sudo apt-get install -y apt-transport-https aria2 bat build-essential bzip2 ca-c
     die "To complete setup, restart your system. run sudo shutdown -r now" 0
 }
 
+flatpak install -y flathub io.github.shiftey.Desktop
 flatpak install -y flathub com.jgraph.drawio.desktop
 flatpak install -y flathub io.dbeaver.DBeaverCommunity
 flatpak install -y flathub net.cozic.joplin_desktop
