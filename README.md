@@ -31,5 +31,5 @@
     ```
 
     ```bash
-    wget -O- https://github.com/duzyn/ubuntu-setup/raw/main/setup-ubuntu.sh | DEBUG=true bash
+    wget -O- https://github.com/duzyn/ubuntu-setup/raw/main/setup-ubuntu.sh | DEBUG=true LOCALE="zh_CN" APT_MIRROR="mirrors.ustc.edu.cn" NPM_REGISTRY_MIRROR="https://registry.npmmirror.com" bash
     ```
