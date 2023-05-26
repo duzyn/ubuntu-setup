@@ -47,7 +47,14 @@ log "Insatlling BCM4360 wifi driver..."
 sudo apt-get install -y dkms bcmwl-kernel-source
 
 log "Installing some base packages..."
-sudo apt-get install -y apt-transport-https aria2 bat build-essential bzip2 ca-certificates coreutils curl fd-find ffmpeg file gcc g++ gdebi git gpg gzip jq libfuse2 lsb-release make man-db net-tools p7zip p7zip-full patch procps proxychains4 ripgrep sed software-properties-common tar unzip wget zip
+sudo apt-get install -y apt-transport-https aria2 bat build-essential bzip2 ca-certificates coreutils curl fd-find ffmpeg file gcc g++ gdebi gpg gzip jq libfuse2 lsb-release make man-db net-tools p7zip p7zip-full patch procps proxychains4 ripgrep sed software-properties-common tar unzip wget zip
+
+[[ -x "$(command -v git)" ]] || {
+    log "Installing Git..."
+    sudo add-apt-repository -y ppa:git-core/ppa
+    sudo apt update
+    sudo apt install -y git
+}
 
 # Google Chrome: https://google.cn/chrome
 [[ -x "$(command -v google-chrome)" ]] || {
@@ -108,6 +115,26 @@ log "Change locale to $LOCALE."
 sudo update-locale LANG="$LOCALE.UTF-8" LANGUAGE="$LOCALE"
 
 
+# https://gnu-linux.readthedocs.io/zh/latest/Chapter02/46_xdg.user.dirs.html
+cd "$HOME" && mkdir -p Desktop Documents Download Music Pictures Publicshare Templates Videos
+xdg-user-dirs-update --set DESKTOP ~/Desktop
+xdg-user-dirs-update --set DOCUMENTS ~/Documents
+xdg-user-dirs-update --set DOWNLOAD ~/Download
+xdg-user-dirs-update --set MUSIC ~/Music
+xdg-user-dirs-update --set PICTURES ~/Pictures
+xdg-user-dirs-update --set PUBLICSHARE ~/Publicshare
+xdg-user-dirs-update --set TEMPLATES ~/Templates
+xdg-user-dirs-update --set VIDEOS ~/Videos
+
+# Albert: https://github.com/albertlauncher/albert
+[[ -n "$(command -v albert)" ]] || {
+    log "Installing Albert..."
+    echo 'deb http://download.opensuse.org/repositories/home:/manuelschneid3r/xUbuntu_20.04/ /' | sudo tee /etc/apt/sources.list.d/home:manuelschneid3r.list
+    curl -fsSL https://download.opensuse.org/repositories/home:manuelschneid3r/xUbuntu_20.04/Release.key | gpg --dearmor | sudo tee /etc/apt/trusted.gpg.d/home_manuelschneid3r.gpg > /dev/null
+    sudo apt update
+    sudo apt install -y albert
+}
+
 # Onedriver: https://github.com/jstaf/onedriver
 [[ -n "$(command -v onedriver)" ]] || {
     log "Installing Onedriver..."
@@ -136,7 +163,7 @@ sudo update-locale LANG="$LOCALE.UTF-8" LANGUAGE="$LOCALE"
 # FSearch: https://github.com/cboxdoerfer/fsearch
 [[ -n "$(command -v fsearch)" ]] || {
     log "Installing FSearch..."
-    sudo add-apt-repository ppa:christian-boxdoerfer/fsearch-stable
+    sudo add-apt-repository -y ppa:christian-boxdoerfer/fsearch-stable
     sudo apt-get update
     sudo apt-get install -y fsearch
 }
