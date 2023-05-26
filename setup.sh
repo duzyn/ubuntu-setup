@@ -39,9 +39,9 @@ export DEBIAN_FRONTEND=noninteractive
 [[ -f /etc/apt/sources.list ]] && {
     log "APT mirror is set to $APT_MIRROR."
     sudo sed -i -e "s|//.*archive.ubuntu.com|//$APT_MIRROR|g" -e "s|security.ubuntu.com|$APT_MIRROR|g" -e "s|http:|https:|g" /etc/apt/sources.list
+    sudo apt-get update
 }
 
-sudo apt-get update
 
 log "Insatlling BCM4360 wifi driver..."
 sudo apt-get install -y dkms bcmwl-kernel-source
@@ -196,58 +196,16 @@ initexmf --set-config-value \[MPM\]RemoteRepository=https://mirrors.ustc.edu.cn/
 log "Installing some extra apps..."
 sudo apt-get install -y android-sdk-platform-tools audacity calibre copyq digikam filezilla flameshot freecad ghostscript gimp handbrake inkscape mupdf mupdf-tools neofetch obs-studio openjdk-16-jdk openshot openvpn pdfarranger pandoc scrcpy scribus vlc
 
-# Some Windows apps
+# Some Windows apps on Ubuntu Kylin
 # https://www.ubuntukylin.com/applications
-# Wine
-[[ -n "$(command -v ukylin-wine)" ]] || {
-    log "Installing Wine..."
-    wget -qO "$TMPDIR/ukylin-wine.deb" https://archive.ubuntukylin.com/software/pool/partner/ukylin-wine_70.6.3.25_amd64.deb
-    sudo gdebi -n "$TMPDIR/ukylin-wine.deb"
+[[ -f /etc/apt/sources.list.d/ubuntukylin.list ]] || {
+    log "Installing Ubuntu Kylin apps..."
+    sudo apt-key adv --keyserver keyserver.ubuntu.com --recv-keys D259B7555E1D3C58
+    echo "deb http://archive.ubuntukylin.com/ubuntukylin focal-partner main" | sudo tee /etc/apt/sources.list.d/ubuntukylin.list
+    sudo apt-get update
+    sudo apt-get install -y ukylin-wine ukylin-wechat ukylin-wxwork ukylin-tencentmeeting ukylin-ps6 com.xunlei.download wps-office
 }
 
-# WeChat
-[[ -n "$(dpkg -s ukylin-wechat)" ]] || {
-    log "Installing WeChat..."
-    wget -qO "$TMPDIR/ukylin-wechat.deb" https://archive.ubuntukylin.com/software/pool/partner/ukylin-wechat_3.0.0_amd64.deb
-    sudo gdebi -n "$TMPDIR/ukylin-wechat.deb"
-}
-
-# WeChat Work
-[[ -n "$(dpkg -s ukylin-wxwork)" ]] || {
-    log "Installing WeChat Work..."
-    wget -qO "$TMPDIR/ukylin-wxwork.deb" https://archive.ubuntukylin.com/software/pool/partner/ukylin-wxwork_1.0_amd64.deb
-    sudo gdebi -n "$TMPDIR/ukylin-wxwork.deb"
-}
-
-# Tencent Meeting
-[[ -n "$(dpkg -s ukylin-tencentmeeting)" ]] || {
-    log "Installing Tencent Meeting..."
-    wget -qO "$TMPDIR/ukylin-tencentmeeting.deb" https://archive.ubuntukylin.com/software/pool/partner/ukylin-tencentmeeting_1.0_amd64.deb
-    sudo gdebi -n "$TMPDIR/ukylin-tencentmeeting.deb"
-}
-
-# Photoshop CS6
-# Rename or delete <PS6 path>/Required/Plug-Ins/ADM/ADMPlugin.apl
-[[ -n "$(dpkg -s ukylin-ps6)" ]] || {
-    log "Installing Photoshop CS6..."
-    wget -qO "$TMPDIR/ukylin-ps6.deb" https://archive.ubuntukylin.com/software/pool/partner/ukylin-ps6_1.0_amd64.deb
-    sudo gdebi -n "$TMPDIR/ukylin-ps6.deb"
-}
-
-# Some Chinese apps.
-# Xunlei
-[[ -n "$(dpkg -s com.xunlei.download)" ]] || {
-    log "Installing Xunlei..."
-    wget -qO "$TMPDIR/xunlei.deb" https://archive.ubuntukylin.com/software/pool/partner/com.xunlei.download_1.0.0.1_amd64.deb
-    sudo gdebi -n "$TMPDIR/xunlei.deb"
-}
-
-# WPS
-[[ -n "$(dpkg -s wps-office)" ]] || {
-    log "Installing WPS..."
-    wget -qO "$TMPDIR/wps-office.deb" https://archive.ubuntukylin.com/software/pool/partner/wps-office_11.1.0.11698_amd64.deb
-    sudo gdebi -n "$TMPDIR/wps-office.deb"
-}
 
 [[ -n "$(dpkg -s wps-fonts)" ]] || {
     log "Installing symbol fonts..."
