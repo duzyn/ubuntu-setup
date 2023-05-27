@@ -171,6 +171,7 @@ xdg-user-dirs-update --set VIDEOS ~/Videos
     sudo apt-get install -y fsearch
 }
 
+# Free Download Manager
 [[ -n "$(dpkg -s freedownloadmanager)" ]] || {
     log "Installing Free Download Manager..."
     wget -qO "$TPMDIR/freedownloadmanager.deb" https://files2.freedownloadmanager.org/6/latest/freedownloadmanager.deb
@@ -231,7 +232,7 @@ initexmf --set-config-value \[MPM\]AutoInstall=1
 initexmf --set-config-value \[MPM\]RemoteRepository=https://mirrors.ustc.edu.cn/CTAN/systems/win32/miktex/tm/packages/
 
 log "Installing some extra apps..."
-sudo apt-get install -y android-sdk-platform-tools audacity calibre copyq digikam filezilla flameshot freecad ghostscript gimp handbrake inkscape mupdf mupdf-tools neofetch obs-studio openjdk-16-jdk openshot openvpn pdfarranger pandoc plank scrcpy scribus vlc
+sudo apt-get install -y android-sdk-platform-tools audacity calibre digikam filezilla flameshot freecad ghostscript gimp handbrake inkscape mupdf mupdf-tools neofetch obs-studio openjdk-16-jdk openshot openvpn pdfarranger pandoc plank scrcpy scribus vlc xfce4-appmenu-plugin
 
 # Some Windows apps on Ubuntu Kylin
 # https://www.ubuntukylin.com/applications
