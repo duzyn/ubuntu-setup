@@ -50,7 +50,9 @@ log "Insatlling BCM4360 wifi driver..."
 sudo apt-get install -y dkms bcmwl-kernel-source
 
 log "Installing some base packages..."
-sudo apt-get install -y apt-transport-https aria2 bat build-essential bzip2 ca-certificates coreutils curl fd-find ffmpeg file gcc g++ gdebi gpg gzip jq libfuse2 lsb-release make man-db net-tools p7zip p7zip-full patch procps proxychains4 ripgrep sed software-properties-common tar unzip wget zip
+sudo apt-get install -y apt-transport-https aria2 bat build-essential bzip2 ca-certificates coreutils curl \
+    fd-find ffmpeg file gcc g++ gdebi gpg gzip jq libfuse2 lsb-release make man-db net-tools ntp \
+    p7zip p7zip-full patch procps proxychains4 ripgrep sed software-properties-common tar unzip wget zip
 
 [[ -x "$(command -v git)" ]] || {
     log "Installing Git..."
@@ -142,7 +144,7 @@ xdg-user-dirs-update --set VIDEOS ~/Videos
 [[ -n "$(command -v onedriver)" ]] || {
     log "Installing Onedriver..."
     echo 'deb http://download.opensuse.org/repositories/home:/jstaf/xUbuntu_20.04/ /' | sudo tee /etc/apt/sources.list.d/home:jstaf.list
-    wget -qO- https://download.opensuse.org/repositories/home:jstaf/xUbuntu_20.04/Release.key | gpg --dearmor | sudo tee /etc/apt/trusted.gpg.d/home_jstaf.gpg >/dev/null
+    wget -O- https://download.opensuse.org/repositories/home:jstaf/xUbuntu_20.04/Release.key | gpg --dearmor | sudo tee /etc/apt/trusted.gpg.d/home_jstaf.gpg >/dev/null
     sudo apt-get update
     sudo apt-get install -y onedriver
 }
@@ -150,14 +152,14 @@ xdg-user-dirs-update --set VIDEOS ~/Videos
 # Greenfish Icon Editor Pro
 [[ -n "$(command -v gfie)" ]] || {
     log "Installing Greenfish Icon Editor Pro..."
-    wget -qO "$TMPDIR/gfie.deb" http://greenfishsoftware.org/dl/gfie/gfie-4.2.deb
+    wget -O "$TMPDIR/gfie.deb" http://greenfishsoftware.org/dl/gfie/gfie-4.2.deb
     sudo gdebi -n "$TMPDIR/gfie.deb"
 }
 
 # Just: https://github.com/casey/just
 [[ -n "$(command -v just)" ]] || {
     log "Installing Just..."
-    wget -qO - 'https://proget.makedeb.org/debian-feeds/prebuilt-mpr.pub' | gpg --dearmor | sudo tee /usr/share/keyrings/prebuilt-mpr-archive-keyring.gpg 1>/dev/null
+    wget -O - 'https://proget.makedeb.org/debian-feeds/prebuilt-mpr.pub' | gpg --dearmor | sudo tee /usr/share/keyrings/prebuilt-mpr-archive-keyring.gpg 1>/dev/null
     echo "deb [arch=amd64 signed-by=/usr/share/keyrings/prebuilt-mpr-archive-keyring.gpg] https://proget.makedeb.org prebuilt-mpr $(lsb_release -cs)" | sudo tee /etc/apt/sources.list.d/prebuilt-mpr.list
     sudo apt update
     sudo apt install -y just
@@ -174,13 +176,13 @@ xdg-user-dirs-update --set VIDEOS ~/Videos
 # Free Download Manager
 [[ -n "$(dpkg -s freedownloadmanager)" ]] || {
     log "Installing Free Download Manager..."
-    wget -qO "$TPMDIR/freedownloadmanager.deb" https://files2.freedownloadmanager.org/6/latest/freedownloadmanager.deb
+    wget -O "$TPMDIR/freedownloadmanager.deb" https://files2.freedownloadmanager.org/6/latest/freedownloadmanager.deb
     sudo gdebi -n "$TMPDIR/freedownloadmanager.deb"
 }
 
 # Node, npm
 log "Installing nvm..."
-wget -qO- "https://ghproxy.com/raw.githubusercontent.com/nvm-sh/nvm/v0.39.3/install.sh" | sed -e "s|https://raw.githubusercontent.com|https://ghproxy.com/raw.githubusercontent.com|g" -e "s|https://github.com|https://ghproxy.com/github.com|g" | bash
+wget -O- "https://ghproxy.com/raw.githubusercontent.com/nvm-sh/nvm/v0.39.3/install.sh" | sed -e "s|https://raw.githubusercontent.com|https://ghproxy.com/raw.githubusercontent.com|g" -e "s|https://github.com|https://ghproxy.com/github.com|g" | bash
 
 export NVM_DIR="$HOME/.nvm"
 # shellcheck source=/dev/null
@@ -204,6 +206,41 @@ grep -q "registry=" "$HOME/.npmrc" || {
 
 log "Updating npm..."
 npm update -g
+
+# Installing 3rd party .deb apps from GitHub Releases
+install_github_releases_apps() {
+    local REPO_NAME PACKAGE_NAME VERSION_LATEST VERSION_INSTALLED API_URL
+    REPO_NAME=$1
+    PACKAGE_NAME=$2
+    PATTERN=$3
+    API_URL=https://api.github.com/repos/$REPO_NAME/releases/latest
+    VERSION_LATEST=$(wget -O- "$API_URL" | jq -r ".tag_name" | tr -d "v")
+
+    if dpkg -s "$PACKAGE_NAME" &>/dev/null; then
+        VERSION_INSTALLED=$(dpkg -s "$PACKAGE_NAME" | grep Version | cut -c 10- -)
+    else
+        VERSION_INSTALLED=not_installed
+    fi
+
+    if [[ "$VERSION_LATEST" == *"$VERSION_INSTALLED"* || "$VERSION_INSTALLED" == *"$VERSION_LATEST"* ]]; then
+            log "$PACKAGE_NAME $VERSION_LATEST is lastest."
+    else
+        log "Installing $PACKAGE_NAME $VERSION_LATEST..."
+        wget -O "$TMPDIR/$PACKAGE_NAME.deb" \
+            "$(wget -O- "$API_URL" | jq -r ".assets[].browser_download_url" | \
+                grep "${PATTERN}" | head -n 1 | sed -e "s|https://github.com|https://ghproxy.com/github.com|g")"
+        sudo gdebi -n "$TMPDIR/$PACKAGE_NAME.deb"
+    fi
+}
+
+install_github_releases_apps jgm/pandoc pandoc amd64.deb
+install_github_releases_apps lyswhut/lx-music-desktop lx-music-desktop x64.deb
+# install_github_releases_apps vercel/hyper hyper amd64.deb
+# install_github_releases_apps dbeaver/dbeaver dbeaver-ce amd64.deb
+# install_github_releases_apps Zettlr/Zettlr zettlr amd64.deb
+# install_github_releases_apps jgraph/drawio-desktop draw.io .deb
+# install_github_releases_apps shiftkey/desktop github-desktop .deb
+
 
 # MiKTeX
 # https://miktex.org/download#ubuntu and
@@ -232,7 +269,7 @@ initexmf --set-config-value \[MPM\]AutoInstall=1
 initexmf --set-config-value \[MPM\]RemoteRepository=https://mirrors.ustc.edu.cn/CTAN/systems/win32/miktex/tm/packages/
 
 log "Installing some extra apps..."
-sudo apt-get install -y android-sdk-platform-tools audacity calibre digikam filezilla flameshot freecad ghostscript gimp handbrake inkscape mupdf mupdf-tools neofetch obs-studio openjdk-16-jdk openshot openvpn pdfarranger pandoc plank scrcpy scribus vlc xfce4-appmenu-plugin
+sudo apt-get install -y android-sdk-platform-tools audacity calibre digikam filezilla flameshot freecad ghostscript gimp handbrake inkscape mupdf mupdf-tools neofetch obs-studio openjdk-16-jdk openshot openvpn pdfarranger plank scrcpy scribus vlc xfce4-appmenu-plugin
 
 # Some Windows apps on Ubuntu Kylin
 # https://www.ubuntukylin.com/applications
@@ -265,7 +302,7 @@ sudo apt-get autoremove -y
 sudo apt-get upgrade -y
 
 # Used for Ventoy VDisk boot
-VTOY_LATEST_VERSION=$(wget -qO- https://api.github.com/repos/ventoy/vtoyboot/releases/latest | jq -r ".tag_name" | tr -d "v")
+VTOY_LATEST_VERSION=$(wget -O- https://api.github.com/repos/ventoy/vtoyboot/releases/latest | jq -r ".tag_name" | tr -d "v")
 VTOY_INSTALLED_VERSION=not_installed
 [[ -e "$HOME/.vtoyboot/VERSION" ]] && VTOY_INSTALLED_VERSION=$(cat "$HOME/.vtoyboot/VERSION")
 
@@ -277,7 +314,7 @@ VTOY_INSTALLED_VERSION=not_installed
 
     # Install new version.
     log "Downloading vtoyboot $VTOY_LATEST_VERSION..."
-    wget -qO "$TMPDIR/vtoyboot.iso" "$(wget -qO- https://api.github.com/repos/ventoy/vtoyboot/releases/latest | jq -r ".assets[].browser_download_url" | grep .iso | head -n 1)"
+    wget -O "$TMPDIR/vtoyboot.iso" "$(wget -O- https://api.github.com/repos/ventoy/vtoyboot/releases/latest | jq -r ".assets[].browser_download_url" | grep .iso | head -n 1)"
     [[ -d "$TMPDIR/vtoyboot-tmp" ]] && rm -r "$TMPDIR/vtoyboot-tmp"
     7z x -o"$TMPDIR/vtoyboot-tmp" "$TMPDIR/vtoyboot.iso"
     7z x -o"$TMPDIR/vtoyboot-tmp" "$TMPDIR/vtoyboot-tmp/*.tar.gz"
