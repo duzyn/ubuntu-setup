@@ -46,7 +46,7 @@ else
         log "APT mirror is set to $APT_MIRROR."
         sudo sed -i -e "s|//.*archive.ubuntu.com|//$APT_MIRROR|g" -e "s|security.ubuntu.com|$APT_MIRROR|g" \
             -e "s|http:|https:|g" /etc/apt/sources.list
-        sudo apt-get update
+        sudo apt-get update -qq
     else
         log "There's no sources.list."
     fi
@@ -67,8 +67,8 @@ if [[ -x "$(command -v git)" ]]; then
 else
     log "Installing latest Git..."
     sudo add-apt-repository -y ppa:git-core/ppa
-    sudo apt update
-    sudo apt install -y git
+    sudo apt-get update -qq
+    sudo apt-get install -y git
 fi
 
 # Google Chrome: https://google.cn/chrome
@@ -89,7 +89,7 @@ else
     sudo install -D -o root -g root -m 644 "$TMPDIR/microsoft.gpg" /usr/share/keyrings/microsoft.gpg
     echo "deb [arch=amd64 signed-by=/usr/share/keyrings/microsoft.gpg] https://packages.microsoft.com/repos/edge stable main" | \
         sudo tee /etc/apt/sources.list.d/microsoft-edge.list
-    sudo apt-get update
+    sudo apt-get update -qq
     sudo apt-get install -y microsoft-edge-stable
 fi
 
@@ -100,7 +100,7 @@ else
     log "Installing Visual Studio Code..."
     echo "deb [arch=amd64 signed-by=/usr/share/keyrings/microsoft.gpg] https://packages.microsoft.com/repos/vscode stable main" | \
         sudo tee /etc/apt/sources.list.d/vscode.list
-    sudo apt-get update
+    sudo apt-get update -qq
     sudo apt-get install -y code
 fi
 
@@ -109,8 +109,8 @@ if [[ -x "$(command -v flatpak)" ]]; then
     log "Flatpak is installed."
 else
     log "Installing Flatpak..."
-    sudo apt-get install flatpak
-    # sudo apt install gnome-software-plugin-flatpak
+    sudo apt-get install -y flatpak
+    # sudo apt-get install -y gnome-software-plugin-flatpak
     flatpak remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
     die "To complete setup, restart your system. run: sudo shutdown -r now" 0
 fi
@@ -141,6 +141,7 @@ sudo update-locale LANG="$LOCALE.UTF-8" LANGUAGE="$LOCALE"
 
 
 # https://gnu-linux.readthedocs.io/zh/latest/Chapter02/46_xdg.user.dirs.html
+# cat ~/.config/user-dirs.dirs
 log "Setting user dirs name..."
 cd "$HOME" && mkdir -p Desktop Documents Download Music Pictures Publicshare Templates Videos
 xdg-user-dirs-update --set DESKTOP "$HOME/Desktop"
@@ -159,8 +160,8 @@ xdg-user-dirs-update --set VIDEOS "$HOME/Videos"
         sudo tee /etc/apt/sources.list.d/home:manuelschneid3r.list
     wget -qO- "https://download.opensuse.org/repositories/home:manuelschneid3r/xUbuntu_$(lsb_release -rs)/Release.key" | gpg --dearmor | \
         sudo tee /etc/apt/trusted.gpg.d/home_manuelschneid3r.gpg > /dev/null
-    sudo apt update
-    sudo apt install -y albert
+    sudo apt-get update
+    sudo apt-get install -y albert
 }
 
 # Onedriver: https://github.com/jstaf/onedriver
@@ -170,7 +171,7 @@ xdg-user-dirs-update --set VIDEOS "$HOME/Videos"
         sudo tee /etc/apt/sources.list.d/home:jstaf.list
     wget -qO- "https://download.opensuse.org/repositories/home:jstaf/xUbuntu_$(lsb_release -rs)/Release.key" | gpg --dearmor | \
         sudo tee /etc/apt/trusted.gpg.d/home_jstaf.gpg >/dev/null
-    sudo apt-get update
+    sudo apt-get update -qq
     sudo apt-get install -y onedriver
 }
 
@@ -188,15 +189,15 @@ xdg-user-dirs-update --set VIDEOS "$HOME/Videos"
         sudo tee /usr/share/keyrings/prebuilt-mpr-archive-keyring.gpg 1>/dev/null
     echo "deb [arch=amd64 signed-by=/usr/share/keyrings/prebuilt-mpr-archive-keyring.gpg] https://proget.makedeb.org prebuilt-mpr $(lsb_release -cs)" | 、
         sudo tee /etc/apt/sources.list.d/prebuilt-mpr.list
-    sudo apt update
-    sudo apt install -y just
+    sudo apt-get update -qq
+    sudo apt-get install -y just
 }
 
 # FSearch: https://github.com/cboxdoerfer/fsearch
 [[ -n "$(command -v fsearch)" ]] || {
     log "Installing FSearch..."
     sudo add-apt-repository -y ppa:christian-boxdoerfer/fsearch-stable
-    sudo apt-get update
+    sudo apt-get update -qq
     sudo apt-get install -y fsearch
 }
 
@@ -263,7 +264,7 @@ install_github_releases_apps() {
     PACKAGE_NAME=$2
     PATTERN=$3
     API_URL=https://api.github.com/repos/$REPO_NAME/releases/latest
-    VERSION_LATEST=$(wget -O- "$API_URL" | jq -r ".tag_name" | tr -d "v")
+    VERSION_LATEST=$(wget -qO- "$API_URL" | jq -r ".tag_name" | tr -d "v")
 
     if dpkg -s "$PACKAGE_NAME" &>/dev/null; then
         VERSION_INSTALLED=$(dpkg -s "$PACKAGE_NAME" | grep Version | cut -c 10- -)
@@ -298,7 +299,7 @@ install_github_releases_apps lyswhut/lx-music-desktop lx-music-desktop x64.deb
     log "Installing MiKTeX..."
     sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys D6BC243565B2087BC3F897C9277A7293F59E4889
     echo "deb http://miktex.org/download/ubuntu $(lsb_release -cs) universe" | sudo tee /etc/apt/sources.list.d/miktex.list
-    sudo apt-get update
+    sudo apt-get update -qq
     sudo apt-get install -y miktex
 }
 
@@ -333,7 +334,7 @@ sudo apt-get install -y android-sdk-platform-tools audacity calibre digikam file
 [[ -n "$(dpkg -s papirus-icon-theme)" ]] || {
     log "Installing apirus-icon-theme..."
     sudo add-apt-repository -y ppa:papirus/papirus
-    sudo apt-get update
+    sudo apt-get update -qq
     sudo apt-get install -y papirus-icon-theme
 }
 
@@ -353,8 +354,8 @@ xfconf-query -c xfwm4 -p /general/title_font -s "Noto Sans CJK SC 9"
 # Hardcode-Tray: https://github.com/bilelmoussaoui/Hardcode-Tray
 [[ -n "$(dpkg -s hardcode-tray)" ]] || {
     sudo add-apt-repository -y ppa:papirus/hardcode-tray
-    sudo apt update
-    sudo apt install -y hardcode-tray
+    sudo apt-get update -qq
+    sudo apt-get install -y hardcode-tray
 }
 
 # Some Windows apps on Ubuntu Kylin
@@ -363,7 +364,7 @@ xfconf-query -c xfwm4 -p /general/title_font -s "Noto Sans CJK SC 9"
     log "Installing Ubuntu Kylin apps..."
     sudo apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 56583E647FFA7DE7
     echo "deb http://archive.ubuntukylin.com/ubuntukylin $(lsb_release -cs)-partner main" | sudo tee /etc/apt/sources.list.d/ubuntukylin.list
-    sudo apt-get update
+    sudo apt-get update -qq
     sudo apt-get install -y sogoupinyin ukylin-wine ukylin-wechat ukylin-wxwork ukylin-tencentmeeting ukylin-ps6 com.xunlei.download wps-office
 }
 # Fix ADM  error when launch PS6
@@ -376,7 +377,7 @@ xfconf-query -c xfwm4 -p /general/title_font -s "Noto Sans CJK SC 9"
 [[ -n "$(dpkg -s wps-fonts)" ]] || {
     log "Installing symbol fonts..."
     sudo add-apt-repository ppa:atareao/atareao 
-    sudo apt-get update
+    sudo apt-get update -qq
     sudo apt-get install -y wps-fonts
 }
 
@@ -389,7 +390,7 @@ sudo apt-get autoremove -y
 sudo apt-get upgrade -y
 
 # Used for Ventoy VDisk boot
-VTOY_LATEST_VERSION=$(wget -O- https://api.github.com/repos/ventoy/vtoyboot/releases/latest | jq -r ".tag_name" | tr -d "v")
+VTOY_LATEST_VERSION=$(wget -qO- https://api.github.com/repos/ventoy/vtoyboot/releases/latest | jq -r ".tag_name" | tr -d "v")
 VTOY_INSTALLED_VERSION=not_installed
 [[ -e "$HOME/.vtoyboot/VERSION" ]] && VTOY_INSTALLED_VERSION=$(cat "$HOME/.vtoyboot/VERSION")
 
@@ -401,7 +402,7 @@ VTOY_INSTALLED_VERSION=not_installed
 
     # Install new version.
     log "Downloading vtoyboot $VTOY_LATEST_VERSION..."
-    wget -O "$TMPDIR/vtoyboot.iso" "$(wget -O- https://api.github.com/repos/ventoy/vtoyboot/releases/latest | jq -r ".assets[].browser_download_url" | grep .iso | head -n 1)"
+    wget -O "$TMPDIR/vtoyboot.iso" "$(wget -qO- https://api.github.com/repos/ventoy/vtoyboot/releases/latest | jq -r ".assets[].browser_download_url" | grep .iso | head -n 1)"
     [[ -d "$TMPDIR/vtoyboot-tmp" ]] && rm -r "$TMPDIR/vtoyboot-tmp"
     7z x -o"$TMPDIR/vtoyboot-tmp" "$TMPDIR/vtoyboot.iso"
     7z x -o"$TMPDIR/vtoyboot-tmp" "$TMPDIR/vtoyboot-tmp/*.tar.gz"
