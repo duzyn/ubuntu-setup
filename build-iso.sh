@@ -18,19 +18,18 @@ set -o pipefail
 [[ "$DEBUG" == "true" ]] && set -o xtrace
 
 # Arguments given to the download router.
-: "${ISO_URL:="https://www.releases.ubuntu.com/20.04.6/ubuntu-20.04.6-desktop-amd64.iso"}"
+: "${ISO_URL:="https://mirrors.ustc.edu.cn/ubuntu-cdimage/xubuntu/releases/20.04.6/release/xubuntu-20.04.6-desktop-amd64.iso"}"
 : "${SOURCE_ISO:="$(basename "$ISO_URL")"}"
-
 : "${DIST_DIR="dist"}"
 
 # Hardcoded host information.
-: "${USERNAME:="ubuntu"}"
-: "${PASSWORD:="ubuntu"}"
-: "${FULL_NAME:="ubuntu"}"
-: "${HOST:="ubuntu"}"
-: "${DOMAIN:="ubuntu.guest.virtualbox.org"}"
-: "${LOCALE:="en_US"}"
-: "${TIMEZONE:="America/Nome"}"
+: "${USERNAME:="xubuntu"}"
+: "${PASSWORD:="xubuntu"}"
+: "${FULL_NAME:="xubuntu"}"
+: "${HOST:="xubuntu"}"
+: "${DOMAIN:="xubuntu.guest.virtualbox.org"}"
+: "${LOCALE:="zh_CN"}"
+: "${TIMEZONE:="Asia/Shanghai"}"
 
 SCRIPT_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" &>/dev/null && pwd -P)
 TMPDIR="$(mktemp -d)"
@@ -70,7 +69,7 @@ if [[ -f "$SOURCE_ISO" ]]; then
     log "Using existing $SOURCE_ISO..."
 else
     log "Downloading $SOURCE_ISO..."
-    wget -qO "$SOURCE_ISO" "$ISO_URL"
+    wget -O "$SOURCE_ISO" "$ISO_URL"
     log "Downloaded $SOURCE_ISO."
 fi
 
@@ -179,9 +178,7 @@ ubiquity ubiquity/reboot boolean true
 EOF
 
 log "Updating $TMPDIR/md5sum.txt with hashes of modified files..."
-sed -i -e '/.\/boot\/grub\/grub.cfg/d' \
-    -e '/.\/boot\/grub\/loopback.cfg/d' \
-    "$TMPDIR/md5sum.txt"
+sed -i -e '/.\/boot\/grub\/grub.cfg/d' -e '/.\/boot\/grub\/loopback.cfg/d' "$TMPDIR/md5sum.txt"
 {
     echo "$(md5sum "$TMPDIR/boot/grub/grub.cfg"      | cut -f1 -d " ")  ./boot/grub/grub.cfg"
     echo "$(md5sum "$TMPDIR/boot/grub/loopback.cfg"  | cut -f1 -d " ")  ./boot/grub/loopback.cfg"
@@ -191,13 +188,10 @@ sed -i -e '/.\/boot\/grub\/grub.cfg/d' \
 log "Repackaging extracted files into an ISO image..."
 cd "$TMPDIR"
 [[ -d "$SCRIPT_DIR/$DIST_DIR" ]] || mkdir "$SCRIPT_DIR/$DIST_DIR"
-xorriso -as mkisofs -r -V "Ubuntu Custom" -J \
-    -b isolinux/isolinux.bin -c isolinux/boot.cat \
-    -no-emul-boot -boot-load-size 4 \
-    -isohybrid-mbr /usr/lib/ISOLINUX/isohdpfx.bin \
-    -boot-info-table -input-charset utf-8 -eltorito-alt-boot \
-    -e boot/grub/efi.img -no-emul-boot -isohybrid-gpt-basdat \
-    -o "$SCRIPT_DIR/$DIST_DIR/$SOURCE_ISO" . &>/dev/null
+xorriso -as mkisofs -r -V "Ubuntu Custom" -J -b isolinux/isolinux.bin -c isolinux/boot.cat \
+    -no-emul-boot -boot-load-size 4 -isohybrid-mbr /usr/lib/ISOLINUX/isohdpfx.bin \
+    -boot-info-table -input-charset utf-8 -eltorito-alt-boot -e boot/grub/efi.img -no-emul-boot \
+    -isohybrid-gpt-basdat -o "$SCRIPT_DIR/$DIST_DIR/$SOURCE_ISO" . &>/dev/null
 cd "$OLDPWD"
 log "Repackaged into $SCRIPT_DIR/$DIST_DIR/$SOURCE_ISO."
 

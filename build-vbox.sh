@@ -14,7 +14,7 @@ set -o pipefail
 [[ "$DEBUG" == "true" ]] && set -o xtrace
 
 # Arguments given to the download router.
-: "${ISO_URL:="https://www.releases.ubuntu.com/20.04.6/ubuntu-20.04.6-desktop-amd64.iso"}"
+: "${ISO_URL:="https://mirrors.ustc.edu.cn/ubuntu-cdimage/xubuntu/releases/20.04.6/release/xubuntu-20.04.6-desktop-amd64.iso"}"
 : "${SOURCE_ISO:="$(basename "$ISO_URL")"}"
 : "${DIST_DIR="dist"}"
 
@@ -54,6 +54,9 @@ function die() {
     exit "$code"
 }
 
+[[ ! -f "$VBOXMANAGE_CMD" ]] && die "VirtualBox is not installed."
+
+
 cd "$SCRIPT_DIR"
 
 # Manual: https://docs.oracle.com/en/virtualization/virtualbox/7.0/user/vboxmanage.html#vboxmanage
@@ -61,50 +64,25 @@ if [[ "$("$VBOXMANAGE_CMD" list vms)" =~ $VBOX_NAME ]]; then
     log "You have created $VBOX_NAME, just boot it in VirtualBox."
 else
     log "Creating Virtual Machine..."
-    "$VBOXMANAGE_CMD" createvm \
-        --name="$VBOX_NAME" \
-        --ostype="$VBOX_OS_TYPE" \
-        --register
+    "$VBOXMANAGE_CMD" createvm --name="$VBOX_NAME" --ostype="$VBOX_OS_TYPE" --register
 
     # Using SSH in WSL, Linux guest VM's network should be configured to accept external request.
     # Bridge should work, while NAT with port forwarding doesn't.
-    "$VBOXMANAGE_CMD" modifyvm "$VBOX_NAME" \
-        --cpus="$VBOX_CPU_NUMBER" \
-        --memory="$VBOX_MEMORY" \
-        --vram="$VBOX_VRAM" \
-        --graphicscontroller=vmsvga \
-        --accelerate3d=on \
-        --nic1=nat \
-        --firmware=efi \
-        --boot1=dvd \
-        --boot2=disk \
-        --boot3=none \
-        --boot4=none
+    "$VBOXMANAGE_CMD" modifyvm "$VBOX_NAME" --cpus="$VBOX_CPU_NUMBER" --memory="$VBOX_MEMORY" \
+        --vram="$VBOX_VRAM" --graphicscontroller=vmsvga --accelerate3d=on --nic1=nat \
+        --firmware=efi --boot1=dvd --boot2=disk --boot3=none --boot4=none
 
-    "$VBOXMANAGE_CMD" createmedium disk \
-        --filename="$DIST_DIR/$VBOX_NAME/$VBOX_NAME.${VBOX_HDD_FORMAT,,}" \
-        --size="$VBOX_HDD_SIZE" \
-        --format="$VBOX_HDD_FORMAT" \
-        --variant=Fixed
-    "$VBOXMANAGE_CMD" storagectl "$VBOX_NAME" \
-        --name=SATA \
-        --add=sata \
-        --controller=IntelAhci
-    "$VBOXMANAGE_CMD" storageattach "$VBOX_NAME" \
-        --storagectl=SATA \
-        --port=0 \
-        --device=0 \
-        --type=hdd \
+    "$VBOXMANAGE_CMD" createmedium disk --filename="$DIST_DIR/$VBOX_NAME/$VBOX_NAME.${VBOX_HDD_FORMAT,,}" \
+        --size="$VBOX_HDD_SIZE" --format="$VBOX_HDD_FORMAT" --variant=Fixed
+
+    "$VBOXMANAGE_CMD" storagectl "$VBOX_NAME" --name=SATA --add=sata --controller=IntelAhci
+
+    "$VBOXMANAGE_CMD" storageattach "$VBOX_NAME" --storagectl=SATA --port=0 --device=0 --type=hdd \
         --medium="$DIST_DIR/$VBOX_NAME/$VBOX_NAME.${VBOX_HDD_FORMAT,,}"
-    "$VBOXMANAGE_CMD" storagectl "$VBOX_NAME" \
-        --name=IDE \
-        --add=ide \
-        --controller=PIIX4
-    "$VBOXMANAGE_CMD" storageattach "$VBOX_NAME" \
-        --storagectl=IDE \
-        --port=1 \
-        --device=0 \
-        --type=dvddrive \
+
+    "$VBOXMANAGE_CMD" storagectl "$VBOX_NAME" --name=IDE --add=ide --controller=PIIX4
+
+    "$VBOXMANAGE_CMD" storageattach "$VBOX_NAME" --storagectl=IDE --port=1 --device=0 --type=dvddrive \
         --medium="$DIST_DIR/$SOURCE_ISO"
 fi
 
