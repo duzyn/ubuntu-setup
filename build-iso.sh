@@ -23,9 +23,9 @@ set -o pipefail
 : "${DIST_DIR="dist"}"
 
 # Hardcoded host information.
-: "${USERNAME:="xubuntu"}"
-: "${PASSWORD:="xubuntu"}"
-: "${FULL_NAME:="xubuntu"}"
+: "${USERNAME:="john"}"
+: "${PASSWORD:="111111"}"
+: "${FULL_NAME:="John Doe"}"
 : "${HOST:="xubuntu"}"
 : "${DOMAIN:="xubuntu.guest.virtualbox.org"}"
 : "${LOCALE:="zh_CN"}"
@@ -37,7 +37,7 @@ TMPDIR="$(mktemp -d)"
 [[ ! -x "$(command -v date)" ]] && echo "date command not found." && exit 1
 
 function log() {
-    echo >&2 -e "[$(date +"%Y-%m-%d %H:%M:%S")] ${1-}"
+    echo -e "[$(date +"%Y-%m-%d %H:%M:%S")] ${1-}"
 }
 
 function die() {
