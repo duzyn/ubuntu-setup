@@ -31,5 +31,5 @@ wget -qO- https://github.com/duzyn/ubuntu-setup/raw/main/build-vbox.sh | DEBUG="
 ```
 
 ```bash
-wget -qO- https://github.com/duzyn/ubuntu-setup/raw/main/setup-ubuntu.sh | DEBUG="false" VTOYBOOT="false" LOCALE="zh_CN" APT_MIRROR="mirrors.ustc.edu.cn" NPM_REGISTRY_MIRROR="https://registry.npmmirror.com" bash
+git clone --depth 1 https://github.com/duzyn/ubuntu-setup && cd ubuntu-setup && DEBUG="false" VTOYBOOT="false" LOCALE="zh_CN" APT_MIRROR="mirrors.ustc.edu.cn" NPM_REGISTRY_MIRROR="https://registry.npmmirror.com" bash
 ```
