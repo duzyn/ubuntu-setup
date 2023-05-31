@@ -29,10 +29,47 @@ install_github_releases_apps() {
     fi
 }
 
+# Pandoc
 install_github_releases_apps jgm/pandoc pandoc amd64.deb
+
+# LX Music
 install_github_releases_apps lyswhut/lx-music-desktop lx-music-desktop x64.deb
-# install_github_releases_apps vercel/hyper hyper amd64.deb
-# install_github_releases_apps dbeaver/dbeaver dbeaver-ce amd64.deb
-# install_github_releases_apps Zettlr/Zettlr zettlr amd64.deb
-# install_github_releases_apps jgraph/drawio-desktop draw.io .deb
-# install_github_releases_apps shiftkey/desktop github-desktop .deb
+
+# Hyper
+install_github_releases_apps vercel/hyper hyper amd64.deb
+# theme
+if grep -q "plugins: \[\"hyper-material-theme\"\]" "$HOME/.hyper.js"; then
+    log "hyper-material-theme is set."
+else
+    log "Setting theme to hyper-material-theme..."
+    hyper i hyper-material-theme
+fi
+
+# DBeaver Community Edition
+install_github_releases_apps dbeaver/dbeaver dbeaver-ce amd64.deb
+
+# Zettlr
+install_github_releases_apps Zettlr/Zettlr zettlr amd64.deb
+
+# Draw.io
+install_github_releases_apps jgraph/drawio-desktop draw.io .deb
+
+# GitHub Desktop
+install_github_releases_apps shiftkey/desktop github-desktop .deb
+
+# Flameshot
+install_github_releases_apps flameshot-org/flameshot flameshot .ubuntu-20.04.amd64.deb
+
+# Figma
+install_github_releases_apps Figma-Linux/figma-linux figma-linux .amd64.deb
+
+# PeaZip
+install_github_releases_apps peazip/PeaZip peazip .GTK2-1_amd64.deb
+
+# OpenBoard
+install_github_releases_apps OpenBoard-org/OpenBoard openboard _20.04_.*_amd64.deb
+
+# LocalSend
+install_github_releases_apps localsend/localsend localsend .deb
+
+

@@ -7,9 +7,9 @@ sudo apt-get install -y \
     android-sdk-platform-tools \
     audacity \
     calibre \
+    clipit \
     digikam \
     filezilla \
-    flameshot \
     freecad \
     ghostscript \
     gimp \
@@ -24,6 +24,7 @@ sudo apt-get install -y \
     openjdk-16-jdk \
     openshot \
     openvpn \
+    network-manager-openvpn-gnome \
     pdfarranger \
     plank \
     scrcpy \

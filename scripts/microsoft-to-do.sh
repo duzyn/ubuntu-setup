@@ -15,27 +15,24 @@ export DEBIAN_FRONTEND=noninteractive
 [[ -d "$HOME/.nativefier/apps/" ]] || mkdir -p "$HOME/.nativefier/apps/"
 nativefier  https://to-do.live.com/ "$HOME/.nativefier/apps/" \
     --name "Microsoft To Do" \
-    --icon "$SCRIPT_DIR/icons/microsoft-to-do-256.png" \
+    --icon "$SCRIPT_DIR/icons/microsoft-to-do.png" \
     --platform linux \
     --arch x64 \
     --min-width 800 \
     --min-height 600 \
-    --portable \
     --single-instance \
-    --tray \
     --lang "zh_CN"
 
-sudo cp -f "$SCRIPT_DIR/icons/microsoft-to-do-256.png" "$HOME/.local/share/icons/hicolor/256x256/apps/"
+sudo cp -f "$SCRIPT_DIR/icons/microsoft-to-do.png" "$HOME/.local/share/icons/hicolor/512x512/apps/microsoft-to-do.png"
 
 # Desktop entry
-cat <<EOF >"$TMPDIR/microsoft-to-do.desktop"
+cat <<EOF | sudo tee "$HOME/.local/share/applications/microsoft-to-do.desktop"
 [Desktop Entry]
 Type=Application
 Name=Microsoft To Do
 Exec=$HOME/.nativefier/apps/MicrosoftToDo-linux-x64/MicrosoftToDo
-Icon=$HOME/.local/share/icons/hicolor/256x256/apps/microsoft-to-do-256.png
+Icon=microsoft-to-do
 Categories=Office;
 EOF
 
-desktop-file-install --dir="$HOME/.local/share/applications" "$TMPDIR/microsoft-to-do.desktop"
 update-desktop-database "$HOME/.local/share/applications"

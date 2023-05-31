@@ -19,6 +19,7 @@ set -o pipefail
 : "${APT_MIRROR:="mirrors.ustc.edu.cn"}"
 : "${NPM_REGISTRY_MIRROR:="https://registry.npmmirror.com"}"
 : "${VTOYBOOT:="false"}"
+: "${GITHUB_TOKEN:="your_github_token"}"
 
 [[ ! -x "$(command -v date)" ]] && echo "date command not found." && exit 1
 
@@ -43,30 +44,37 @@ export DEBIAN_FRONTEND=noninteractive
 . "$SCRIPT_DIR/scripts/albert.sh"
 . "$SCRIPT_DIR/scripts/drivers.sh"
 . "$SCRIPT_DIR/scripts/extras.sh"
-. "$SCRIPT_DIR/scripts/flatpak-apps.sh"
 . "$SCRIPT_DIR/scripts/free-download-manager.sh"
+# . "$SCRIPT_DIR/scripts/freecad.sh"
+# . "$SCRIPT_DIR/scripts/libreoffice.sh"
+# . "$SCRIPT_DIR/scripts/inkscape.sh"
 . "$SCRIPT_DIR/scripts/fsearch.sh"
-. "$SCRIPT_DIR/scripts/google-chrome.sh"
 . "$SCRIPT_DIR/scripts/git.sh"
 . "$SCRIPT_DIR/scripts/github-releases-apps.sh"
+. "$SCRIPT_DIR/scripts/google-chrome.sh"
 . "$SCRIPT_DIR/scripts/greenfish-icon-editor-pro.sh"
+. "$SCRIPT_DIR/scripts/install-appimage-apps.sh"
 . "$SCRIPT_DIR/scripts/just.sh"
 . "$SCRIPT_DIR/scripts/locale.sh"
 . "$SCRIPT_DIR/scripts/microsoft-edge.sh"
-. "$SCRIPT_DIR/scripts/miktex.sh"
-. "$SCRIPT_DIR/scripts/onedriver.sh"
-. "$SCRIPT_DIR/scripts/node.sh"
 . "$SCRIPT_DIR/scripts/microsoft-to-do.sh" # nativefier web app
+. "$SCRIPT_DIR/scripts/miktex.sh"
+. "$SCRIPT_DIR/scripts/node.sh"
+. "$SCRIPT_DIR/scripts/onedriver.sh"
 . "$SCRIPT_DIR/scripts/theme.sh"
 . "$SCRIPT_DIR/scripts/tor-browser.sh"
 . "$SCRIPT_DIR/scripts/ubuntukylin.sh"
 . "$SCRIPT_DIR/scripts/vim.sh"
 . "$SCRIPT_DIR/scripts/visual-studio-code.sh"
+# . "$SCRIPT_DIR/scripts/flatpak-apps.sh"
 # . "$SCRIPT_DIR/scripts/wine.sh"
 
 log "Uninstalling unnecessary apps..."
 sudo apt-get clean -y
 sudo apt-get autoremove -y
+
+# Remove LibreOffice, use WPS Office instead.
+sudo apt purge --autoremove libreoffice*
 
 log "Checking installed apps' update..."
 sudo apt-get upgrade -y

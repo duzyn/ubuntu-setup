@@ -2,33 +2,43 @@
 
 export DEBIAN_FRONTEND=noninteractive
 
-log "Installing Vim GTK…"
+log "Installing Vim GTK..."
 sudo apt-get install -y vim vim-gtk
 
-# Usage: install_vim_plugin repo/name
+log "Installing pathogen.vim..."
+mkdir -p "$HOME/.vim/autoload"
+if [[ ! -f "$HOME/.vim/autoload/pathogen.vim" ]]; then
+    wget -O "$HOME/.vim/autoload/pathogen.vim" https://ghproxy.com/https://github.com/tpope/vim-pathogen/raw/master/autoload/pathogen.vim
+fi
+
 function install_vim_plugin() {
     local REPO_NAME PLUGIN_NAME
     REPO_NAME=$1
     PLUGIN_NAME="$(basename "$REPO_NAME")"
 
-    [[ -d "$HOME/.vim/pack/plugins/start" ]] || mkdir -p "$HOME/.vim/pack/plugins/start"
-    if [[ -d "$HOME/.vim/pack/plugins/start/$PLUGIN_NAME" ]]; then
-        cd "$HOME/.vim/pack/plugins/start/$PLUGIN_NAME" || exit
+    mkdir -p "$HOME/.vim/bundle"
+    if [[ -d "$HOME/.vim/bundle/$PLUGIN_NAME" ]]; then
+        cd "$HOME/.vim/bundle/$PLUGIN_NAME" || exit
         log "Updating Vim plugin $REPO_NAME..."
         git pull
     else
         log "Installing Vim plugin $REPO_NAME..."
-        git clone --depth 1 "https://ghproxy.com/https://github.com/$REPO_NAME" "$HOME/.vim/pack/plugins/start/$PLUGIN_NAME"
+        git clone --depth 1 "https://ghproxy.com/https://github.com/$REPO_NAME" "$HOME/.vim/bundle/$PLUGIN_NAME"
     fi
 }
+
 
 install_vim_plugin yianwillis/vimcdoc
 install_vim_plugin sheerun/vim-polyglot
 install_vim_plugin vim-airline/vim-airline
+install_vim_plugin dracula/vim
+
 
 # vimrc
 cat <<EOF >"$HOME/.vimrc"
+execute pathogen#infect()
 syntax on
+colorscheme dracula
 
 set history=700
 
@@ -160,4 +170,7 @@ try
   set stal=2
 catch
 endtry
+
+" https://github.com/vim-airline/vim-airline/issues/1300#issuecomment-255698405
+let g:airline#extensions#disable_rtp_load=1
 EOF

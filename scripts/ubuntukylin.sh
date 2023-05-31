@@ -10,11 +10,20 @@ else
     log "Adding Ubuntu Kylin apt repository..."
     sudo apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 56583E647FFA7DE7
     echo "deb http://archive.ubuntukylin.com/ubuntukylin $(lsb_release -cs)-partner main" | sudo tee /etc/apt/sources.list.d/ubuntukylin.list
+    sudo apt-get update
 fi
 
 log "Installing Ubuntu Kylin apps..."
-sudo apt-get update
-sudo apt-get install -y sogoupinyin ukylin-wine ukylin-wxwork ukylin-ps6 com.xunlei.download wps-office weixin wemeet
+sudo apt-get install -y \
+    com.xunlei.download \
+    sogoupinyin \
+    ukylin-ps6 \
+    ukylin-wine \
+    ukylin-wxwork \
+    weixin \
+    wemeet \
+    wps-office \
+    xmind-vana
 
 # Fix ADM  error when launch PS6
 if [[ -f "$HOME/.ukylin-wine/photoshop-cs6/drive_c/Program Files/Adobe/Photoshop CS6/Required/Plug-ins/ADM/ADMPlugin.apl" ]]; then

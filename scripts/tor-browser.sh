@@ -3,7 +3,7 @@
 export DEBIAN_FRONTEND=noninteractive
 
 # Tor Browser
-TOR_BROWSER_LATEST_VERSION=$(curl "https://api.github.com/repos/TheTorProject/gettorbrowser/releases/latest" |
+TOR_BROWSER_LATEST_VERSION=$(wget -qO- "https://api.github.com/repos/TheTorProject/gettorbrowser/releases/latest" |
     jq -r ".tag_name" | sed "s/.*-//g")
 
 if [[ -e "$HOME/.tor-browser/VERSION" ]]; then

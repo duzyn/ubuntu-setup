@@ -14,13 +14,7 @@ else
     die "To complete setup, restart your system. run: sudo shutdown -r now" 0
 fi
 
-flatpak install --or-update -y flathub com.bitwarden.desktop
-flatpak install --or-update -y flathub com.jgraph.drawio.desktop
-flatpak install --or-update -y flathub com.zettlr.Zettlr
-flatpak install --or-update -y flathub io.dbeaver.DBeaverCommunity
-flatpak install --or-update -y flathub io.github.Figma_Linux.figma_linux
-flatpak install --or-update -y flathub io.github.peazip.PeaZip
-flatpak install --or-update -y flathub io.github.shiftey.Desktop
-flatpak install --or-update -y flathub net.cozic.joplin_desktop
-flatpak install --or-update -y flathub net.xmind.XMind
-flatpak install --or-update -y flathub org.localsend.localsend_app
+# flatpak install --or-update -y flathub net.cozic.joplin_desktop
+# flatpak install --or-update -y flathub net.xmind.XMind
+# flatpak install --or-update -y flathub org.localsend.localsend_app
+# flatpak install --or-update -y flathub com.github.hluk.copyq # ppa copyq can't startup
