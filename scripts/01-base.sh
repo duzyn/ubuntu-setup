@@ -6,7 +6,6 @@ echo "Installing some base packages..."
 sudo apt-get install -y \
     apt-transport-https \
     aria2 \
-    bat \
     binutils \
     build-essential \
     bzip2 \
@@ -14,7 +13,6 @@ sudo apt-get install -y \
     coreutils \
     curl \
     desktop-file-utils \
-    fd-find \
     ffmpeg \
     file \
     g++ \
@@ -33,7 +31,6 @@ sudo apt-get install -y \
     patch \
     procps \
     proxychains4 \
-    ripgrep \
     sed \
     software-properties-common \
     tar \

@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+: "${VTOYBOOT:="false"}"
+
 export DEBIAN_FRONTEND=noninteractive
 TMPDIR="$(mktemp -d)"
 
@@ -32,7 +34,4 @@ if [[ "$VTOYBOOT" == "true" ]]; then
 
     echo "Completed! You can poweroff vbox, and copy the .vdi file to .vdi.vtoy file, and put it on Ventoy ISO scan folder."
     exit 1
-else
-    echo "Completed!"
-    exit 0
 fi

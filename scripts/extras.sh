@@ -7,7 +7,6 @@ sudo apt-get install -y \
     android-sdk-platform-tools \
     audacity \
     calibre \
-    clipit \
     digikam \
     filezilla \
     freecad \
@@ -20,11 +19,12 @@ sudo apt-get install -y \
     mupdf \
     mupdf-tools \
     neofetch \
+    network-manager-openvpn-gnome \
     obs-studio \
     openjdk-16-jdk \
     openshot \
     openvpn \
-    network-manager-openvpn-gnome \
+    parcellite \
     pdfarranger \
     plank \
     scrcpy \
