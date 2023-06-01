@@ -24,11 +24,12 @@ sudo apt-get install -y \
     openjdk-16-jdk \
     openshot \
     openvpn \
-    parcellite \
     pdfarranger \
     plank \
     scrcpy \
     scribus \
     subversion \
     vlc \
-    xfce4-appmenu-plugin
+    wkhtmltopdf \
+    xfce4-appmenu-plugin \
+    xfce4-clipman-plugin

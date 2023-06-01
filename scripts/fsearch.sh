@@ -8,8 +8,8 @@ if [[ -n "$(command -v fsearch)" ]]; then
 else
     echo "Adding FSearch apt repository..."
     sudo add-apt-repository -y ppa:christian-boxdoerfer/fsearch-stable
+    sudo apt-get update
 
     echo "Installing FSearch..."
-    sudo apt-get update
     sudo apt-get install -y fsearch
 fi
