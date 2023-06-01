@@ -2,7 +2,7 @@
 
 export DEBIAN_FRONTEND=noninteractive
 
-log "Installing some extra apps..."
+echo "Installing some extra apps..."
 sudo apt-get install -y \
     android-sdk-platform-tools \
     audacity \

@@ -1,12 +1,13 @@
 #!/usr/bin/env bash
 
 export DEBIAN_FRONTEND=noninteractive
+TMPDIR="$(mktemp -d)"
 
 # Wine: https://wiki.winehq.org/Ubuntu_zhcn
 if [[ -n "$(command -v winetricks)" ]]; then
-    log "Wine is installed."
+    echo "Wine is installed."
 else
-    log "Installing Wine..."
+    echo "Installing Wine..."
     sudo dpkg --add-architecture i386 
     sudo mkdir -pm755 /etc/apt/keyrings
     sudo wget -O /etc/apt/keyrings/winehq-archive.key https://dl.winehq.org/wine-builds/winehq.key
@@ -17,7 +18,7 @@ else
 fi
 
 # Winetricks: https://github.com/Winetricks/winetricks
-log "Installing or Updating Winetricks..."
+echo "Installing or Updating Winetricks..."
 wget -q -O "$TMPDIR/winetricks" https://ghproxy.com/https://raw.githubusercontent.com/Winetricks/winetricks/master/src/winetricks
 chmod +x "$TMPDIR/winetricks"
 sudo cp "$TMPDIR/winetricks" /usr/local/bin

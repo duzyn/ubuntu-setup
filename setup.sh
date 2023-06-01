@@ -21,19 +21,6 @@ set -o pipefail
 : "${VTOYBOOT:="false"}"
 : "${GITHUB_TOKEN:="your_github_token"}"
 
-[[ ! -x "$(command -v date)" ]] && echo "date command not found." && exit 1
-
-function log() {
-    echo -e "[$(date +"%Y-%m-%d %H:%M:%S")] ${1-}"
-}
-
-function die() {
-    local msg=$1
-    local code=${2-1} # Bash parameter expansion - default exit status 1. See https://wiki.bash-hackers.org/syntax/pe#use_a_default_value
-    log "$msg"
-    exit "$code"
-}
-
 TMPDIR="$(mktemp -d)"
 SCRIPT_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" &>/dev/null && pwd -P)
 
@@ -69,14 +56,14 @@ export DEBIAN_FRONTEND=noninteractive
 # . "$SCRIPT_DIR/scripts/flatpak-apps.sh"
 # . "$SCRIPT_DIR/scripts/wine.sh"
 
-log "Uninstalling unnecessary apps..."
+echo "Uninstalling unnecessary apps..."
 sudo apt-get clean -y
 sudo apt-get autoremove -y
 
 # Remove LibreOffice, use WPS Office instead.
 sudo apt purge --autoremove libreoffice*
 
-log "Checking installed apps' update..."
+echo "Checking installed apps' update..."
 sudo apt-get upgrade -y
 
 . "$SCRIPT_DIR/scripts/vtoyboot.sh"

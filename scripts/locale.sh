@@ -3,7 +3,7 @@
 export DEBIAN_FRONTEND=noninteractive
 
 # Fonts
-log "Installing some fonts..."
+echo "Installing some fonts..."
 sudo apt-get install -y \
     fonts-cascadia-code \
     fonts-emojione \
@@ -15,10 +15,10 @@ sudo apt-get install -y \
 
 # Locale
 if [[ $LOCALE == "zh_CN" ]]; then
-    log "Installing Chinese language pack..."
+    echo "Installing Chinese language pack..."
     sudo apt-get install -y language-pack-gnome-zh-hans language-pack-zh-hans
 
-    log "Installing Chinese fonts..."
+    echo "Installing Chinese fonts..."
     sudo apt-get install -y \
         fonts-arphic-ukai \
         fonts-arphic-uming \
@@ -26,12 +26,12 @@ if [[ $LOCALE == "zh_CN" ]]; then
         fonts-noto-cjk-extra
 fi
 
-log "Changing locale to $LOCALE..."
+echo "Changing locale to $LOCALE..."
 sudo update-locale LANG="$LOCALE.UTF-8" LANGUAGE="$LOCALE"
 
 # https://gnu-linux.readthedocs.io/zh/latest/Chapter02/46_xdg.user.dirs.html
 # cat ~/.config/user-dirs.dirs
-log "Setting user dirs name..."
+echo "Setting user dirs name..."
 cd "$HOME" && mkdir -p Desktop Documents Download Music Pictures Publicshare Templates Videos
 xdg-user-dirs-update --set DESKTOP "$HOME/Desktop"
 xdg-user-dirs-update --set DOCUMENTS "$HOME/Documents"

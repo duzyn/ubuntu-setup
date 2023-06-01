@@ -4,12 +4,12 @@ export DEBIAN_FRONTEND=noninteractive
 
 # LibreOffice: https://launchpad.net/~libreoffice/+archive/ubuntu/ppa
 if [[ -n "$(command -v libreoffice-writer)" ]]; then
-    log "LibreOffice is installed."
+    echo "LibreOffice is installed."
 else
-    log "Adding LibreOffice apt repository..."
+    echo "Adding LibreOffice apt repository..."
     sudo add-apt-repository -y ppa:libreoffice/ppa
     sudo apt-get update
 
-    log "Installing LibreOffice..."
+    echo "Installing LibreOffice..."
     sudo apt-get install -y libreoffice libreoffice-help-zh-cn libreoffice-l10n-zh-cn
 fi

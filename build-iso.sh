@@ -43,7 +43,7 @@ function log() {
 function die() {
     local msg=$1
     local code=${2-1} # Bash parameter expansion - default exit status 1. See https://wiki.bash-hackers.org/syntax/pe#use_a_default_value
-    log "$msg"
+    echo "$msg"
     exit "$code"
 }
 
@@ -53,41 +53,41 @@ function die() {
 if [[ ! "$TMPDIR" ]] || [[ ! -d "$TMPDIR" ]]; then
     die "Could not create temporary working directory."
 else
-    log "Created temporary working directory $TMPDIR."
+    echo "Created temporary working directory $TMPDIR."
 fi
 
 # Utilities should installed before run this script
-log "Checking required utilities..."
+echo "Checking required utilities..."
 [[ ! -x "$(command -v wget)" ]] && die "wget is not installed."
 [[ ! -x "$(command -v sed)" ]] && die "sed is not installed."
 [[ ! -x "$(command -v xorriso)" ]] && die "xorriso is not installed."
 [[ ! -f "/usr/lib/ISOLINUX/isohdpfx.bin" ]] && die "isolinux is not installed."
-log "All required utilities are installed."
+echo "All required utilities are installed."
 
 # Download ISO file
 if [[ -f "$SOURCE_ISO" ]]; then
-    log "Using existing $SOURCE_ISO..."
+    echo "Using existing $SOURCE_ISO..."
 else
-    log "Downloading $SOURCE_ISO..."
+    echo "Downloading $SOURCE_ISO..."
     wget -O "$SOURCE_ISO" "$ISO_URL"
-    log "Downloaded $SOURCE_ISO."
+    echo "Downloaded $SOURCE_ISO."
 fi
 
 # Check SHA256SUMS
-log "Verifying ISO file..."
+echo "Verifying ISO file..."
 if [[ "$(sha256sum "$SOURCE_ISO" | cut -f1 -d " ")" == "$(wget -qO- "$(dirname "$ISO_URL")/SHA256SUMS" | grep "$SOURCE_ISO" | cut -f1 -d " ")" ]]; then
-    log "ISO file is verified."
+    echo "ISO file is verified."
 else
     die "ISO file verification is failed, please download the file again!"
 fi
 
 # Extract Ubuntu ISO image
-log "Extracting Ubuntu ISO image to $TMPDIR..."
+echo "Extracting Ubuntu ISO image to $TMPDIR..."
 xorriso -osirrox on -indev "$SOURCE_ISO" -extract / "$TMPDIR" &>/dev/null
 chmod -R u+w "$TMPDIR"
 rm -rf "$TMPDIR/"'[BOOT]'
 
-log "Adding preseed parameters to kernel command line..."
+echo "Adding preseed parameters to kernel command line..."
 # These are for UEFI mode
 # Ubuntu
 sed -i -e "s|file=/cdrom/preseed/ubuntu.seed maybe-ubiquity quiet splash|file=/cdrom/preseed/custom.seed auto=true priority=critical boot=casper automatic-ubiquity quiet splash noprompt noshell|g" \
@@ -116,7 +116,7 @@ EOF
 # https://d-i.debian.org/manual/zh_CN.amd64/apb.html
 # https://github.com/covertsh/ubuntu-preseed-iso-generator/blob/main/example.seed
 # https://superuser.com/questions/1544921/vboxmanage-unattended-ubuntu-live-server/1545412#1545412
-log "Adding preseed configuration file..."
+echo "Adding preseed configuration file..."
 cat <<EOF >"$TMPDIR/preseed/custom.seed"
 # Locale
 d-i debian-installer/locale string $LOCALE.UTF-8
@@ -177,7 +177,7 @@ ubiquity ubiquity/reboot boolean true
 # ubiquity ubiquity/poweroff boolean true
 EOF
 
-log "Updating $TMPDIR/md5sum.txt with hashes of modified files..."
+echo "Updating $TMPDIR/md5sum.txt with hashes of modified files..."
 sed -i -e '/.\/boot\/grub\/grub.cfg/d' -e '/.\/boot\/grub\/loopback.cfg/d' "$TMPDIR/md5sum.txt"
 {
     echo "$(md5sum "$TMPDIR/boot/grub/grub.cfg"      | cut -f1 -d " ")  ./boot/grub/grub.cfg"
@@ -185,7 +185,7 @@ sed -i -e '/.\/boot\/grub\/grub.cfg/d' -e '/.\/boot\/grub\/loopback.cfg/d' "$TMP
     echo "$(md5sum "$TMPDIR/preseed/custom.seed"     | cut -f1 -d " ")  ./preseed/custom.seed"
 } >>"$TMPDIR/md5sum.txt"
 
-log "Repackaging extracted files into an ISO image..."
+echo "Repackaging extracted files into an ISO image..."
 cd "$TMPDIR"
 [[ -d "$SCRIPT_DIR/$DIST_DIR" ]] || mkdir "$SCRIPT_DIR/$DIST_DIR"
 xorriso -as mkisofs -r -V "Ubuntu Custom" -J -b isolinux/isolinux.bin -c isolinux/boot.cat \
@@ -193,6 +193,6 @@ xorriso -as mkisofs -r -V "Ubuntu Custom" -J -b isolinux/isolinux.bin -c isolinu
     -boot-info-table -input-charset utf-8 -eltorito-alt-boot -e boot/grub/efi.img -no-emul-boot \
     -isohybrid-gpt-basdat -o "$SCRIPT_DIR/$DIST_DIR/$SOURCE_ISO" . &>/dev/null
 cd "$OLDPWD"
-log "Repackaged into $SCRIPT_DIR/$DIST_DIR/$SOURCE_ISO."
+echo "Repackaged into $SCRIPT_DIR/$DIST_DIR/$SOURCE_ISO."
 
 die "Completed." 0

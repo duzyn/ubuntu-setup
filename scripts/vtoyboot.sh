@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 
 export DEBIAN_FRONTEND=noninteractive
+TMPDIR="$(mktemp -d)"
 
 # Used for Ventoy VDisk boot
 if [[ "$VTOYBOOT" == "true" ]]; then
@@ -13,7 +14,7 @@ if [[ "$VTOYBOOT" == "true" ]]; then
         [[ -d "$HOME/.vtoyboot" ]] && rm -r "$HOME/.vtoyboot"
 
         # Install new version.
-        log "Downloading vtoyboot $VTOY_LATEST_VERSION..."
+        echo "Downloading vtoyboot $VTOY_LATEST_VERSION..."
         wget -O "$TMPDIR/vtoyboot.iso" "$(wget -qO- https://api.github.com/repos/ventoy/vtoyboot/releases/latest | \
             jq -r ".assets[].browser_download_url" | grep .iso | head -n 1 | sed -e "s|https://github.com|https://ghproxy.com/github.com|g")"
 
@@ -25,11 +26,13 @@ if [[ "$VTOYBOOT" == "true" ]]; then
         echo "$VTOY_LATEST_VERSION" >"$HOME/.vtoyboot/VERSION"
     fi
 
-    cd "$HOME/.vtoyboot/vtoyboot-$VTOY_LATEST_VERSION" || die "No vtoyboot folder."
-    log "Running vtoyboot..."
+    cd "$HOME/.vtoyboot/vtoyboot-$VTOY_LATEST_VERSION" || echo "No vtoyboot folder."
+    echo "Running vtoyboot..."
     sudo bash "./vtoyboot.sh"
 
-    die "Completed! You can poweroff vbox, and copy the .vdi file to .vdi.vtoy file, and put it on Ventoy ISO scan folder." 0
+    echo "Completed! You can poweroff vbox, and copy the .vdi file to .vdi.vtoy file, and put it on Ventoy ISO scan folder."
+    exit 1
 else
-    die "Completed!" 0
+    echo "Completed!"
+    exit 0
 fi

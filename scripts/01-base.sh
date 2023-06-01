@@ -2,7 +2,7 @@
 
 export DEBIAN_FRONTEND=noninteractive
 
-log "Installing some base packages..."
+echo "Installing some base packages..."
 sudo apt-get install -y \
     apt-transport-https \
     aria2 \

@@ -5,15 +5,16 @@ export DEBIAN_FRONTEND=noninteractive
 # Some Windows apps on Ubuntu Kylin
 # https://www.ubuntukylin.com/applications
 if [[ -f /etc/apt/sources.list.d/ubuntukylin.list ]]; then
-    log "Ubuntu Kylin mirror list is added."
+    echo "Ubuntu Kylin mirror list is added."
 else
-    log "Adding Ubuntu Kylin apt repository..."
+    echo "Adding Ubuntu Kylin apt repository..."
     sudo apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 56583E647FFA7DE7
-    echo "deb http://archive.ubuntukylin.com/ubuntukylin $(lsb_release -cs)-partner main" | sudo tee /etc/apt/sources.list.d/ubuntukylin.list
+    echo "deb http://archive.ubuntukylin.com/ubuntukylin $(lsb_release -cs)-partner main" | \
+        sudo tee /etc/apt/sources.list.d/ubuntukylin.list
     sudo apt-get update
 fi
 
-log "Installing Ubuntu Kylin apps..."
+echo "Installing Ubuntu Kylin apps..."
 sudo apt-get install -y \
     com.xunlei.download \
     sogoupinyin \
@@ -33,12 +34,12 @@ fi
 
 # WPS needs to install symbol fonts.
 if dpkg -s wps-fonts &>/dev/null; then
-    log "WPS fonts is installed."
+    echo "WPS fonts is installed."
 else
-    log "Adding WPS fonts apt repository..."
+    echo "Adding WPS fonts apt repository..."
     sudo add-apt-repository ppa:atareao/atareao 
 
-    log "Installing WPS symbol fonts..."
+    echo "Installing WPS symbol fonts..."
     sudo apt-get update
     sudo apt-get install -y wps-fonts
 fi

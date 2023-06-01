@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 
 # Usage: install_appimage_apps jgraph/drawio-desktop draw.io
+TMPDIR="$(mktemp -d)"
 
 install_appimage_apps() {
     local REPO_NAME PACKAGE_NAME VERSION_LATEST VERSION_INSTALLED
@@ -10,19 +11,19 @@ install_appimage_apps() {
 
     if [[ -e "$HOME/.$PACKAGE_NAME/VERSION" ]]; then
         VERSION_INSTALLED=$(cat "$HOME/.$PACKAGE_NAME/VERSION")
-        log "$PACKAGE_NAME $VERSION_INSTALLED is installed."
+        echo "$PACKAGE_NAME $VERSION_INSTALLED is installed."
     else
         VERSION_INSTALLED="not_installed"
     fi
 
     if [[ "$VERSION_INSTALLED" == "$VERSION_LATEST" ]]; then
-        log "$PACKAGE_NAME $VERSION_INSTALLED is lastest."
+        echo "$PACKAGE_NAME $VERSION_INSTALLED is lastest."
     else
         # Remove old version
         [[ -e "$HOME/.$PACKAGE_NAME/$PACKAGE_NAME.AppImage" ]] && rm -f "$HOME/.$PACKAGE_NAME/$PACKAGE_NAME.AppImage"
         sudo rm -f "$HOME/.local/share/applications/appimagekit-joplin.desktop"
 
-        log "Downloading $PACKAGE_NAME $VERSION_LATEST..."
+        echo "Downloading $PACKAGE_NAME $VERSION_LATEST..."
         wget -O "$TMPDIR/$PACKAGE_NAME.AppImage" "$(curl "https://api.github.com/repos/$REPO_NAME/releases/latest" | \
             jq -r ".assets[].browser_download_url" | grep .AppImage | head -n 1 | sed -e "s|https://github.com|https://ghproxy.com/github.com|g")"
 
@@ -40,7 +41,7 @@ install_appimage_apps() {
 install_appimage_apps laurent22/joplin joplin
 # Desktop entry
 if [[ -e "$HOME/.local/share/icons/hicolor/512x512/apps/joplin.png" ]]; then
-    log "Icon is found."
+    echo "Icon is found."
 else
     wget -O "$TMPDIR/joplin.png" https://joplinapp.org/images/Icon512.png
     sudo mkdir -p "$HOME/.local/share/icons/hicolor/512x512/apps"

@@ -50,7 +50,7 @@ function log() {
 function die() {
     local msg=$1
     local code=${2-1} # Bash parameter expansion - default exit status 1. See https://wiki.bash-hackers.org/syntax/pe#use_a_default_value
-    log "$msg"
+    echo "$msg"
     exit "$code"
 }
 
@@ -61,9 +61,9 @@ cd "$SCRIPT_DIR"
 
 # Manual: https://docs.oracle.com/en/virtualization/virtualbox/7.0/user/vboxmanage.html#vboxmanage
 if [[ "$("$VBOXMANAGE_CMD" list vms)" =~ $VBOX_NAME ]]; then
-    log "You have created $VBOX_NAME, just boot it in VirtualBox."
+    echo "You have created $VBOX_NAME, just boot it in VirtualBox."
 else
-    log "Creating Virtual Machine..."
+    echo "Creating Virtual Machine..."
     "$VBOXMANAGE_CMD" createvm --name="$VBOX_NAME" --ostype="$VBOX_OS_TYPE" --register
 
     # Using SSH in WSL, Linux guest VM's network should be configured to accept external request.
@@ -90,9 +90,9 @@ cd "$OLDPWD"
 
 # Start the virtual machine and the OS installation.
 if [[ "$("$VBOXMANAGE_CMD" list runningvms)" =~ $VBOX_NAME ]]; then
-    log "Virtual machine $VBOX_NAME is running..."
+    echo "Virtual machine $VBOX_NAME is running..."
 else
-    log "Starting Virtual machine $VBOX_NAME..."
+    echo "Starting Virtual machine $VBOX_NAME..."
     "$VBOXMANAGE_CMD" startvm "$VBOX_NAME" --type=gui
 fi
 

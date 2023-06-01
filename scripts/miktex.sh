@@ -6,14 +6,14 @@ export DEBIAN_FRONTEND=noninteractive
 # https://miktex.org/download#ubuntu and
 # https://mirrors.ustc.edu.cn/CTAN/systems/win32/miktex/doc/miktex.pdf
 if [[ -n "$(command -v miktex)" ]]; then
-    log "MiKTeX is installed."
+    echo "MiKTeX is installed."
 else
-    log "Adding MiKTeX apt repository..."
+    echo "Adding MiKTeX apt repository..."
     sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys D6BC243565B2087BC3F897C9277A7293F59E4889
     echo "deb [arch=amd64] https://mirrors.ustc.edu.cn/CTAN/systems/win32/miktex/setup/deb $(lsb_release -cs) universe" | \
         sudo tee /etc/apt/sources.list.d/miktex.list
 
-    log "Installing MiKTeX..."
+    echo "Installing MiKTeX..."
     sudo apt-get update
     sudo apt-get install -y miktex
 

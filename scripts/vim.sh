@@ -2,10 +2,10 @@
 
 export DEBIAN_FRONTEND=noninteractive
 
-log "Installing Vim GTK..."
+echo "Installing Vim GTK..."
 sudo apt-get install -y vim vim-gtk
 
-log "Installing pathogen.vim..."
+echo "Installing pathogen.vim..."
 mkdir -p "$HOME/.vim/autoload"
 if [[ ! -f "$HOME/.vim/autoload/pathogen.vim" ]]; then
     wget -O "$HOME/.vim/autoload/pathogen.vim" https://ghproxy.com/https://github.com/tpope/vim-pathogen/raw/master/autoload/pathogen.vim
@@ -19,10 +19,10 @@ function install_vim_plugin() {
     mkdir -p "$HOME/.vim/bundle"
     if [[ -d "$HOME/.vim/bundle/$PLUGIN_NAME" ]]; then
         cd "$HOME/.vim/bundle/$PLUGIN_NAME" || exit
-        log "Updating Vim plugin $REPO_NAME..."
+        echo "Updating Vim plugin $REPO_NAME..."
         git pull
     else
-        log "Installing Vim plugin $REPO_NAME..."
+        echo "Installing Vim plugin $REPO_NAME..."
         git clone --depth 1 "https://ghproxy.com/https://github.com/$REPO_NAME" "$HOME/.vim/bundle/$PLUGIN_NAME"
     fi
 }

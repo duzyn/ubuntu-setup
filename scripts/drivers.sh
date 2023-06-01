@@ -2,7 +2,7 @@
 
 export DEBIAN_FRONTEND=noninteractive
 
-log "Insatlling or updating BCM4360 wifi driver..."
+echo "Insatlling BCM4360 wifi driver..."
 sudo apt-get install -y \
     dkms \
     bcmwl-kernel-source
