@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-: "${NVM_NODEJS_ORG_MIRROR:="https://nodejs.org/dist/"}"
+: "${NVM_NODEJS_ORG_MIRROR:="https://npmmirror.com/mirrors/node"}"
 : "${NPM_REGISTRY_MIRROR:="https://registry.npmmirror.com"}"
 
 
@@ -8,18 +8,10 @@ export DEBIAN_FRONTEND=noninteractive
 
 # Node, npm
 echo "Installing nvm..."
-if eval "curl -sk https://raw.githubusercontent.com" >> /dev/null 2>&1; then
-    echo "Connected to GitHub!"
-    wget -qO- "https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.3/install.sh" | bash
-elif eval "curl -sk https://ghproxy.com" >> /dev/null 2>&1; then
-    echo "Connected to GitHub Proxy!"
-    wget -qO- "https://ghproxy.com/raw.githubusercontent.com/nvm-sh/nvm/v0.39.3/install.sh" | \
-        sed -e "s|https://raw.githubusercontent.com|https://ghproxy.com/raw.githubusercontent.com|g" \
-            -e "s|https://github.com|https://ghproxy.com/github.com|g" | bash
-else
-    echo "Failed! No internet connection available."
-    exit 0
-fi
+wget -qO- "https://ghproxy.com/raw.githubusercontent.com/nvm-sh/nvm/v0.39.3/install.sh" | \
+    sed -e "s|https://raw.githubusercontent.com|https://ghproxy.com/raw.githubusercontent.com|g" \
+        -e "s|https://github.com|https://ghproxy.com/github.com|g" | bash
+
 
 export NVM_DIR="$HOME/.nvm"
 # shellcheck source=/dev/null

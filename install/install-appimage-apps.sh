@@ -7,7 +7,7 @@ install_appimage_apps() {
     local REPO_NAME PACKAGE_NAME VERSION_LATEST VERSION_INSTALLED
     REPO_NAME=$1
     PACKAGE_NAME=$2
-    VERSION_LATEST=$(wget -qO- "https://api.github.com/repos/$REPO_NAME/releases/latest" | jq -r ".tag_name" | tr -d "v")
+    VERSION_LATEST=$(wget -qO- --header "Authorization: $GITHUB_TOKEN" "https://api.github.com/repos/$REPO_NAME/releases/latest" | jq -r ".tag_name" | tr -d "v")
 
     if [[ -e "$HOME/.$PACKAGE_NAME/VERSION" ]]; then
         VERSION_INSTALLED=$(cat "$HOME/.$PACKAGE_NAME/VERSION")
@@ -24,7 +24,7 @@ install_appimage_apps() {
         sudo rm -f "$HOME/.local/share/applications/appimagekit-joplin.desktop"
 
         echo "Downloading $PACKAGE_NAME $VERSION_LATEST..."
-        wget -O "$TMPDIR/$PACKAGE_NAME.AppImage" "$(curl "https://api.github.com/repos/$REPO_NAME/releases/latest" | \
+        wget -O "$TMPDIR/$PACKAGE_NAME.AppImage" "$(wget -qO- --header "Authorization: $GITHUB_TOKEN" "https://api.github.com/repos/$REPO_NAME/releases/latest" | \
             jq -r ".assets[].browser_download_url" | grep .AppImage | head -n 1 | sed -e "s|https://github.com|https://ghproxy.com/github.com|g")"
 
         # Install new version

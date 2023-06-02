@@ -1,6 +1,9 @@
 #!/usr/bin/env bash
 
 export DEBIAN_FRONTEND=noninteractive
+: "${UBUNTU_VERSION:="22.04"}"
+: "${GITHUB_TOKEN:="your_github_token"}"
+
 TMPDIR="$(mktemp -d)"
 
 # Installing 3rd party .deb apps from GitHub Releases
@@ -10,7 +13,7 @@ install_github_releases_apps() {
     PACKAGE_NAME=$2
     PATTERN=$3
     API_URL=https://api.github.com/repos/$REPO_NAME/releases/latest
-    VERSION_LATEST=$(wget -qO- "$API_URL" | jq -r ".tag_name" | tr -d "v")
+    VERSION_LATEST=$(wget -qO- --header "Authorization: $GITHUB_TOKEN" "$API_URL" | jq -r ".tag_name" | tr -d "v")
 
     if dpkg -s "$PACKAGE_NAME" &>/dev/null; then
         VERSION_INSTALLED=$(dpkg -s "$PACKAGE_NAME" | grep Version: | cut -f2 -d " ")
@@ -24,7 +27,7 @@ install_github_releases_apps() {
     else
         echo "Installing $PACKAGE_NAME $VERSION_LATEST..."
         wget -O "$TMPDIR/$PACKAGE_NAME.deb" \
-            "$(wget -O- "$API_URL" | jq -r ".assets[].browser_download_url" | \
+            "$(wget -O- --header "Authorization: $GITHUB_TOKEN" "$API_URL" | jq -r ".assets[].browser_download_url" | \
                 grep "${PATTERN}" | head -n 1 | sed -e "s|https://github.com|https://ghproxy.com/github.com|g")"
         sudo gdebi -n "$TMPDIR/$PACKAGE_NAME.deb"
     fi
@@ -39,7 +42,7 @@ install_github_releases_apps lyswhut/lx-music-desktop lx-music-desktop x64.deb
 # Hyper
 install_github_releases_apps vercel/hyper hyper amd64.deb
 # theme
-if grep -q "plugins: \[\"hyper-material-theme\"\]" "$HOME/.hyper.js"; then
+if grep -q "hyper-material-theme" "$HOME/.hyper.js"; then
     echo "hyper-material-theme is set."
 else
     echo "Setting theme to hyper-material-theme..."
@@ -59,7 +62,7 @@ install_github_releases_apps jgraph/drawio-desktop draw.io .deb
 install_github_releases_apps shiftkey/desktop github-desktop .deb
 
 # Flameshot
-install_github_releases_apps flameshot-org/flameshot flameshot .ubuntu-20.04.amd64.deb
+install_github_releases_apps flameshot-org/flameshot flameshot "ubuntu-${UBUNTU_VERSION}.amd64.deb"
 
 # Figma
 install_github_releases_apps Figma-Linux/figma-linux figma-linux .amd64.deb
@@ -68,7 +71,7 @@ install_github_releases_apps Figma-Linux/figma-linux figma-linux .amd64.deb
 install_github_releases_apps peazip/PeaZip peazip .GTK2-1_amd64.deb
 
 # OpenBoard
-install_github_releases_apps OpenBoard-org/OpenBoard openboard _20.04_.*_amd64.deb
+install_github_releases_apps OpenBoard-org/OpenBoard openboard "${UBUNTU_VERSION}_.*_amd64.deb"
 
 # LocalSend
 install_github_releases_apps localsend/localsend localsend .deb

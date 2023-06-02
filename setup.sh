@@ -15,16 +15,16 @@ set -o pipefail
 : "${DEBUG="false"}"
 [[ "$DEBUG" == "true" ]] && set -o xtrace
 #  Configurations
-: "${GITHUB_TOKEN:="your_github_token"}"
 
 TMPDIR="$(mktemp -d)"
 SCRIPT_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" &>/dev/null && pwd -P)
 
 export DEBIAN_FRONTEND=noninteractive
 
-if FILE in "$SCRIPT_DIR/install/*.sh"; then
-    echo "$FILE"
-fi
+for FILE in "$SCRIPT_DIR"/install/*.sh; do
+    # shellcheck source=/dev/null
+    . "$FILE"
+done
 
 echo "Uninstalling unnecessary apps..."
 sudo apt-get clean -y
@@ -36,4 +36,4 @@ sudo apt purge --autoremove libreoffice*
 echo "Checking installed apps' update..."
 sudo apt-get upgrade -y
 
-. "$SCRIPT_DIR/scripts/vtoyboot.sh"
+. "$SCRIPT_DIR/install/vtoyboot.sh"

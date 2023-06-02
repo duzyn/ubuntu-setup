@@ -5,7 +5,7 @@ TMPDIR="$(mktemp -d)"
 
 # Greenfish Icon Editor Pro
 # TODO update
-if [[ -n "$(command -v gfie)" ]]; then
+if dpkg -s gfie &>/dev/null; then
     echo "Greenfish Icon Editor Pro is installed."
 else
     echo "Installing Greenfish Icon Editor Pro..."
