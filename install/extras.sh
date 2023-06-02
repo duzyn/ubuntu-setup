@@ -24,7 +24,6 @@ sudo apt-get install -y \
     network-manager-openvpn-gnome \
     obs-studio \
     openjdk-8-jdk \
-    openshot \
     openvpn \
     pdfarranger \
     plank \
