@@ -16,9 +16,6 @@ fi
 
 echo "Installing Ubuntu Kylin apps..."
 sudo apt-get install -y \
-    sogoupinyin \
-    ukylin-wine \
-    ukylin-wxwork \
     weixin \
     wemeet \
     wps-office \
@@ -33,10 +30,10 @@ sudo apt-get install -y \
 # fi
 
 # WPS needs to install symbol fonts.
-if [[ ! -f /usr/share/fonts/wps-fonts ]]; then
+if [[ ! -d /usr/share/fonts/wps-fonts ]]; then
     echo "Installing WPS symbol fonts..."
     sudo mkdir -p /usr/share/fonts/wps-fonts
-    sudo cp "$SCRIPT_DIR/../wps-fonts/*" /usr/share/fonts/wps-fonts
+    sudo cp -r "$SCRIPT_DIR/../wps-fonts" /usr/share/fonts
     sudo chmod 644 /usr/share/fonts/wps-fonts/*
     sudo fc-cache -vfs
 fi

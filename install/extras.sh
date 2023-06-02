@@ -14,6 +14,7 @@ sudo apt-get install -y \
     freecad \
     ghostscript \
     gimp \
+    git \
     handbrake \
     imagemagick \
     inkscape \
@@ -23,7 +24,7 @@ sudo apt-get install -y \
     neofetch \
     network-manager-openvpn-gnome \
     obs-studio \
-    openjdk-8-jdk \
+    openjdk-11-jre \
     openvpn \
     pdfarranger \
     plank \

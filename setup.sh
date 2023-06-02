@@ -31,9 +31,10 @@ sudo apt-get clean -y
 sudo apt-get autoremove -y
 
 # Remove LibreOffice, use WPS Office instead.
-sudo apt purge --autoremove libreoffice*
+# sudo apt purge --autoremove libreoffice*
 
 echo "Checking installed apps' update..."
 sudo apt-get upgrade -y
 
-. "$SCRIPT_DIR/install/vtoyboot.sh"
+# shellcheck source=/dev/null
+. "$SCRIPT_DIR"/vtoyboot.bash

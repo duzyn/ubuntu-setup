@@ -54,7 +54,7 @@ cat <<EOF > "$HOME/.local/share/applications/appimagekit-joplin.desktop"
 Encoding=UTF-8
 Name=Joplin
 Comment=Joplin for Desktop
-Exec=$HOME/.joplin/Joplin.AppImage %u
+Exec=$HOME/.joplin/joplin.AppImage %u
 Icon=joplin
 StartupWMClass=Joplin
 Type=Application

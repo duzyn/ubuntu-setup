@@ -40,14 +40,14 @@ install_github_releases_apps jgm/pandoc pandoc amd64.deb
 install_github_releases_apps lyswhut/lx-music-desktop lx-music-desktop x64.deb
 
 # Hyper
-install_github_releases_apps vercel/hyper hyper amd64.deb
+# install_github_releases_apps vercel/hyper hyper amd64.deb
 # theme
-if grep -q "hyper-material-theme" "$HOME/.hyper.js"; then
-    echo "hyper-material-theme is set."
-else
-    echo "Setting theme to hyper-material-theme..."
-    hyper i hyper-material-theme
-fi
+# if grep -q "hyper-material-theme" "$HOME/.hyper.js"; then
+#     echo "hyper-material-theme is set."
+# else
+#     echo "Setting theme to hyper-material-theme..."
+#     hyper i hyper-material-theme
+# fi
 
 # DBeaver Community Edition
 install_github_releases_apps dbeaver/dbeaver dbeaver-ce amd64.deb

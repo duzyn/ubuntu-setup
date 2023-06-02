@@ -39,15 +39,3 @@ echo "Setting font family and size..."
 xfconf-query -c xsettings -p /Gtk/FontName -s "Noto Sans CJK SC 9"
 xfconf-query -c xsettings -p /Gtk/MonospaceFontName -s "Noto Sans Mono CJK SC 9"
 xfconf-query -c xfwm4 -p /general/title_font -s "Noto Sans CJK SC 9"
-
-# Hardcode-Tray: https://github.com/bilelmoussaoui/Hardcode-Tray
-if dpkg -s hardcode-tray &>/dev/null; then
-    echo "Hardcode Tray is installed."
-else
-    echo "Adding Hardcode Tray apt repository..."
-    sudo add-apt-repository -y ppa:papirus/hardcode-tray
-
-    echo "Installing Hardcode Tray..."
-    sudo apt-get update
-    sudo apt-get install -y hardcode-tray
-fi
