@@ -8,7 +8,7 @@ install_appimage_apps() {
     local REPO_NAME PACKAGE_NAME VERSION_LATEST VERSION_INSTALLED
     REPO_NAME=$1
     PACKAGE_NAME=$2
-    VERSION_LATEST=$(wget -qO- --header "Authorization: $GITHUB_TOKEN" "https://api.github.com/repos/$REPO_NAME/releases/latest" | jq -r ".tag_name" | tr -d "v")
+    VERSION_LATEST=$(wget --show-progress -qO- --header="Authorization: Bearer $GITHUB_TOKEN" "https://api.github.com/repos/$REPO_NAME/releases/latest" | jq -r ".tag_name" | tr -d "v")
 
     if [[ -e "$HOME/.$PACKAGE_NAME/VERSION" ]]; then
         VERSION_INSTALLED=$(cat "$HOME/.$PACKAGE_NAME/VERSION")
@@ -25,7 +25,7 @@ install_appimage_apps() {
         sudo rm -f "$HOME/.local/share/applications/appimagekit-joplin.desktop"
 
         echo "Downloading $PACKAGE_NAME $VERSION_LATEST..."
-        wget -O "$TMPDIR/$PACKAGE_NAME.AppImage" "$(wget -qO- --header "Authorization: $GITHUB_TOKEN" "https://api.github.com/repos/$REPO_NAME/releases/latest" | \
+        wget --show-progress -O "$TMPDIR/$PACKAGE_NAME.AppImage" "$(wget --show-progress -qO- --header="Authorization: Bearer $GITHUB_TOKEN" "https://api.github.com/repos/$REPO_NAME/releases/latest" | \
             jq -r ".assets[].browser_download_url" | grep .AppImage | head -n 1 | sed -e "s|https://github.com|https://ghproxy.com/github.com|g")"
 
         # Install new version
@@ -44,7 +44,7 @@ install_appimage_apps laurent22/joplin joplin
 if [[ -e "$HOME/.local/share/icons/hicolor/512x512/apps/joplin.png" ]]; then
     echo "Icon is found."
 else
-    wget -O "$TMPDIR/joplin.png" https://joplinapp.org/images/Icon512.png
+    wget --show-progress -O "$TMPDIR/joplin.png" https://joplinapp.org/images/Icon512.png
     sudo mkdir -p "$HOME/.local/share/icons/hicolor/512x512/apps"
     sudo mv "$TMPDIR/joplin.png" "$HOME/.local/share/icons/hicolor/512x512/apps/joplin.png"
 fi

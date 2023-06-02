@@ -8,7 +8,7 @@ export DEBIAN_FRONTEND=noninteractive
 
 # Node, npm
 echo "Installing nvm..."
-wget -qO- "https://ghproxy.com/raw.githubusercontent.com/nvm-sh/nvm/v0.39.3/install.sh" | \
+wget --show-progress -qO- "https://ghproxy.com/raw.githubusercontent.com/nvm-sh/nvm/v0.39.3/install.sh" | \
     sed -e "s|https://raw.githubusercontent.com|https://ghproxy.com/raw.githubusercontent.com|g" \
         -e "s|https://github.com|https://ghproxy.com/github.com|g" | bash
 

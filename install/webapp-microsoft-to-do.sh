@@ -9,7 +9,7 @@ SCRIPT_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" &>/dev/null && pwd -P)
 # https://specifications.freedesktop.org/desktop-entry-spec/desktop-entry-spec-latest.html
 
 # Get app icon from Apple App Store
-# wget -O "$TMPDIR/microsoft-to-do-512.jpg" "$(wget -qO- "https://itunes.apple.com/lookup?country=CN&id=1212616790" | jq -r .results[0].artworkUrl512)"
+# wget --show-progress -O "$TMPDIR/microsoft-to-do-512.jpg" "$(wget --show-progress -qO- "https://itunes.apple.com/lookup?country=CN&id=1212616790" | jq -r .results[0].artworkUrl512)"
 # vips scale "$TMPDIR/microsoft-to-do-512.jpg" "$TMPDIR/microsoft-to-do-256.jpg" --exp 0.5
 
 VERSION=1.0

@@ -32,9 +32,9 @@ set -o pipefail
 SCRIPT_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" &>/dev/null && pwd -P)
 TMPDIR="$(mktemp -d)"
 
-if eval "wget -qO- $(dirname "$ISO_URL")/SHA256SUMS" >> /dev/null 2>&1; then
+if eval "wget --show-progress -qO- $(dirname "$ISO_URL")/SHA256SUMS" >> /dev/null 2>&1; then
     SHA256SUMS_URL=$(dirname "$ISO_URL")/SHA256SUMS # Ubuntu
-elif eval "wget -qO- $(dirname "$ISO_URL")/sha256sum.txt" >> /dev/null 2>&1; then
+elif eval "wget --show-progress -qO- $(dirname "$ISO_URL")/sha256sum.txt" >> /dev/null 2>&1; then
     SHA256SUMS_URL=$(dirname "$ISO_URL")/sha256sum.txt # Linux Mint
 else
     echo "Failed! No SHA256SUMS available." && exit 1
@@ -60,12 +60,12 @@ if [[ -f "$ISO_FILE" ]]; then
     echo "Using existing $ISO_FILE..."
 else
     echo "Downloading $ISO_FILE..."
-    wget -O "$ISO_FILE" "$ISO_URL"
+    wget --show-progress -O "$ISO_FILE" "$ISO_URL"
 fi
 
 # Check SHA256SUMS
 echo "Verifying ISO file..."
-if [[ "$(wget -qO- "$SHA256SUMS_URL" | grep "$ISO_FILE" | cut -f1 -d " ")" == "$(sha256sum "$ISO_FILE" | cut -f1 -d " ")" ]]; then
+if [[ "$(wget --show-progress -qO- "$SHA256SUMS_URL" | grep "$ISO_FILE" | cut -f1 -d " ")" == "$(sha256sum "$ISO_FILE" | cut -f1 -d " ")" ]]; then
     echo "ISO file is verified."
 else
     echo "ISO file verification is failed, please download the file again!" && exit 1
