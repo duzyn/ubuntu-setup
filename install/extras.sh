@@ -5,10 +5,12 @@ export DEBIAN_FRONTEND=noninteractive
 echo "Installing some extra apps..."
 sudo apt-get install -y \
     android-sdk-platform-tools \
+    aria2 \
     audacity \
     calibre \
     digikam \
     filezilla \
+    ffmpeg \
     freecad \
     ghostscript \
     gimp \
@@ -21,11 +23,12 @@ sudo apt-get install -y \
     neofetch \
     network-manager-openvpn-gnome \
     obs-studio \
-    openjdk-16-jdk \
+    openjdk-8-jdk \
     openshot \
     openvpn \
     pdfarranger \
     plank \
+    proxychains4 \
     scrcpy \
     scribus \
     subversion \

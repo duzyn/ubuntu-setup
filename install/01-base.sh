@@ -5,7 +5,6 @@ export DEBIAN_FRONTEND=noninteractive
 echo "Installing some base packages..."
 sudo apt-get install -y \
     apt-transport-https \
-    aria2 \
     binutils \
     build-essential \
     bzip2 \
@@ -13,7 +12,6 @@ sudo apt-get install -y \
     coreutils \
     curl \
     desktop-file-utils \
-    ffmpeg \
     file \
     g++ \
     gcc \
@@ -30,7 +28,6 @@ sudo apt-get install -y \
     p7zip-full \
     patch \
     procps \
-    proxychains4 \
     sed \
     software-properties-common \
     tar \

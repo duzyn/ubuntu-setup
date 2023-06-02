@@ -15,11 +15,11 @@ set -o pipefail
 
 # Arguments given to the download router.
 : "${ISO_URL:="https://mirrors.ustc.edu.cn/ubuntu-cdimage/xubuntu/releases/20.04.6/release/xubuntu-20.04.6-desktop-amd64.iso"}"
-: "${SOURCE_ISO:="$(basename "$ISO_URL")"}"
-: "${DIST_DIR="dist"}"
+: "${ISO_FILE:="$(basename "$ISO_URL")"}"
+: "${ISO_DIST_DIR="dist"}"
 
 # Virtual machine
-: "${VBOX_NAME:="${SOURCE_ISO%.*}"}"
+: "${VBOX_NAME:="${ISO_FILE%.*}"}"
 : "${VBOX_OS_TYPE:=Ubuntu_64}"
 : "${VBOX_CPU_NUMBER:=2}"
 : "${VBOX_MEMORY:=2048}"
@@ -37,24 +37,10 @@ elif [[ "$(uname -a)" =~ "Linux" ]]; then
 elif [[ "$(uname -a)" =~ "Darwin" ]]; then
     VBOXMANAGE_CMD="/Applications/VirtualBox.app/Contents/MacOS/VBoxManage"
 else
-    die "This script doesn't support the OS you are running."
+    echo "This script doesn't support the OS you are running." && exit 1
 fi
 
-
-[[ ! -x "$(command -v date)" ]] && echo "date command not found." && exit 1
-
-function log() {
-    echo -e "[$(date +"%Y-%m-%d %H:%M:%S")] ${1-}"
-}
-
-function die() {
-    local msg=$1
-    local code=${2-1} # Bash parameter expansion - default exit status 1. See https://wiki.bash-hackers.org/syntax/pe#use_a_default_value
-    echo "$msg"
-    exit "$code"
-}
-
-[[ ! -f "$VBOXMANAGE_CMD" ]] && die "VirtualBox is not installed."
+[[ ! -f "$VBOXMANAGE_CMD" ]] && echo "VirtualBox is not installed." && exit 1
 
 
 cd "$SCRIPT_DIR"
@@ -72,18 +58,18 @@ else
         --vram="$VBOX_VRAM" --graphicscontroller=vmsvga --accelerate3d=on --nic1=nat \
         --firmware=efi --boot1=dvd --boot2=disk --boot3=none --boot4=none
 
-    "$VBOXMANAGE_CMD" createmedium disk --filename="$DIST_DIR/$VBOX_NAME/$VBOX_NAME.${VBOX_HDD_FORMAT,,}" \
+    "$VBOXMANAGE_CMD" createmedium disk --filename="$ISO_DIST_DIR/$VBOX_NAME/$VBOX_NAME.${VBOX_HDD_FORMAT,,}" \
         --size="$VBOX_HDD_SIZE" --format="$VBOX_HDD_FORMAT" --variant=Fixed
 
     "$VBOXMANAGE_CMD" storagectl "$VBOX_NAME" --name=SATA --add=sata --controller=IntelAhci
 
     "$VBOXMANAGE_CMD" storageattach "$VBOX_NAME" --storagectl=SATA --port=0 --device=0 --type=hdd \
-        --medium="$DIST_DIR/$VBOX_NAME/$VBOX_NAME.${VBOX_HDD_FORMAT,,}"
+        --medium="$ISO_DIST_DIR/$VBOX_NAME/$VBOX_NAME.${VBOX_HDD_FORMAT,,}"
 
     "$VBOXMANAGE_CMD" storagectl "$VBOX_NAME" --name=IDE --add=ide --controller=PIIX4
 
     "$VBOXMANAGE_CMD" storageattach "$VBOX_NAME" --storagectl=IDE --port=1 --device=0 --type=dvddrive \
-        --medium="$DIST_DIR/$SOURCE_ISO"
+        --medium="$ISO_DIST_DIR/$ISO_FILE"
 fi
 
 cd "$OLDPWD"
@@ -96,4 +82,4 @@ else
     "$VBOXMANAGE_CMD" startvm "$VBOX_NAME" --type=gui
 fi
 
-die "Completed!" 0
+echo "Completed!" && exit 0

@@ -1,5 +1,9 @@
 #!/usr/bin/env bash
 
+: "${NVM_NODEJS_ORG_MIRROR:="https://nodejs.org/dist/"}"
+: "${NPM_REGISTRY_MIRROR:="https://registry.npmmirror.com"}"
+
+
 export DEBIAN_FRONTEND=noninteractive
 
 # Node, npm

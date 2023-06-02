@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+: "${LOCALE:="zh_CN"}"
 
 export DEBIAN_FRONTEND=noninteractive
 

@@ -1,8 +1,6 @@
 #!/usr/bin/env bash
 # Based on https://github.com/devstructure/ubuntu and
 # https://github.com/covertsh/ubuntu-preseed-iso-generator
-# Ubuntu has discontinued preseed as of 20.04 according to this:
-# https://discourse.ubuntu.com/t/server-installer-plans-for-20-04-lts/13631
 
 
 # Exit on error. Append "|| true" if you expect an error.
@@ -19,95 +17,81 @@ set -o pipefail
 
 # Arguments given to the download router.
 : "${ISO_URL:="https://mirrors.ustc.edu.cn/ubuntu-cdimage/xubuntu/releases/20.04.6/release/xubuntu-20.04.6-desktop-amd64.iso"}"
-: "${SOURCE_ISO:="$(basename "$ISO_URL")"}"
-: "${DIST_DIR="dist"}"
+: "${ISO_FILE:="$(basename "$ISO_URL")"}"
+: "${ISO_DIST_DIR="dist"}"
 
 # Hardcoded host information.
-: "${USERNAME:="john"}"
-: "${PASSWORD:="111111"}"
-: "${FULL_NAME:="John Doe"}"
-: "${HOST:="xubuntu"}"
-: "${DOMAIN:="xubuntu.guest.virtualbox.org"}"
-: "${LOCALE:="zh_CN"}"
-: "${TIMEZONE:="Asia/Shanghai"}"
+: "${ISO_USERNAME:="john"}"
+: "${ISO_PASSWORD:="111111"}"
+: "${ISO_FULL_NAME:="John Doe"}"
+: "${ISO_HOST:="xubuntu"}"
+: "${ISO_DOMAIN:="xubuntu.guest.virtualbox.org"}"
+: "${ISO_LOCALE:="zh_CN"}"
+: "${ISO_TIMEZONE:="Asia/Shanghai"}"
 
 SCRIPT_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" &>/dev/null && pwd -P)
 TMPDIR="$(mktemp -d)"
 
-[[ ! -x "$(command -v date)" ]] && echo "date command not found." && exit 1
-
-function log() {
-    echo -e "[$(date +"%Y-%m-%d %H:%M:%S")] ${1-}"
-}
-
-function die() {
-    local msg=$1
-    local code=${2-1} # Bash parameter expansion - default exit status 1. See https://wiki.bash-hackers.org/syntax/pe#use_a_default_value
-    echo "$msg"
-    exit "$code"
-}
-
-
+if eval "wget -qO- $(dirname "$ISO_URL")/SHA256SUMS" >> /dev/null 2>&1; then
+    SHA256SUMS_URL=$(dirname "$ISO_URL")/SHA256SUMS # Ubuntu
+elif eval "wget -qO- $(dirname "$ISO_URL")/sha256sum.txt" >> /dev/null 2>&1; then
+    SHA256SUMS_URL=$(dirname "$ISO_URL")/sha256sum.txt # Linux Mint
+else
+    echo "Failed! No SHA256SUMS available." && exit 1
+fi
 
 # Do things in a tmp directory
 if [[ ! "$TMPDIR" ]] || [[ ! -d "$TMPDIR" ]]; then
-    die "Could not create temporary working directory."
+    echo "Could not create temporary working directory."
 else
     echo "Created temporary working directory $TMPDIR."
 fi
 
 # Utilities should installed before run this script
 echo "Checking required utilities..."
-[[ ! -x "$(command -v wget)" ]] && die "wget is not installed."
-[[ ! -x "$(command -v sed)" ]] && die "sed is not installed."
-[[ ! -x "$(command -v xorriso)" ]] && die "xorriso is not installed."
-[[ ! -f "/usr/lib/ISOLINUX/isohdpfx.bin" ]] && die "isolinux is not installed."
+[[ ! -x "$(command -v wget)" ]] && echo "wget is not installed." && exit 1
+[[ ! -x "$(command -v sed)" ]] && echo "sed is not installed." && exit 1
+[[ ! -x "$(command -v xorriso)" ]] && echo "xorriso is not installed." && exit 1
+[[ ! -f "/usr/lib/ISOLINUX/isohdpfx.bin" ]] && echo "isolinux is not installed." && exit 1
 echo "All required utilities are installed."
 
 # Download ISO file
-if [[ -f "$SOURCE_ISO" ]]; then
-    echo "Using existing $SOURCE_ISO..."
+if [[ -f "$ISO_FILE" ]]; then
+    echo "Using existing $ISO_FILE..."
 else
-    echo "Downloading $SOURCE_ISO..."
-    wget -O "$SOURCE_ISO" "$ISO_URL"
-    echo "Downloaded $SOURCE_ISO."
+    echo "Downloading $ISO_FILE..."
+    wget -O "$ISO_FILE" "$ISO_URL"
 fi
 
 # Check SHA256SUMS
 echo "Verifying ISO file..."
-if [[ "$(sha256sum "$SOURCE_ISO" | cut -f1 -d " ")" == "$(wget -qO- "$(dirname "$ISO_URL")/SHA256SUMS" | grep "$SOURCE_ISO" | cut -f1 -d " ")" ]]; then
+if [[ "$(wget -qO- "$SHA256SUMS_URL" | grep "$ISO_FILE" | cut -f1 -d " ")" == "$(sha256sum "$ISO_FILE" | cut -f1 -d " ")" ]]; then
     echo "ISO file is verified."
 else
-    die "ISO file verification is failed, please download the file again!"
+    echo "ISO file verification is failed, please download the file again!" && exit 1
 fi
 
 # Extract Ubuntu ISO image
 echo "Extracting Ubuntu ISO image to $TMPDIR..."
-xorriso -osirrox on -indev "$SOURCE_ISO" -extract / "$TMPDIR" &>/dev/null
+xorriso -osirrox on -indev "$ISO_FILE" -extract / "$TMPDIR" &>/dev/null
 chmod -R u+w "$TMPDIR"
 rm -rf "$TMPDIR/"'[BOOT]'
 
 echo "Adding preseed parameters to kernel command line..."
 # These are for UEFI mode
-# Ubuntu
-sed -i -e "s|file=/cdrom/preseed/ubuntu.seed maybe-ubiquity quiet splash|file=/cdrom/preseed/custom.seed auto=true priority=critical boot=casper automatic-ubiquity quiet splash noprompt noshell|g" \
+sed -i -e "s|file=/cdrom/preseed/.*\.seed.*\-\-$|file=/cdrom/preseed/custom.seed auto=true priority=critical boot=casper automatic-ubiquity quiet splash noprompt noshell --|g" \
     "$TMPDIR/boot/grub/grub.cfg"
-sed -i -e "s|file=/cdrom/preseed/ubuntu.seed maybe-ubiquity iso-scan/filename=\${iso_path} quiet splash|file=/cdrom/preseed/custom.seed auto=true priority=critical boot=casper automatic-ubiquity quiet splash noprompt noshell|g" \
+sed -i -e "s|file=/cdrom/preseed/.*\.seed.*\-\-$|file=/cdrom/preseed/custom.seed auto=true priority=critical boot=casper automatic-ubiquity quiet splash noprompt noshell --|g" \
     "$TMPDIR/boot/grub/loopback.cfg"
-# Xubuntu
-sed -i -e "s|file=/cdrom/preseed/xubuntu.seed quiet splash|file=/cdrom/preseed/custom.seed auto=true priority=critical boot=casper automatic-ubiquity quiet splash noprompt noshell|g" \
-    -e "s|file=/cdrom/preseed/xubuntu.seed only-ubiquity quiet splash|file=/cdrom/preseed/custom.seed auto=true priority=critical boot=casper automatic-ubiquity quiet splash noprompt noshell|g" \
-    "$TMPDIR/boot/grub/grub.cfg"
-sed -i -e "s|file=/cdrom/preseed/xubuntu.seed iso-scan/filename=\${iso_path} quiet splash|file=/cdrom/preseed/custom.seed auto=true priority=critical boot=casper automatic-ubiquity quiet splash noprompt noshell|g" \
-    -e "s|file=/cdrom/preseed/xubuntu.seed only-ubiquity iso-scan/filename=\${iso_path} quiet splash|file=/cdrom/preseed/custom.seed auto=true priority=critical boot=casper automatic-ubiquity quiet splash noprompt noshell|g" \
-    "$TMPDIR/boot/grub/loopback.cfg"
+sed -i -e '/timeout=/d' "$TMPDIR/boot/grub/grub.cfg"
+echo -e "\nset timeout=3\n">>"$TMPDIR/boot/grub/grub.cfg"
 
 # This one is used for BIOS mode
 cat <<EOF >"$TMPDIR/isolinux/txt.cfg"
 default custom-install
 timeout 1
 label custom-install
-  menu label ^Install Ubuntu
+  menu label ^Auto Install
   kernel /casper/vmlinuz
   append file=/cdrom/preseed/custom.seed auto=true priority=critical boot=casper automatic-ubiquity initrd=/casper/initrd quiet splash noprompt noshell ---
 EOF
@@ -119,26 +103,28 @@ EOF
 echo "Adding preseed configuration file..."
 cat <<EOF >"$TMPDIR/preseed/custom.seed"
 # Locale
-d-i debian-installer/locale string $LOCALE.UTF-8
+d-i debian-installer/locale string $ISO_LOCALE.UTF-8
 d-i keyboard-configuration/layoutcode string us
 d-i keyboard-configuration/xkb-keymap select us
 
+ubiquity ubiquity/use_nonfree boolean true
+
 # Network
 d-i netcfg/choose_interface select auto
-d-i netcfg/get_hostname string $HOST
-d-i netcfg/get_domain string $DOMAIN
+d-i netcfg/get_hostname string $ISO_HOST
+d-i netcfg/get_domain string $ISO_DOMAIN
 d-i netcfg/wireless_wep string
 
 # Clock
-d-i time/zone string $TIMEZONE
+d-i time/zone string $ISO_TIMEZONE
 d-i clock-setup/utc boolean true
 d-i clock-setup/ntp boolean true
 
 # Users
-d-i passwd/user-fullname string $FULL_NAME
-d-i passwd/username string $USERNAME
-d-i passwd/user-password password $PASSWORD
-d-i passwd/user-password-again password $PASSWORD
+d-i passwd/user-fullname string $ISO_FULL_NAME
+d-i passwd/username string $ISO_USERNAME
+d-i passwd/user-password ISO_password $ISO_PASSWORD
+d-i passwd/user-password-again ISO_password $ISO_PASSWORD
 d-i passwd/root-login boolean false
 d-i user-setup/allow-password-weak boolean true
 
@@ -178,21 +164,27 @@ ubiquity ubiquity/reboot boolean true
 EOF
 
 echo "Updating $TMPDIR/md5sum.txt with hashes of modified files..."
-sed -i -e '/.\/boot\/grub\/grub.cfg/d' -e '/.\/boot\/grub\/loopback.cfg/d' "$TMPDIR/md5sum.txt"
+if [[ -f "$TMPDIR/md5sum.txt" ]]; then # Ubuntu 20.04
+    MD5FILE="$TMPDIR/md5sum.txt"
+elif [[ -f "$TMPDIR/MD5SUMS" ]]; then # Linux Mint 21.1
+    MD5FILE="$TMPDIR/MD5SUMS"
+fi
+sed -i -e '/.\/boot\/grub\/grub.cfg/d' -e '/.\/boot\/grub\/loopback.cfg/d' "$MD5FILE"
 {
     echo "$(md5sum "$TMPDIR/boot/grub/grub.cfg"      | cut -f1 -d " ")  ./boot/grub/grub.cfg"
     echo "$(md5sum "$TMPDIR/boot/grub/loopback.cfg"  | cut -f1 -d " ")  ./boot/grub/loopback.cfg"
     echo "$(md5sum "$TMPDIR/preseed/custom.seed"     | cut -f1 -d " ")  ./preseed/custom.seed"
-} >>"$TMPDIR/md5sum.txt"
+    echo "$(md5sum "$TMPDIR/isolinux/txt.cfg"        | cut -f1 -d " ")  ./isolinux/txt.cfg"
+} >>"$MD5FILE"
 
 echo "Repackaging extracted files into an ISO image..."
 cd "$TMPDIR"
-[[ -d "$SCRIPT_DIR/$DIST_DIR" ]] || mkdir "$SCRIPT_DIR/$DIST_DIR"
+mkdir -p "$SCRIPT_DIR/$ISO_DIST_DIR"
 xorriso -as mkisofs -r -V "Ubuntu Custom" -J -b isolinux/isolinux.bin -c isolinux/boot.cat \
     -no-emul-boot -boot-load-size 4 -isohybrid-mbr /usr/lib/ISOLINUX/isohdpfx.bin \
     -boot-info-table -input-charset utf-8 -eltorito-alt-boot -e boot/grub/efi.img -no-emul-boot \
-    -isohybrid-gpt-basdat -o "$SCRIPT_DIR/$DIST_DIR/$SOURCE_ISO" . &>/dev/null
+    -isohybrid-gpt-basdat -o "$SCRIPT_DIR/$ISO_DIST_DIR/$ISO_FILE" . &>/dev/null
 cd "$OLDPWD"
-echo "Repackaged into $SCRIPT_DIR/$DIST_DIR/$SOURCE_ISO."
+echo "Repackaged into $SCRIPT_DIR/$ISO_DIST_DIR/$ISO_FILE."
 
-die "Completed." 0
+echo "Completed." && exit 0

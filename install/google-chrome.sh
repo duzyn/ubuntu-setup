@@ -4,7 +4,7 @@ export DEBIAN_FRONTEND=noninteractive
 TMPDIR="$(mktemp -d)"
 
 # Google Chrome: https://google.cn/chrome
-if [[ -x "$(command -v google-chrome-stable)" ]]; then
+if [[ -n "$(command -v google-chrome-stable)" ]]; then
     echo "Google Chrome is installed."
 else
     echo "Downloading Google Chrome..."

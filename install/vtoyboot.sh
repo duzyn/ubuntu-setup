@@ -32,6 +32,5 @@ if [[ "$VTOYBOOT" == "true" ]]; then
     echo "Running vtoyboot..."
     sudo bash "./vtoyboot.sh"
 
-    echo "Completed! You can poweroff vbox, and copy the .vdi file to .vdi.vtoy file, and put it on Ventoy ISO scan folder."
-    exit 1
+    echo "Completed! You can poweroff vbox, and copy the .vdi file to .vdi.vtoy file, and put it on Ventoy ISO scan folder." && exit 0
 fi
