@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+: "${GITHUB_TOKEN:="your_github_token"}"
 
 # Usage: install_appimage_apps jgraph/drawio-desktop draw.io
 TMPDIR="$(mktemp -d)"

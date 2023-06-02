@@ -1,10 +1,11 @@
 #!/usr/bin/env bash
 
+: "${GITHUB_TOKEN:="your_github_token"}"
 export DEBIAN_FRONTEND=noninteractive
 TMPDIR="$(mktemp -d)"
 
 # Tor Browser
-TOR_BROWSER_LATEST_VERSION=$(wget -qO- "https://api.github.com/repos/TheTorProject/gettorbrowser/releases/latest" |
+TOR_BROWSER_LATEST_VERSION=$(wget -qO- --header "Authorization: $GITHUB_TOKEN" "https://api.github.com/repos/TheTorProject/gettorbrowser/releases/latest" |
     jq -r ".tag_name" | sed "s/.*-//g")
 
 if [[ -e "$HOME/.tor-browser/VERSION" ]]; then

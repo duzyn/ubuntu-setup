@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 
 : "${VTOYBOOT:="false"}"
+: "${GITHUB_TOKEN:="your_github_token"}"
 
 export DEBIAN_FRONTEND=noninteractive
 TMPDIR="$(mktemp -d)"
