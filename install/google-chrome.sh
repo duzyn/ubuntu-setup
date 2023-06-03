@@ -8,7 +8,7 @@ if [[ -n "$(command -v google-chrome-stable)" ]]; then
     echo "Google Chrome is installed."
 else
     echo "Downloading Google Chrome..."
-    wget --show-progress -O "$TMPDIR/google-chrome.deb" https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
+    wget -O "$TMPDIR/google-chrome.deb" https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
 
     echo "Installing Google Chrome..."
     sudo gdebi -n "$TMPDIR/google-chrome.deb"

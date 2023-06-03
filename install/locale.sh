@@ -8,6 +8,7 @@ echo "Installing some fonts..."
 sudo apt-get install -y \
     fonts-cascadia-code \
     fonts-emojione \
+    fonts-droid-fallback \
     fonts-firacode \
     fonts-noto-color-emoji \
     fonts-open-sans \

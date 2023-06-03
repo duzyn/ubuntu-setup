@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 export DEBIAN_FRONTEND=noninteractive
-: "${UBUNTU_CODENAME:="jammy"}"
+: "${UBUNTU_CODENAME:="focal"}"
 
 # MiKTeX
 # https://miktex.org/download#ubuntu and

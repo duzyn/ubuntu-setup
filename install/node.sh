@@ -8,9 +8,9 @@ export DEBIAN_FRONTEND=noninteractive
 
 # Node, npm
 echo "Installing nvm..."
-wget --show-progress -qO- "https://ghproxy.com/raw.githubusercontent.com/nvm-sh/nvm/v0.39.3/install.sh" | \
-    sed -e "s|https://raw.githubusercontent.com|https://ghproxy.com/raw.githubusercontent.com|g" \
-        -e "s|https://github.com|https://ghproxy.com/github.com|g" | bash
+wget -qO- "https://ghproxy.com/raw.githubusercontent.com/nvm-sh/nvm/v0.39.3/install.sh" | \
+    sed -e "s|https://raw.githubusercontent.com|https://ghproxy.com/https://raw.githubusercontent.com|g" \
+        -e "s|https://github.com|https://ghproxy.com/https://github.com|g" | bash
 
 
 export NVM_DIR="$HOME/.nvm"
@@ -39,12 +39,12 @@ fi
 
 sudo chown -R 1000:1000 "$HOME/.npm"
 
-if [[ -n "$( command -v nativefier)" ]]; then
-    echo "Nativefier is installed."
-else
-    echo "Installing Nativefier..."
-    npm install -g nativefier
-fi
+# if [[ -n "$( command -v nativefier)" ]]; then
+#     echo "Nativefier is installed."
+# else
+#     echo "Installing Nativefier..."
+#     npm install -g nativefier
+# fi
 
 echo "Upgrading packages..."
 npm upgrade -g

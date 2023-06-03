@@ -37,4 +37,4 @@ echo "Checking installed apps' update..."
 sudo apt-get upgrade -y
 
 # shellcheck source=/dev/null
-. "$SCRIPT_DIR"/vtoyboot.bash
+. "$SCRIPT_DIR/install/vtoyboot.bash"

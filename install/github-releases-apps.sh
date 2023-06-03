@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 export DEBIAN_FRONTEND=noninteractive
-: "${UBUNTU_VERSION:="22.04"}"
+: "${UBUNTU_VERSION:="20.04"}"
 : "${GITHUB_TOKEN:="your_github_token"}"
 
 TMPDIR="$(mktemp -d)"
@@ -13,7 +13,7 @@ install_github_releases_apps() {
     PACKAGE_NAME=$2
     PATTERN=$3
     API_URL=https://api.github.com/repos/$REPO_NAME/releases/latest
-    VERSION_LATEST=$(wget --show-progress -qO- --header="Authorization: Bearer $GITHUB_TOKEN" "$API_URL" | jq -r ".tag_name" | tr -d "v")
+    VERSION_LATEST=$(wget -qO- --header="Authorization: Bearer $GITHUB_TOKEN" "$API_URL" | jq -r ".tag_name" | tr -d "v")
 
     if dpkg -s "$PACKAGE_NAME" &>/dev/null; then
         VERSION_INSTALLED=$(dpkg -s "$PACKAGE_NAME" | grep Version: | cut -f2 -d " ")
@@ -26,8 +26,8 @@ install_github_releases_apps() {
             echo "$PACKAGE_NAME $VERSION_INSTALLED is lastest."
     else
         echo "Installing $PACKAGE_NAME $VERSION_LATEST..."
-        wget --show-progress -O "$TMPDIR/$PACKAGE_NAME.deb" \
-            "$(wget --show-progress -O- --header="Authorization: Bearer $GITHUB_TOKEN" "$API_URL" | jq -r ".assets[].browser_download_url" | \
+        wget -O "$TMPDIR/$PACKAGE_NAME.deb" \
+            "$(wget -O- --header="Authorization: Bearer $GITHUB_TOKEN" "$API_URL" | jq -r ".assets[].browser_download_url" | \
                 grep "${PATTERN}" | head -n 1 | sed -e "s|https://github.com|https://ghproxy.com/github.com|g")"
         sudo gdebi -n "$TMPDIR/$PACKAGE_NAME.deb"
     fi

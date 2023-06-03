@@ -5,7 +5,7 @@ export DEBIAN_FRONTEND=noninteractive
 TMPDIR="$(mktemp -d)"
 
 # Tor Browser
-TOR_BROWSER_LATEST_VERSION=$(wget --show-progress -qO- --header="Authorization: Bearer $GITHUB_TOKEN" "https://api.github.com/repos/TheTorProject/gettorbrowser/releases/latest" |
+TOR_BROWSER_LATEST_VERSION=$(wget -qO- --header="Authorization: Bearer $GITHUB_TOKEN" "https://api.github.com/repos/TheTorProject/gettorbrowser/releases/latest" |
     jq -r ".tag_name" | sed "s/.*-//g")
 
 if [[ -e "$HOME/.tor-browser/VERSION" ]]; then
@@ -19,7 +19,7 @@ fi
 if [[ "$TOR_BROWSER_INSTALLED_VERSION" != "$TOR_BROWSER_LATEST_VERSION" ]]; then
 
     echo "Downloading Tor Browser..."
-    wget --show-progress -O "$TMPDIR/tor-browser.tar.xz" "https://ghproxy.com/https://github.com/TheTorProject/gettorbrowser/releases/download/linux64-${TOR_BROWSER_LATEST_VERSION}/tor-browser-linux64-${TOR_BROWSER_LATEST_VERSION}_ALL.tar.xz"
+    wget -O "$TMPDIR/tor-browser.tar.xz" "https://ghproxy.com/https://github.com/TheTorProject/gettorbrowser/releases/download/linux64-${TOR_BROWSER_LATEST_VERSION}/tor-browser-linux64-${TOR_BROWSER_LATEST_VERSION}_ALL.tar.xz"
 
     # Remove old version.
     if [[ -f "$HOME/.tor-browser/tor-browser/Browser/start-tor-browser" ]]; then

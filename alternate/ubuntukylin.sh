@@ -1,8 +1,7 @@
 #!/usr/bin/env bash
 
 export DEBIAN_FRONTEND=noninteractive
-: "${UBUNTU_CODENAME:="jammy"}"
-SCRIPT_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" &>/dev/null && pwd -P)
+: "${UBUNTU_CODENAME:="focal"}"
 
 # Some Windows apps on Ubuntu Kylin
 # https://www.ubuntukylin.com/applications
@@ -29,11 +28,4 @@ sudo apt-get install -y \
 #         "$HOME/.ukylin-wine/photoshop-cs6/drive_c/Program Files/Adobe/Photoshop CS6/Required/Plug-ins/ADM/ADMPlugin.apl.origin"
 # fi
 
-# WPS needs to install symbol fonts.
-if [[ ! -d /usr/share/fonts/wps-fonts ]]; then
-    echo "Installing WPS symbol fonts..."
-    sudo mkdir -p /usr/share/fonts/wps-fonts
-    sudo cp -r "$SCRIPT_DIR/../wps-fonts" /usr/share/fonts
-    sudo chmod 644 /usr/share/fonts/wps-fonts/*
-    sudo fc-cache -vfs
-fi
+

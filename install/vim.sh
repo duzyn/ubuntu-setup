@@ -8,7 +8,7 @@ sudo apt-get install -y vim vim-gtk
 echo "Installing pathogen.vim..."
 mkdir -p "$HOME/.vim/autoload"
 if [[ ! -f "$HOME/.vim/autoload/pathogen.vim" ]]; then
-    wget --show-progress -O "$HOME/.vim/autoload/pathogen.vim" https://ghproxy.com/https://github.com/tpope/vim-pathogen/raw/master/autoload/pathogen.vim
+    wget -O "$HOME/.vim/autoload/pathogen.vim" https://ghproxy.com/https://github.com/tpope/vim-pathogen/raw/master/autoload/pathogen.vim
 fi
 
 function install_vim_plugin() {

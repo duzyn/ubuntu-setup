@@ -8,7 +8,7 @@ TMPDIR="$(mktemp -d)"
 
 # Used for Ventoy VDisk boot
 if [[ "$VTOYBOOT" == "true" ]]; then
-    VTOY_LATEST_VERSION=$(wget --show-progress -qO- --header="Authorization: Bearer $GITHUB_TOKEN" https://api.github.com/repos/ventoy/vtoyboot/releases/latest | jq -r ".tag_name" | tr -d "v")
+    VTOY_LATEST_VERSION=$(wget -qO- --header="Authorization: Bearer $GITHUB_TOKEN" https://api.github.com/repos/ventoy/vtoyboot/releases/latest | jq -r ".tag_name" | tr -d "v")
     VTOY_INSTALLED_VERSION=not_installed
     [[ -e "$HOME/.vtoyboot/VERSION" ]] && VTOY_INSTALLED_VERSION=$(cat "$HOME/.vtoyboot/VERSION")
 
@@ -18,7 +18,7 @@ if [[ "$VTOYBOOT" == "true" ]]; then
 
         # Install new version.
         echo "Downloading vtoyboot $VTOY_LATEST_VERSION..."
-        wget --show-progress -O "$TMPDIR/vtoyboot.iso" "$(wget --show-progress -qO- --header="Authorization: Bearer $GITHUB_TOKEN" https://api.github.com/repos/ventoy/vtoyboot/releases/latest | \
+        wget -O "$TMPDIR/vtoyboot.iso" "$(wget -qO- --header="Authorization: Bearer $GITHUB_TOKEN" https://api.github.com/repos/ventoy/vtoyboot/releases/latest | \
             jq -r ".assets[].browser_download_url" | grep .iso | head -n 1 | sed -e "s|https://github.com|https://ghproxy.com/github.com|g")"
 
         7z x -o"$TMPDIR" "$TMPDIR/vtoyboot.iso"
