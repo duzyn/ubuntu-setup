@@ -95,16 +95,11 @@ function install_vim_plugin() {
 }
 
 ### APT source list
-# I can't connect to freedownloadmanager apt repo, so remove it.
-if [[ -f /etc/apt/sources.list.d/freedownloadmanager.list ]]; then
-    sudo rm /etc/apt/sources.list.d/freedownloadmanager.list
-fi
-
 sudo sed -i -e "s|//.*archive.ubuntu.com|//$APT_MIRROR|g" -e "s|security.ubuntu.com|$APT_MIRROR|g" -e "s|http:|https:|g" /etc/apt/sources.list
 sudo apt-get update
 
 ### Base packages
-sudo apt-get install -y apt-transport-https binutils build-essential bzip2 ca-certificates coreutils curl desktop-file-utils file g++ gcc gdebi gpg gzip jq libfuse2 lsb-release make man-db net-tools ntp p7zip-full patch procps sed software-properties-common tar unzip wget zip
+sudo apt-get install -y apt-transport-https binutils build-essential bzip2 ca-certificates coreutils curl desktop-file-utils file g++ gcc gdebi git gpg gzip jq libfuse2 lsb-release make man-db net-tools ntp p7zip-full patch procps sed software-properties-common tar unzip wget zip
 
 ### Drivers
 sudo apt-get install -y dkms bcmwl-kernel-source nvidia-driver-530
@@ -158,6 +153,7 @@ xfconf-query -c xsettings -p /Gtk/FontName -s "Noto Sans CJK SC 9"
 xfconf-query -c xsettings -p /Gtk/MonospaceFontName -s "Noto Sans Mono CJK SC 9"
 xfconf-query -c xfwm4 -p /general/title_font -s "Noto Sans CJK SC 9"
 
+xfconf-query -c xfce4-notifyd -p /theme -s "Default"
 
 ### Ulauncher
 if [[ -z "$(command -v ulauncher)" ]]; then
@@ -170,6 +166,10 @@ fi
 if [[ "$(wget -qO- "https://www.freedownloadmanager.org/board/viewtopic.php?f=1&t=17900" | grep -Po "([\d.]+)\s*\[\w+.*?STABLE" | head -n 1 | cut -f1 -d " ")" != "$(get_package_version freedownloadmanager)" ]]; then
     wget -O "$TMPDIR/freedownloadmanager.deb" https://files2.freedownloadmanager.org/6/latest/freedownloadmanager.deb
     sudo gdebi -n "$TMPDIR/freedownloadmanager.deb"
+fi
+# I can't connect to freedownloadmanager apt repo, so remove it.
+if [[ -f /etc/apt/sources.list.d/freedownloadmanager.list ]]; then
+    sudo rm /etc/apt/sources.list.d/freedownloadmanager.list
 fi
 
 ### FSearch: https://github.com/cboxdoerfer/fsearch
@@ -203,8 +203,8 @@ sudo apt-get install -y microsoft-edge-stable
 
 ### Onedriver: https://github.com/jstaf/onedriver
 if [[ ! -f /etc/apt/sources.list.d/home:jstaf.list ]]; then
-    echo "deb http://download.opensuse.org/repositories/home:/jstaf/xUbuntu_$UBUNTU_VERSION/ /" | sudo tee /etc/apt/sources.list.d/home:jstaf.list
-    wget -qO- "https://download.opensuse.org/repositories/home:jstaf/xUbuntu_$UBUNTU_VERSION/Release.key" | gpg --dearmor | sudo tee /etc/apt/trusted.gpg.d/home_jstaf.gpg >/dev/null
+    echo "deb http://download.opensuse.org/repositories/home:/jstaf/xUbuntu_$(lsb_release -rs)/ /" | sudo tee /etc/apt/sources.list.d/home:jstaf.list
+    wget -qO- "https://download.opensuse.org/repositories/home:jstaf/xUbuntu_$(lsb_release -rs)/Release.key" | gpg --dearmor | sudo tee /etc/apt/trusted.gpg.d/home_jstaf.gpg >/dev/null
     sudo apt-get update
 fi
 sudo apt-get install -y onedriver
@@ -275,15 +275,18 @@ fi
 sudo apt-get install -y bat fd just ripgrep
 
 ### Sogou Pinyin
-if [[ "$(wget -qO- https://shurufa.sogou.com/linux | grep -Po "https://ime-sec.*?amd64.deb" | cut -f2 -d "_")" != "$(get_package_version sogoupinyin)" ]]; then
-    wget -qO- https://shurufa.sogou.com/linux | grep -Po "https://ime-sec.*?amd64.deb" | xargs wget -O "$TMPDIR/sogoupinyin.deb"
-    sudo apt-get remove -y fcitx-ui-qimpanel
-    sudo gdebi -n "$TMPDIR/sogoupinyin.deb"
-    sudo apt-mark hold fcitx-ui-qimpanel
+if [[ "$(lsb_release -rs)" == "20.04" ]]; then
+    if [[ "$(wget -qO- https://shurufa.sogou.com/linux | grep -Po "https://ime-sec.*?amd64.deb" | cut -f2 -d "_")" != "$(get_package_version sogoupinyin)" ]]; then
+        wget -qO- https://shurufa.sogou.com/linux | grep -Po "https://ime-sec.*?amd64.deb" | xargs wget -O "$TMPDIR/sogoupinyin.deb"
+        sudo apt-get remove -y fcitx-ui-qimpanel
+        sudo gdebi -n "$TMPDIR/sogoupinyin.deb"
+        sudo apt-mark hold fcitx-ui-qimpanel
+    fi
 fi
 
 
 ### GitHub Releases apps
+# install_github_releases_apps vercel/hyper hyper amd64.deb
 install_github_releases_apps dbeaver/dbeaver dbeaver-ce amd64.deb
 install_github_releases_apps Figma-Linux/figma-linux figma-linux .amd64.deb
 install_github_releases_apps flameshot-org/flameshot flameshot "ubuntu-$(lsb_release -rs).amd64.deb"
@@ -302,10 +305,11 @@ install_appimage_apps laurent22/joplin joplin
 if [[ ! -e "$HOME/.local/share/icons/hicolor/512x512/apps/joplin.png" ]]; then
     wget -O "$TMPDIR/joplin.png" https://joplinapp.org/images/Icon512.png
     sudo mkdir -p "$HOME/.local/share/icons/hicolor/512x512/apps"
-    sudo mv "$TMPDIR/joplin.png" "$HOME/.local/share/icons/hicolor/512x512/apps/joplin.png"
+    sudo mv "$TMPDIR/joplin.png" "$HOME/.local/share/icons/hicolor/512x512/apps"
 fi
 
-cat <<EOF > "$HOME/.local/share/applications/joplin.desktop"
+mkdir -p "$HOME/.local/share/applications"
+cat <<EOF | sudo tee "$HOME/.local/share/applications/joplin.desktop"
 [Desktop Entry]
 Encoding=UTF-8
 Name=Joplin
@@ -490,7 +494,17 @@ fi
 # done
 
 ### Extras
-sudo apt-get install -y android-sdk-platform-tools aria2 audacity calibre digikam filezilla ffmpeg freecad ghostscript gimp git handbrake imagemagick inkscape libvips-tools mupdf mupdf-tools neofetch network-manager-openvpn-gnome obs-studio openjdk-11-jre openvpn pdfarranger plank proxychains4 scrcpy scribus shotcut sigil subversion vlc wkhtmltopdf xfce4-appmenu-plugin xfce4-clipman-plugin
+sudo apt-get install -y android-sdk-platform-tools aria2 audacity calibre digikam filezilla ffmpeg freecad ghostscript gimp handbrake imagemagick inkscape libvips-tools mupdf mupdf-tools neofetch network-manager-openvpn-gnome obs-studio openjdk-11-jre openvpn pdfarranger plank proxychains4 scrcpy scribus shotcut sigil subversion vlc wkhtmltopdf xfce4-appmenu-plugin xfce4-clipman-plugin
+# autostart
+if [[ ! -e /etc/xdg/autostart/plank.desktop ]]; then
+    sudo cp -f /usr/share/applications/plank.desktop /etc/xdg/autostart
+fi
+
+mkdir -p "$HOME/.config/autostart"
+if [[ ! -e "$HOME/.config/autostart/start-tor-browser.desktop" ]]; then
+    cp -f "$HOME/.local/share/applications/start-tor-browser.desktop" "$HOME/.config/autostart"
+fi
+
 
 echo "Uninstalling unnecessary apps..."
 sudo apt-get clean -y
@@ -519,7 +533,7 @@ if [[ "$VTOYBOOT" == "true" ]]; then
         # Install new version.
         wget -qO- --header="Authorization: Bearer $GITHUB_TOKEN" https://api.github.com/repos/ventoy/vtoyboot/releases/latest | jq -r ".assets[].browser_download_url" | grep .iso | head -n 1 | sed -e "s|https://github.com|https://ghproxy.com/github.com|g" | xargs wget -O "$TMPDIR/vtoyboot.iso"
 
-        7z x -o "$TMPDIR" "$TMPDIR/vtoyboot.iso"
+        7z x -o"$TMPDIR" "$TMPDIR/vtoyboot.iso"
         mkdir -p "$HOME/.vtoyboot"
         tar --extract --gz --directory "$HOME/.vtoyboot" --file "$TMPDIR/vtoyboot-$VTOY_LATEST_VERSION.tar.gz"
 
