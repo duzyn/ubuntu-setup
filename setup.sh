@@ -191,16 +191,23 @@ if [[ ! -f /etc/apt/sources.list.d/microsoft-edge.list ]]; then
     sudo install -D -o root -g root -m 644 "$TMPDIR/microsoft.gpg" /usr/share/keyrings/microsoft.gpg
     echo "deb [arch=amd64 signed-by=/usr/share/keyrings/microsoft.gpg] https://packages.microsoft.com/repos/edge stable main" | sudo tee /etc/apt/sources.list.d/microsoft-edge.list
     sudo apt-get update
+    sudo apt-get install -y microsoft-edge-stable
 fi
-sudo apt-get install -y microsoft-edge-stable
 
 ### Onedriver: https://github.com/jstaf/onedriver
 if [[ ! -f /etc/apt/sources.list.d/home:jstaf.list ]]; then
     echo "deb https://download.opensuse.org/repositories/home:/jstaf/xUbuntu_$(lsb_release -rs)/ /" | sudo tee /etc/apt/sources.list.d/home:jstaf.list
     wget -qO- "https://download.opensuse.org/repositories/home:jstaf/xUbuntu_$(lsb_release -rs)/Release.key" | gpg --dearmor | sudo tee /etc/apt/trusted.gpg.d/home_jstaf.gpg >/dev/null
     sudo apt-get update
+    sudo apt-get install -y onedriver
 fi
-sudo apt-get install -y onedriver
+
+### CopyQ
+if [[ -z "$(command -v copyq)" ]]; then
+    sudo add-apt-repository -y ppa:hluk/copyq
+    sudo apt update
+    sudo apt install -y copyq
+fi
 
 ### Visual Studio Code: https://code.visualstudio.com/docs/setup/linux
 if [[ ! -f /etc/apt/sources.list.d/vscode.list ]]; then
