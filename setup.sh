@@ -196,7 +196,7 @@ sudo apt-get install -y microsoft-edge-stable
 
 ### Onedriver: https://github.com/jstaf/onedriver
 if [[ ! -f /etc/apt/sources.list.d/home:jstaf.list ]]; then
-    echo "deb http://download.opensuse.org/repositories/home:/jstaf/xUbuntu_$(lsb_release -rs)/ /" | sudo tee /etc/apt/sources.list.d/home:jstaf.list
+    echo "deb https://download.opensuse.org/repositories/home:/jstaf/xUbuntu_$(lsb_release -rs)/ /" | sudo tee /etc/apt/sources.list.d/home:jstaf.list
     wget -qO- "https://download.opensuse.org/repositories/home:jstaf/xUbuntu_$(lsb_release -rs)/Release.key" | gpg --dearmor | sudo tee /etc/apt/trusted.gpg.d/home_jstaf.gpg >/dev/null
     sudo apt-get update
 fi
@@ -213,7 +213,8 @@ fi
 # https://miktex.org/download#ubuntu and
 # https://mirrors.ustc.edu.cn/CTAN/systems/win32/miktex/doc/miktex.pdf
 if [[ -z "$(command -v miktex)" ]]; then
-    sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys D6BC243565B2087BC3F897C9277A7293F59E4889
+    wget -qO- "https://keyserver.ubuntu.com/pks/lookup?op=get&search=0xD6BC243565B2087BC3F897C9277A7293F59E4889" | gpg --dearmor | sudo tee /etc/apt/trusted.gpg.d/miktex.gpg >/dev/null
+    
     echo "deb [arch=amd64] https://mirrors.ustc.edu.cn/CTAN/systems/win32/miktex/setup/deb $(lsb_release -cs) universe" | sudo tee /etc/apt/sources.list.d/miktex.list
     sudo apt-get update
     sudo apt-get install -y miktex
