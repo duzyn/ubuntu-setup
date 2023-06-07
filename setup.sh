@@ -20,7 +20,7 @@ set -o pipefail
 : "${LOCALE:="zh_CN"}"
 : "${NVM_NODEJS_ORG_MIRROR:="https://npmmirror.com/mirrors/node"}"
 : "${NPM_REGISTRY_MIRROR:="https://registry.npmmirror.com"}"
-: "${VTOYBOOT:="true"}"
+: "${VTOYBOOT:="false"}"
 
 TMPDIR="$(mktemp -d)"
 export DEBIAN_FRONTEND=noninteractive
@@ -105,7 +105,7 @@ sudo apt-get install -y apt-transport-https binutils build-essential bzip2 ca-ce
 sudo apt-get install -y dkms bcmwl-kernel-source nvidia-driver-530
 
 ### Fonts
-sudo apt-get install -y fonts-cascadia-code fonts-emojione fonts-droid-fallback fonts-firacode fonts-noto-color-emoji fonts-open-sans fonts-roboto fonts-ubuntu
+sudo apt-get install -y fonts-cascadia-code fonts-emojione fonts-droid-fallback fonts-firacode fonts-noto-color-emoji fonts-open-sans fonts-roboto fonts-stix fonts-ubuntu
 
 # Locale
 if [[ "$LOCALE" == "zh_CN" ]]; then
@@ -154,13 +154,6 @@ xfconf-query -c xsettings -p /Gtk/MonospaceFontName -s "Noto Sans Mono CJK SC 9"
 xfconf-query -c xfwm4 -p /general/title_font -s "Noto Sans CJK SC 9"
 
 xfconf-query -c xfce4-notifyd -p /theme -s "Default"
-
-### Ulauncher
-if [[ -z "$(command -v ulauncher)" ]]; then
-    sudo add-apt-repository -y ppa:agornostal/ulauncher
-    sudo apt update
-    sudo apt install -y ulauncher
-fi
 
 ### Free Download Manager
 if [[ "$(wget -qO- "https://www.freedownloadmanager.org/board/viewtopic.php?f=1&t=17900" | grep -Po "([\d.]+)\s*\[\w+.*?STABLE" | head -n 1 | cut -f1 -d " ")" != "$(get_package_version freedownloadmanager)" ]]; then
@@ -213,8 +206,8 @@ sudo apt-get install -y onedriver
 if [[ ! -f /etc/apt/sources.list.d/vscode.list ]]; then
     echo "deb [arch=amd64 signed-by=/usr/share/keyrings/microsoft.gpg] https://packages.microsoft.com/repos/vscode stable main" | sudo tee /etc/apt/sources.list.d/vscode.list
     sudo apt-get update
+    sudo apt-get install -y code
 fi
-sudo apt-get install -y code
 
 ### MiKTeX
 # https://miktex.org/download#ubuntu and
@@ -299,9 +292,9 @@ install_github_releases_apps peazip/PeaZip peazip .GTK2-1_amd64.deb
 install_github_releases_apps shiftkey/desktop github-desktop .deb
 install_github_releases_apps Zettlr/Zettlr zettlr amd64.deb
 
-### GitHub Releases apps
+### GitHub Releases AppImage apps
+# Joplin
 install_appimage_apps laurent22/joplin joplin
-# Desktop entry
 if [[ ! -e "$HOME/.local/share/icons/hicolor/512x512/apps/joplin.png" ]]; then
     wget -O "$TMPDIR/joplin.png" https://joplinapp.org/images/Icon512.png
     sudo mkdir -p "$HOME/.local/share/icons/hicolor/512x512/apps"
@@ -323,6 +316,19 @@ MimeType=x-scheme-handler/joplin;
 X-GNOME-SingleWindow=true
 SingleMainWindow=true
 EOF
+
+# Losslesscut
+install_appimage_apps mifi/lossless-cut losslesscut
+if [[ ! -e "$HOME/.local/share/icons/hicolor/scalable/apps/losslesscut.svg" ]]; then
+    wget -O "$TMPDIR/losslesscut.svg" https://ghproxy.com/https://github.com/mifi/lossless-cut/raw/master/src/icon.svg
+    sudo mkdir -p "$HOME/.local/share/icons/hicolor/scalable/apps"
+    sudo mv "$TMPDIR/losslesscut.svg" "$HOME/.local/share/icons/hicolor/scalable/apps"
+fi
+
+mkdir -p "$HOME/.local/share/applications"
+wget -O "$TMPDIR/losslesscut.desktop" https://ghproxy.com/https://github.com/mifi/lossless-cut/raw/master/no.mifi.losslesscut.desktop
+sudo mv "$TMPDIR/losslesscut.desktop" "$HOME/.local/share/applications/losslesscut.desktop"
+sudo sed -i -e "s|Exec=.*|Exec=$HOME/.AppImageApplications/losslesscut.AppImage %u|g" "$HOME/.local/share/applications/losslesscut.desktop"
 
 update-desktop-database "$HOME/.local/share/applications"
 
