@@ -1,3 +1,7 @@
+#!/usr/bin/env bash
+
+export DEBIAN_FRONTEND=noninteractive
+
 ### Ulauncher
 if [[ -z "$(command -v ulauncher)" ]]; then
     sudo add-apt-repository -y ppa:agornostal/ulauncher

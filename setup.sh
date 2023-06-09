@@ -99,7 +99,7 @@ sudo sed -i -e "s|//.*archive.ubuntu.com|//$APT_MIRROR|g" -e "s|security.ubuntu.
 sudo apt-get update
 
 ### Base packages
-sudo apt-get install -y apt-transport-https binutils build-essential bzip2 ca-certificates coreutils curl desktop-file-utils file g++ gcc gdebi git gpg gzip jq libfuse2 lsb-release make man-db net-tools ntp p7zip-full patch procps sed software-properties-common tar unzip wget zip
+sudo apt-get install -y apt-transport-https binutils build-essential bzip2 ca-certificates coreutils curl desktop-file-utils file g++ gcc gdebi gpg gzip jq libfuse2 lsb-release make man-db net-tools ntp p7zip-full patch procps sed software-properties-common tar unzip wget zip
 
 ### Drivers
 sudo apt-get install -y dkms bcmwl-kernel-source nvidia-driver-530
@@ -171,6 +171,14 @@ if [[ -z "$(command -v fsearch)" ]]; then
     sudo apt-get update
     sudo apt-get install -y fsearch
 fi
+
+# Git latest version
+if [[ -z "$(command -v git)" ]]; then
+    sudo add-apt-repository -y ppa:git-core/ppa
+    sudo apt-get update
+    sudo apt-get install -y git
+fi
+
 
 ### Google Chrome: https://google.cn/chrome
 if [[ -z "$(command -v google-chrome-stable)" ]]; then
