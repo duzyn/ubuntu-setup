@@ -179,9 +179,9 @@ if [[ -z "$(command -v google-chrome-stable)" ]]; then
 fi
 
 ### Greenfish Icon Editor Pro
-# TODO update
-if ! dpkg -s gfie &>/dev/null; then
-    wget -O "$TMPDIR/gfie.deb" http://greenfishsoftware.org/dl/gfie/gfie-4.2.deb
+GFIE_LATEST_VESION="$(wget -qO- "http://greenfishsoftware.org/gfie.php#apage" | grep -Po "Latest.+stable.+release\s\([\d.]+\)" | grep -Po "[\d.]+")"
+if [[ "$GFIE_LATEST_VESION" != "$(get_package_version gfie)" ]]; then
+    wget -O "$TMPDIR/gfie.deb" "http://greenfishsoftware.org/dl/gfie/gfie-$GFIE_LATEST_VESION.deb"
     sudo gdebi -n "$TMPDIR/gfie.deb"
 fi
 
