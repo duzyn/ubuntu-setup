@@ -41,7 +41,7 @@ install_github_releases_apps() {
     PACKAGE_NAME="$2"
     PATTERN="$3"
     API_URL="https://api.github.com/repos/$REPO_NAME/releases/latest"
-    VERSION_LATEST="$(wget -qO- --header="Authorization: Bearer $GITHUB_TOKEN" "$API_URL" | jq -r ".tag_name" | tr -d "v")"
+    VERSION_LATEST="$(wget -qO- --header="Authorization: Bearer $GITHUB_TOKEN" "$API_URL" | jq -r '.tag_name' | tr -d "v")"
     VERSION_INSTALLED="$(get_package_version "$PACKAGE_NAME")"
 
     if ! [[ "$VERSION_LATEST" == *"$VERSION_INSTALLED"* || "$VERSION_INSTALLED" == *"$VERSION_LATEST"* ]]; then
@@ -55,7 +55,7 @@ install_appimage_apps() {
     local REPO_NAME PACKAGE_NAME VERSION_LATEST VERSION_INSTALLED
     REPO_NAME="$1"
     PACKAGE_NAME="$2"
-    VERSION_LATEST="$(wget -qO- --header="Authorization: Bearer $GITHUB_TOKEN" "https://api.github.com/repos/$REPO_NAME/releases/latest" | jq -r ".tag_name" | tr -d "v")"
+    VERSION_LATEST="$(wget -qO- --header="Authorization: Bearer $GITHUB_TOKEN" "https://api.github.com/repos/$REPO_NAME/releases/latest" | jq -r '.tag_name' | tr -d "v")"
 
     if [[ -e "$HOME/.AppImageApplications/$PACKAGE_NAME.VERSION" ]]; then
         VERSION_INSTALLED=$(cat "$HOME/.AppImageApplications/$PACKAGE_NAME.VERSION")
@@ -307,6 +307,7 @@ install_github_releases_apps OpenBoard-org/OpenBoard openboard "$(lsb_release -r
 install_github_releases_apps peazip/PeaZip peazip .GTK2-1_amd64.deb
 install_github_releases_apps shiftkey/desktop github-desktop .deb
 install_github_releases_apps Zettlr/Zettlr zettlr amd64.deb
+# install_github_releases_apps bitwarden/clients bitwarden amd64.deb
 
 ### GitHub Releases AppImage apps
 # Joplin
@@ -349,7 +350,8 @@ sudo sed -i -e "s|Exec=.*|Exec=$HOME/.AppImageApplications/losslesscut.AppImage 
 update-desktop-database "$HOME/.local/share/applications"
 
 ### Tor Browser
-TOR_BROWSER_LATEST_VERSION=$(wget -qO- --header="Authorization: Bearer $GITHUB_TOKEN" "https://api.github.com/repos/TheTorProject/gettorbrowser/releases/latest" | jq -r ".tag_name" | sed "s/.*-//g")
+TOR_BROWSER_API_URL="https://api.github.com/repos/TheTorProject/gettorbrowser/releases"
+TOR_BROWSER_LATEST_VERSION=$(wget -qO- --header="Authorization: Bearer $GITHUB_TOKEN" "$TOR_BROWSER_API_URL" | jq -r '.[].tag_name' | grep -Po "linux64-.+" | head -n 1 | cut -f2 -d "-")
 
 if [[ -e "$HOME/.tor-browser/VERSION" ]]; then
     TOR_BROWSER_INSTALLED_VERSION=$(cat "$HOME/.tor-browser/VERSION")
@@ -358,7 +360,11 @@ else
 fi
 
 if [[ "$TOR_BROWSER_INSTALLED_VERSION" != "$TOR_BROWSER_LATEST_VERSION" ]]; then
-    wget -O "$TMPDIR/tor-browser.tar.xz" "https://ghproxy.com/https://github.com/TheTorProject/gettorbrowser/releases/download/linux64-${TOR_BROWSER_LATEST_VERSION}/tor-browser-linux64-${TOR_BROWSER_LATEST_VERSION}_ALL.tar.xz"
+    wget -qO- --header="Authorization: Bearer $GITHUB_TOKEN" "$TOR_BROWSER_API_URL" | \
+        jq -r ".[].assets[].browser_download_url" | \
+        grep -Po "https://.+linux64-.+_ALL\.tar\.xz" | head -n 1 | \
+        sed -e "s|https://github.com|https://ghproxy.com/github.com|g" | \
+        xargs wget -O "$TMPDIR/tor-browser.tar.xz"
 
     # Remove old version.
     if [[ -f "$HOME/.tor-browser/tor-browser/Browser/start-tor-browser" ]]; then
@@ -497,12 +503,18 @@ fi
 # WPS needs to install symbol fonts.
 if [[ ! -f /usr/share/fonts/wps-fonts/mtextra.ttf ]] || [[ ! -f /usr/share/fonts/wps-fonts/symbol.ttf ]] || [[ ! -f /usr/share/fonts/wps-fonts/WEBDINGS.TTF ]] || [[ ! -f /usr/share/fonts/wps-fonts/wingding.ttf ]] || [[ ! -f /usr/share/fonts/wps-fonts/WINGDNG2.ttf ]] || [[ ! -f /usr/share/fonts/wps-fonts/WINGDNG3.ttf ]]; then
     sudo mkdir -p /usr/share/fonts/wps-fonts
-    wget -P "$TMPDIR/wps-fonts" https://ghproxy.com/https://github.com/BannedPatriot/ttf-wps-fonts/raw/master/mtextra.ttf
-    wget -P "$TMPDIR/wps-fonts" https://ghproxy.com/https://github.com/BannedPatriot/ttf-wps-fonts/raw/master/symbol.ttf
-    wget -P "$TMPDIR/wps-fonts" https://ghproxy.com/https://github.com/BannedPatriot/ttf-wps-fonts/raw/master/WEBDINGS.TTF
-    wget -P "$TMPDIR/wps-fonts" https://ghproxy.com/https://github.com/BannedPatriot/ttf-wps-fonts/raw/master/wingding.ttf
-    wget -P "$TMPDIR/wps-fonts" https://ghproxy.com/https://github.com/BannedPatriot/ttf-wps-fonts/raw/master/WINGDNG2.ttf
-    wget -P "$TMPDIR/wps-fonts" https://ghproxy.com/https://github.com/BannedPatriot/ttf-wps-fonts/raw/master/WINGDNG3.ttf
+    [[ -f /usr/share/fonts/wps-fonts/mtextra.ttf ]] || \
+        wget -P "$TMPDIR/wps-fonts" https://ghproxy.com/https://github.com/BannedPatriot/ttf-wps-fonts/raw/master/mtextra.ttf
+    [[ -f /usr/share/fonts/wps-fonts/symbol.ttf ]] || \
+        wget -P "$TMPDIR/wps-fonts" https://ghproxy.com/https://github.com/BannedPatriot/ttf-wps-fonts/raw/master/symbol.ttf
+    [[ -f /usr/share/fonts/wps-fonts/WEBDINGS.TTF ]] || \
+        wget -P "$TMPDIR/wps-fonts" https://ghproxy.com/https://github.com/BannedPatriot/ttf-wps-fonts/raw/master/WEBDINGS.TTF
+    [[ -f /usr/share/fonts/wps-fonts/symbol.ttf ]] || \
+        wget -P "$TMPDIR/wps-fonts" https://ghproxy.com/https://github.com/BannedPatriot/ttf-wps-fonts/raw/master/wingding.ttf
+    [[ -f /usr/share/fonts/wps-fonts/wingding.ttf ]] || \
+        wget -P "$TMPDIR/wps-fonts" https://ghproxy.com/https://github.com/BannedPatriot/ttf-wps-fonts/raw/master/WINGDNG2.ttf
+    [[ -f /usr/share/fonts/wps-fonts/WINGDNG2.ttf ]] || \
+        wget -P "$TMPDIR/wps-fonts" https://ghproxy.com/https://github.com/BannedPatriot/ttf-wps-fonts/raw/master/WINGDNG3.ttf
     sudo rm -rf /usr/share/fonts/wps-fonts
     sudo cp -rf "$TMPDIR/wps-fonts" /usr/share/fonts
     sudo chmod 644 /usr/share/fonts/wps-fonts/*
