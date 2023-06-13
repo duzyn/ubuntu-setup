@@ -2,9 +2,8 @@
 
 export DEBIAN_FRONTEND=noninteractive
 
-# CopyQ
 if [[ -z "$(command -v copyq)" ]]; then
     sudo add-apt-repository -y ppa:hluk/copyq
-    sudo apt update
-    sudo apt install -y copyq
+    sudo apt-get update
+    sudo apt-get install -y copyq
 fi
