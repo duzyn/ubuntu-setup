@@ -13,7 +13,6 @@ sudo apt-get install -y \
     gimp \
     handbrake \
     imagemagick \
-    inkscape \
     obs-studio \
     openjdk-11-jre \
     scribus \

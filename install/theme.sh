@@ -33,8 +33,8 @@ if [[ -n "$(command -v xfconf-query)" ]]; then
     xfconf-query -c xsettings -p /Gtk/MonospaceFontName -s "Fira Code 10"
     if [[ "$LOCALE" == "zh_CN" ]]; then
         sudo apt-get install -y fonts-noto-cjk fonts-noto-cjk-extra
-        xfconf-query -c xsettings -p /Gtk/FontName -s "Noto Sans CJK SC 10"
-        xfconf-query -c xfwm4 -p /general/title_font -s "Noto Sans CJK SC 10"
+        xfconf-query -c xsettings -p /Gtk/FontName -s "Noto Sans CJK SC 9"
+        xfconf-query -c xfwm4 -p /general/title_font -s "Noto Sans CJK SC 9"
     else
         xfconf-query -c xsettings -p /Gtk/FontName -s "Open Sans 10"
         xfconf-query -c xfwm4 -p /general/title_font -s "Open Sans 10"

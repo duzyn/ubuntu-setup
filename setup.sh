@@ -33,7 +33,6 @@ sudo apt-get install -y \
     gcc \
     gdebi \
     gpg \
-    git \
     gzip \
     jq \
     libfuse2 \
