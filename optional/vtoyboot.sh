@@ -1,12 +1,27 @@
 #!/usr/bin/env bash
 
+# Exit on error. Append "|| true" if you expect an error.
+set -o errexit
+# Exit on error inside any functions or subshells.
+set -o errtrace
+# Do not allow use of undefined vars. Use ${VAR:-} to use an undefined VAR
+set -o nounset
+# Catch the error in case mysqldump fails (but gzip succeeds) in `mysqldump | gzip`
+set -o pipefail
+# Turn on traces, useful while debugging but commented out by default
+set -o xtrace
+
 export DEBIAN_FRONTEND=noninteractive
 
 # Used for Ventoy VDisk boot
 LATEST_VERSION=$(wget -qO- --header="Authorization: Bearer $GITHUB_TOKEN" \
     https://api.github.com/repos/ventoy/vtoyboot/releases/latest | jq -r ".tag_name" | tr -d "v")
-CURRENT_VERSION=noversion
-[[ -e "$HOME/.vtoyboot/VERSION" ]] && CURRENT_VERSION=$(cat "$HOME/.vtoyboot/VERSION")
+
+if [[ -e "$HOME/.vtoyboot/VERSION" ]]; then
+    CURRENT_VERSION=$(cat "$HOME/.vtoyboot/VERSION")
+else
+    CURRENT_VERSION=noversion
+fi
 
 if [[ "$CURRENT_VERSION" != "$LATEST_VERSION" ]]; then
     # Remove old version.
