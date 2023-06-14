@@ -4,7 +4,10 @@ export DEBIAN_FRONTEND=noninteractive
 
 sudo apt-get install -y \
     android-sdk-platform-tools \
+    ffmpeg \
     filezilla \
+    ghostscript \
+    gimp \
     libvips-tools \
     mupdf \
     mupdf-tools \
@@ -13,4 +16,6 @@ sudo apt-get install -y \
     openvpn \
     pdfarranger \
     proxychains4 \
-    scrcpy
+    scrcpy \
+    scribus \
+    vlc

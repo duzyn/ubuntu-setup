@@ -7,17 +7,11 @@ sudo apt-get install -y \
     audacity \
     calibre \
     digikam \
-    ffmpeg \
-    freecad \
-    ghostscript \
-    gimp \
     handbrake \
     imagemagick \
     obs-studio \
     openjdk-11-jre \
-    scribus \
     shotcut \
     sigil \
     subversion \
-    vlc \
     wkhtmltopdf
