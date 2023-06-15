@@ -13,22 +13,6 @@ set -o xtrace
 
 export DEBIAN_FRONTEND=noninteractive
 
-# Install vim plugin
-function install_vim_plugin() {
-    local REPO_NAME PLUGIN_NAME
-    REPO_NAME="$1"
-    PLUGIN_NAME="$(basename "$REPO_NAME")"
-
-    mkdir -p "$HOME/.vim/bundle"
-    if [[ -d "$HOME/.vim/bundle/$PLUGIN_NAME" ]]; then
-        cd "$HOME/.vim/bundle/$PLUGIN_NAME" || exit
-        git pull
-    else
-        git clone --depth 1 "https://ghproxy.com/https://github.com/$REPO_NAME" "$HOME/.vim/bundle/$PLUGIN_NAME"
-    fi
-}
-
-### GVim
 sudo apt-get update
 sudo apt-get install -y vim vim-gtk
 
@@ -38,10 +22,12 @@ if [[ ! -f "$HOME/.vim/autoload/pathogen.vim" ]]; then
         https://ghproxy.com/https://github.com/tpope/vim-pathogen/raw/master/autoload/pathogen.vim
 fi
 
-install_vim_plugin yianwillis/vimcdoc
-install_vim_plugin sheerun/vim-polyglot
-install_vim_plugin vim-airline/vim-airline
-install_vim_plugin dracula/vim
+# Install vim plugin
+mkdir -p "$HOME/.vim/bundle"
+git clone --depth 1 "https://ghproxy.com/https://github.com/yianwillis/vimcdoc" "$HOME/.vim/bundle/vimcdoc"
+git clone --depth 1 "https://ghproxy.com/https://github.com/sheerun/vim-polyglot" "$HOME/.vim/bundle/vim-polyglot"
+git clone --depth 1 "https://ghproxy.com/https://github.com/vim-airline/vim-airline" "$HOME/.vim/bundle/vim-airline"
+git clone --depth 1 "https://ghproxy.com/https://github.com/dracula/vim" "$HOME/.vim/bundle/vim-dracula"
 
 # vimrc
 cat <<EOF >"$HOME/.vimrc"
