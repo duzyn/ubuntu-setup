@@ -25,7 +25,7 @@ fi
 
 if ! [[ "$LATEST_VERSION" == *"$CURRENT_VERSION"* || "$CURRENT_VERSION" == *"$LATEST_VERSION"* ]]; then
     wget -qO- --header="Authorization: Bearer $GITHUB_TOKEN" "$API_URL" | \
-        grep -Po "https://.+\.deb" | head -n 1 | \
+        grep -Po "https://.+amd64.+\.deb" | head -n 1 | \
         sed -e "s|https://github.com|https://ghproxy.com/https://github.com|g" | \
         xargs wget -O "$TEMP_DIR/draw.io.deb"
     if [[ -z "$(command -v gdebi)" ]]; then
