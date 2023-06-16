@@ -15,6 +15,7 @@ set -o pipefail
 set -o xtrace
 
 export DEBIAN_FRONTEND=noninteractive
+SCRIPT_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" &>/dev/null && pwd -P)
 
 sudo apt-get update
 
@@ -51,7 +52,7 @@ sudo apt-get install -y \
     wget \
     zip
 
-for FILE in ./install/*.sh; do
+for FILE in "$SCRIPT_DIR"/install/*.sh; do
     # shellcheck source=/dev/null
     . "$FILE"
 done

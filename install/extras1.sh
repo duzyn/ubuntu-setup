@@ -26,7 +26,6 @@ sudo apt-get install -y \
     network-manager-openvpn-gnome \
     openvpn \
     pdfarranger \
-    proxychains4 \
     scrcpy \
     scribus \
     vlc
