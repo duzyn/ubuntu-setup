@@ -28,7 +28,7 @@ wget -qO- --header="Authorization: Bearer $GITHUB_TOKEN" https://api.github.com/
     grep -Po "https://.+pac-gfwlist-17mon\.txt\.gz" | head -n 1 | \
     sed -e "s|https://github.com|https://ghproxy.com/https://github.com|g" | \
     xargs wget -O "$SCRIPT_DIR/pac-gfwlist-17mon.txt.gz"
-gzip -d "$SCRIPT_DIR/pac-gfwlist-17mon.txt.gz"
+gzip -d -f "$SCRIPT_DIR/pac-gfwlist-17mon.txt.gz"
 rm -f "$SCRIPT_DIR/pac-gfwlist-17mon.txt.gz"
 
 if [[ -f "$SCRIPT_DIR/pac-gfwlist-17mon.txt" ]]; then
