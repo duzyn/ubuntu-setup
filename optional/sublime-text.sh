@@ -13,9 +13,10 @@ set -o xtrace
 
 export DEBIAN_FRONTEND=noninteractive
 
-if [[ -z "$(command -v deb-get)" ]]; then
-    wget -qO- https://ghproxy.com/https://raw.githubusercontent.com/wimpysworld/deb-get/main/deb-get | sudo -E bash -s install deb-get
+if [[ -z "$(command -v sublime-text)" ]]; then
+    wget -qO - https://download.sublimetext.com/sublimehq-pub.gpg | gpg --dearmor | sudo tee /etc/apt/trusted.gpg.d/sublimehq-archive.gpg > /dev/null
+    echo "deb https://download.sublimetext.com/ apt/stable/" | sudo tee /etc/apt/sources.list.d/sublime-text.list
+    sudo apt-get update
+    sudo apt-get install -y sublime-text
 fi
 
-deb-get update
-# deb-get install bitwarden

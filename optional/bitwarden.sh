@@ -24,15 +24,16 @@ else
     CURRENT_VERSION=noversion
 fi
 
+if [[ -z "$(command -v gdebi)" ]]; then
+    sudo apt-get update
+    sudo apt-get install -y gdebi
+fi
+
 if ! [[ "$LATEST_VERSION" == *"$CURRENT_VERSION"* || "$CURRENT_VERSION" == *"$LATEST_VERSION"* ]]; then
     wget -qO- --header="Authorization: Bearer $GITHUB_TOKEN" "$API_URL" | \
         grep -Po "https://.+amd64\.deb" | head -n 1 | \
         sed -e "s|https://github.com|https://ghproxy.com/https://github.com|g" | \
         xargs wget -O "$TEMP_DIR/bitwarden.deb"
-    if [[ -z "$(command -v gdebi)" ]]; then
-        sudo apt-get update
-        sudo apt-get install -y gdebi
-    fi
     sudo gdebi -n "$TEMP_DIR/bitwarden.deb"
 fi
 

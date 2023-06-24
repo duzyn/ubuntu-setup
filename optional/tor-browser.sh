@@ -11,21 +11,11 @@ set -o pipefail
 # Turn on traces, useful while debugging but commented out by default
 set -o xtrace
 
-# Exit on error. Append "|| true" if you expect an error.
-set -o errexit
-# Exit on error inside any functions or subshells.
-set -o errtrace
-# Do not allow use of undefined vars. Use ${VAR:-} to use an undefined VAR
-set -o nounset
-# Catch the error in case mysqldump fails (but gzip succeeds) in `mysqldump | gzip`
-set -o pipefail
-# Turn on traces, useful while debugging but commented out by default
-set -o xtrace
-
 export DEBIAN_FRONTEND=noninteractive
 TEMP_DIR="$(mktemp -d)"
 
-### Tor Browser
+# Tor Browser
+# It's recommended using Tor Browser to update itself
 API_URL="https://api.github.com/repos/TheTorProject/gettorbrowser/releases"
 LATEST_VERSION=$(wget -qO- --header="Authorization: Bearer $GITHUB_TOKEN" "$API_URL" | \
     jq -r '.[].tag_name' | grep -Po "linux64-.+" | head -n 1 | cut -f2 -d "-")
@@ -57,7 +47,6 @@ if [[ "$CURRENT_VERSION" != "$LATEST_VERSION" ]]; then
     # Record version
     echo "$LATEST_VERSION" >"$HOME/.tor-browser/VERSION"
 fi
-
 
 mkdir -p "$HOME/.config/autostart"
 [[ ! -e "$HOME/.config/autostart/start-tor-browser.desktop" ]] && \

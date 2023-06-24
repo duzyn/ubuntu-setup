@@ -15,7 +15,7 @@ export DEBIAN_FRONTEND=noninteractive
 : "${LOCALE:="zh_CN"}"
 
 # https://launchpad.net/~libreoffice/+archive/ubuntu/ppa
-if [[ -z "$(command -v libreoffice-writer)" ]]; then
+if ! dpkg -s libreoffice &>/dev/null; then
     sudo add-apt-repository -y ppa:libreoffice/ppa
     sudo apt-get update
     sudo apt-get install -y libreoffice
