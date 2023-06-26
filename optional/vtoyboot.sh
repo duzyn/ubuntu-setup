@@ -15,7 +15,7 @@ export DEBIAN_FRONTEND=noninteractive
 
 # Used for Ventoy VDisk boot
 LATEST_VERSION=$(wget -qO- --header="Authorization: Bearer $GITHUB_TOKEN" \
-    https://api.github.com/repos/ventoy/vtoyboot/releases/latest | jq -r ".tag_name" | tr -d "v")
+    https://api.github.com/repos/ventoy/vtoyboot/releases/latest | grep tag_name | head -n 1 | cut -f4 -d "\"" | tr -d "v")
 
 if [[ -e "$HOME/.vtoyboot/VERSION" ]]; then
     CURRENT_VERSION=$(cat "$HOME/.vtoyboot/VERSION")
@@ -30,7 +30,7 @@ if [[ "$CURRENT_VERSION" != "$LATEST_VERSION" ]]; then
     # Install new version.
     wget -qO- --header="Authorization: Bearer $GITHUB_TOKEN" \
         https://api.github.com/repos/ventoy/vtoyboot/releases/latest | \
-        jq -r ".assets[].browser_download_url" | grep .iso | head -n 1 | \
+        grep -Po "https://.*\.iso" | head -n 1 | \
         sed -e "s|https://github.com|https://ghproxy.com/github.com|g" | \
         xargs wget -O "$TEMP_DIR/vtoyboot.iso"
 

@@ -46,7 +46,7 @@ install_vim_plugin dracula/vim
 cd "$SCRIPT_DIR" || exit 1
 
 # vimrc
-cat <<EOF >"$HOME/.vimrc" 
+tee "$HOME/.vimrc" <<"EOF"
 execute pathogen#infect()
 syntax on
 colorscheme dracula
@@ -65,8 +65,8 @@ set fileencodings=ucs-bom,utf-8,cp936,gb18030,big5,euc-jp,euc-kr,latin1
 " set langmenu=en_US.UTF-8
 language messages zh_CN.UTF-8
 set langmenu=zh_CN.UTF-8
-source \$VIMRUNTIME/delmenu.vim
-source \$VIMRUNTIME/menu.vim
+source $VIMRUNTIME/delmenu.vim
+source $VIMRUNTIME/menu.vim
 if has("mac") || has("macunix")
     set gfn=Fira\ Code:h9,Source\ Code\ Pro:h9,Menlo:h9
 elseif has("win16") || has("win32")

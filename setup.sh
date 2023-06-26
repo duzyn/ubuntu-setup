@@ -35,7 +35,6 @@ sudo apt-get install -y \
     gdebi \
     gpg \
     gzip \
-    jq \
     libfuse2 \
     lsb-release \
     make \

@@ -18,7 +18,7 @@ TEMP_DIR="$(mktemp -d)"
 # It's recommended using Tor Browser to update itself
 API_URL="https://api.github.com/repos/TheTorProject/gettorbrowser/releases"
 LATEST_VERSION=$(wget -qO- --header="Authorization: Bearer $GITHUB_TOKEN" "$API_URL" | \
-    jq -r '.[].tag_name' | grep -Po "linux64-.+" | head -n 1 | cut -f2 -d "-")
+    grep tag_name | grep "linux64-" | head -n 1 | cut -f4 -d "\"" | cut -f2 -d "-")
 
 if [[ -e "$HOME/.tor-browser/VERSION" ]]; then
     CURRENT_VERSION=$(cat "$HOME/.tor-browser/VERSION")
@@ -28,7 +28,6 @@ fi
 
 if [[ "$CURRENT_VERSION" != "$LATEST_VERSION" ]]; then
     wget -qO- --header="Authorization: Bearer $GITHUB_TOKEN" "$API_URL" | \
-        jq -r ".[].assets[].browser_download_url" | \
         grep -Po "https://.+linux64-.+_ALL\.tar\.xz" | head -n 1 | \
         sed -e "s|https://github.com|https://ghproxy.com/github.com|g" | \
         xargs wget -O "$TEMP_DIR/tor-browser.tar.xz"

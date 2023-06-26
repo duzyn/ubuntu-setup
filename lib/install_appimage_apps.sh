@@ -7,7 +7,7 @@ install_appimage_apps() {
     PACKAGE_NAME="$2"
     API_URL="https://api.github.com/repos/$REPO_NAME/releases/latest"
     VERSION_LATEST="$(wget -qO- --header="Authorization: Bearer $GITHUB_TOKEN" "$API_URL" | \
-        jq -r '.tag_name' | tr -d "v")"
+        grep tag_name | head -n 1 | cut -f4 -d "\"" | tr -d "v")"
 
     if [[ -e "$HOME/.AppImageApplications/$PACKAGE_NAME.VERSION" ]]; then
         VERSION_INSTALLED=$(cat "$HOME/.AppImageApplications/$PACKAGE_NAME.VERSION")
@@ -22,7 +22,7 @@ install_appimage_apps() {
             rm -f "$HOME/.AppImageApplications/$PACKAGE_NAME.AppImage"
 
         wget -qO- --header="Authorization: Bearer $GITHUB_TOKEN" "$API_URL" | \
-            jq -r ".assets[].browser_download_url" | grep .AppImage | head -n 1 | \
+            grep -Po "https://.*\.AppImage" | head -n 1 | \
             sed -e "s|https://github.com|https://ghproxy.com/github.com|g" | \
             xargs wget -O "$TEMP_DIR/$PACKAGE_NAME.AppImage"
 

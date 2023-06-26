@@ -15,9 +15,9 @@ export DEBIAN_FRONTEND=noninteractive
 : "${LOCALE:="zh_CN"}"
 
 ### Theme
-# Window Manager: https://github.com/nana-4/materia-theme
+# Window Manager: Yaru
 # Icons: https://github.com/PapirusDevelopmentTeam/papirus-icon-theme
-dpkg -s materia-gtk-theme &>/dev/null || sudo apt-get install -y materia-gtk-theme
+dpkg -s yaru-theme-gtk &>/dev/null || sudo apt-get install -y yaru-theme-gtk
 
 if ! dpkg -s papirus-icon-theme &>/dev/null; then
     sudo add-apt-repository -y ppa:papirus/papirus
@@ -27,16 +27,16 @@ fi
 
 # For GTK3
 if [[ -n "$(command -v gsettings)" ]]; then
-    gsettings set org.gnome.desktop.interface gtk-theme "Materia"
-    gsettings set org.gnome.desktop.wm.preferences theme "Materia"
+    gsettings set org.gnome.desktop.interface gtk-theme "Yaru-blue-dark"
+    gsettings set org.gnome.desktop.wm.preferences theme "Yaru-blue-dark"
     gsettings set org.gnome.desktop.interface icon-theme "Papirus"
 fi
 
 # For GTK2
 if [[ -n "$(command -v xfconf-query)" ]]; then
-    xfconf-query -c xsettings -p /Net/ThemeName -s "Materia"
+    xfconf-query -c xsettings -p /Net/ThemeName -s "Yaru-blue-dark"
     xfconf-query -c xsettings -p /Net/IconThemeName -s "Papirus"
-    xfconf-query -c xfwm4 -p /general/theme -s "Materia"
+    xfconf-query -c xfwm4 -p /general/theme -s "Yaru-dark"
     xfconf-query -c xfce4-notifyd -p /theme -s "Default"
 
     # Fonts
