@@ -14,14 +14,14 @@ set -o xtrace
 export DEBIAN_FRONTEND=noninteractive
 TEMP_DIR=$(mktemp -d)
 
-API_URL=https://api.github.com/repos/Zettlr/Zettlr/releases/latest
-LATEST_VERSION=$(wget -qO- --header="Authorization: Bearer $GITHUB_TOKEN" "$API_URL" | grep tag_name | cut -f4 -d "\"" | tr -d "v")
-
 if dpkg -s zettlr &>/dev/null; then
     CURRENT_VERSION=$(dpkg -s zettlr | grep ^Version: | cut -f2 -d " ")
 else
     CURRENT_VERSION=noversion
 fi
+
+API_URL=https://api.github.com/repos/Zettlr/Zettlr/releases/latest
+LATEST_VERSION=$(wget -qO- --header="Authorization: Bearer $GITHUB_TOKEN" "$API_URL" | grep tag_name | cut -f4 -d "\"" | tr -d "v")
 
 if ! [[ "$LATEST_VERSION" == *"$CURRENT_VERSION"* || "$CURRENT_VERSION" == *"$LATEST_VERSION"* ]]; then
     wget -qO- --header="Authorization: Bearer $GITHUB_TOKEN" "$API_URL" | \

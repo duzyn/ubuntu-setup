@@ -26,7 +26,7 @@ else
     CURRENT_VERSION=noversion
 fi
 
-if [[ $CURRENT_VERSION != $LATEST_VERSION ]]; then
+if [[ "$CURRENT_VERSION" != "$LATEST_VERSION" ]]; then
     wget -c -O "$TEMP_DIR/$FILENAME" "$URL"
     cp -f "$TEMP_DIR/$FILENAME" "$HOME/Applications/"
     chmod +x "$HOME/Applications/$FILENAME"

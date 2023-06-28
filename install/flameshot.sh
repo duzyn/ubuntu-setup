@@ -32,8 +32,10 @@ if ! [[ "$LATEST_VERSION" == *"$CURRENT_VERSION"* || "$CURRENT_VERSION" == *"$LA
         grep -Po "https://.+ubuntu-$(lsb_release -rs)\.amd64\.deb\.sha256sum" | \
         sed -e "s|https://github.com|https://ghproxy.com/https://github.com|g" | \
         xargs wget -qO- | cut -f1 -d " ")" == "$(sha256sum "$TEMP_DIR/flameshot.deb" | cut -f1 -d " ")" ]]; then
-            sudo apt-get update
-            sudo apt-get install -y gdebi
+            if [[ -z "$(command -v gdebi)" ]]; then
+                sudo apt-get update
+                sudo apt-get install -y gdebi
+            fi
             sudo gdebi -n "$TEMP_DIR/flameshot.deb"
     fi
 fi

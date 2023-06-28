@@ -14,8 +14,10 @@ set -o xtrace
 export DEBIAN_FRONTEND=noninteractive
 SCRIPT_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" &>/dev/null && pwd -P)
 
-sudo apt-get update
-sudo apt-get install -y vim vim-gtk
+if [[ -z "$(command -v gvim)" ]]; then
+    sudo apt-get update
+    sudo apt-get install -y vim vim-gtk
+fi
 
 mkdir -p "$HOME/.vim/autoload"
 if [[ ! -f "$HOME/.vim/autoload/pathogen.vim" ]]; then

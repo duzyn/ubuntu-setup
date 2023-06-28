@@ -23,13 +23,13 @@ else
     CURRENT_VERSION=noversion
 fi
 
-if [[ -z "$(command -v gdebi)" ]]; then
-    sudo apt-get update
-    sudo apt-get install -y gdebi
-fi
-
 if [[ "${LATEST_VERSION}" != "${CURRENT_VERSION}" ]]; then
     wget -O "$TEMP_DIR/freedownloadmanager.deb" https://files2.freedownloadmanager.org/6/latest/freedownloadmanager.deb
+
+    if [[ -z "$(command -v gdebi)" ]]; then
+        sudo apt-get update
+        sudo apt-get install -y gdebi
+    fi
     sudo gdebi -n "$TEMP_DIR/freedownloadmanager.deb"
 fi
 

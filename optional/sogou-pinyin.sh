@@ -15,6 +15,10 @@ export DEBIAN_FRONTEND=noninteractive
 TEMP_DIR=$(mktemp -d)
 
 # Sogou Pinyin is not compatible with fcitx5.
+if dpkg -s fcitx5 &>/dev/null; then
+    sudo apt purge --auto-remove -y fcitx5*
+fi
+
 LATEST_VERSION=$(wget -qO- https://shurufa.sogou.com/linux | grep -Po "https://ime-sec.*?amd64.deb" | cut -f2 -d "_")
 
 if dpkg -s sogoupinyin &>/dev/null; then

@@ -14,29 +14,30 @@ set -o xtrace
 export DEBIAN_FRONTEND=noninteractive
 : "${LOCALE:="zh_CN"}"
 
-### Theme
-# Window Manager: Yaru
-# Icons: https://github.com/PapirusDevelopmentTeam/papirus-icon-theme
+# Yaru theme
 dpkg -s yaru-theme-gtk &>/dev/null || sudo apt-get install -y yaru-theme-gtk
+dpkg -s yaru-theme-icon &>/dev/null || sudo apt-get install -y yaru-theme-icon
+dpkg -s yaru-theme-sound &>/dev/null || sudo apt-get install -y yaru-theme-sound
 
-if ! dpkg -s papirus-icon-theme &>/dev/null; then
-    sudo add-apt-repository -y ppa:papirus/papirus
-    sudo apt-get update
-    sudo apt-get install -y papirus-icon-theme
-fi
+# if ! dpkg -s papirus-icon-theme &>/dev/null; then
+#     sudo add-apt-repository -y ppa:papirus/papirus
+#     sudo apt-get update
+#     sudo apt-get install -y papirus-icon-theme
+# fi
 
 # For GTK3
 if [[ -n "$(command -v gsettings)" ]]; then
-    gsettings set org.gnome.desktop.interface gtk-theme "Yaru-blue-dark"
-    gsettings set org.gnome.desktop.wm.preferences theme "Yaru-blue-dark"
-    gsettings set org.gnome.desktop.interface icon-theme "Papirus"
+    gsettings set org.gnome.desktop.interface gtk-theme "Yaru-blue"
+    gsettings set org.gnome.desktop.wm.preferences theme "Yaru-blue"
+    gsettings set org.gnome.desktop.interface icon-theme "Yaru-blue"
 fi
 
 # For GTK2
 if [[ -n "$(command -v xfconf-query)" ]]; then
-    xfconf-query -c xsettings -p /Net/ThemeName -s "Yaru-blue-dark"
-    xfconf-query -c xsettings -p /Net/IconThemeName -s "Papirus"
-    xfconf-query -c xfwm4 -p /general/theme -s "Yaru-dark"
+    xfconf-query -c xsettings -p /Net/ThemeName -s "Yaru-blue"
+    xfconf-query -c xsettings -p /Net/IconThemeName -s "Yaru-blue"
+    xfconf-query -c xsettings -p /Net/SoundThemeName -s "Yaru"
+    xfconf-query -c xfwm4 -p /general/theme -s "Yaru"
     xfconf-query -c xfce4-notifyd -p /theme -s "Default"
 
     # Fonts
@@ -50,11 +51,13 @@ if [[ -n "$(command -v xfconf-query)" ]]; then
         xfconf-query -c xsettings -p /Gtk/FontName -s "Open Sans 10"
         xfconf-query -c xfwm4 -p /general/title_font -s "Open Sans 10"
     fi
+
+    # Plank
+    sudo apt-get install -y plank xfce4-appmenu-plugin
+    if [[ ! -e /etc/xdg/autostart/plank.desktop ]]; then
+        sudo cp -f /usr/share/applications/plank.desktop /etc/xdg/autostart
+    fi
 fi
 
-sudo apt-get install -y plank xfce4-appmenu-plugin
-if [[ ! -e /etc/xdg/autostart/plank.desktop ]]; then
-    sudo cp -f /usr/share/applications/plank.desktop /etc/xdg/autostart
-fi
 
 

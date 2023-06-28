@@ -14,14 +14,14 @@ set -o xtrace
 export DEBIAN_FRONTEND=noninteractive
 
 # Used for Ventoy VDisk boot
-LATEST_VERSION=$(wget -qO- --header="Authorization: Bearer $GITHUB_TOKEN" \
-    https://api.github.com/repos/ventoy/vtoyboot/releases/latest | grep tag_name | head -n 1 | cut -f4 -d "\"" | tr -d "v")
-
 if [[ -e "$HOME/.vtoyboot/VERSION" ]]; then
     CURRENT_VERSION=$(cat "$HOME/.vtoyboot/VERSION")
 else
     CURRENT_VERSION=noversion
 fi
+
+LATEST_VERSION=$(wget -qO- --header="Authorization: Bearer $GITHUB_TOKEN" \
+    https://api.github.com/repos/ventoy/vtoyboot/releases/latest | grep tag_name | head -n 1 | cut -f4 -d "\"" | tr -d "v")
 
 if [[ "$CURRENT_VERSION" != "$LATEST_VERSION" ]]; then
     # Remove old version.
