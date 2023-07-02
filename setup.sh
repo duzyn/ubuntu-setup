@@ -23,7 +23,7 @@ set -o pipefail
 : "${VTOYBOOT:="true"}"
 
 TEMP_DIR="$(mktemp -d)"
-SCRIPT_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" >/dev/null && pwd -P)
+SCRIPT_DIR="$(dirname "$(readlink -f "${0}")")"
 
 export DEBIAN_FRONTEND=noninteractive
 
@@ -312,7 +312,7 @@ install_github_releases_apps jgraph/drawio-desktop draw.io "amd64*.deb"
 install_github_releases_apps localsend/localsend localsend x86-64.deb
 install_github_releases_apps lyswhut/lx-music-desktop lx-music-desktop x64.deb
 install_github_releases_apps peazip/PeaZip peazip .GTK2-1_amd64.deb
-install_github_releases_apps sharkdp/fd fd amd64.deb
+install_github_releases_apps sharkdp/fd fd-musl amd64.deb
 install_github_releases_apps shiftkey/desktop github-desktop .deb
 
 ### GitHub Releases AppImage apps
