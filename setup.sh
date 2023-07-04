@@ -285,7 +285,7 @@ install_github_releases_apps shiftkey/desktop         github-desktop   "\.deb"
 
 ### GitHub Releases AppImage apps
 # Joplin
-wget -qO- https://ghproxy.com/https://raw.githubusercontent.com/laurent22/joplin/dev/Joplin_install_and_update.sh | sed -E 's|https://objects\.joplinusercontent\.com/(v\$\{RELEASE_VERSION\}/Joplin-\$\{RELEASE_VERSION\}\.AppImage)\?source=LinuxInstallScript\&type=\$DOWNLOAD_TYPE|https://ghproxy.com/https://github.com/laurent22/joplin/releases/download/\1|g' | bash
+wget -qO- https://ghproxy.com/https://raw.githubusercontent.com/laurent22/joplin/dev/Joplin_install_and_update.sh | sed -E 's|https://objects\.joplinusercontent\.com/(v.+RELEASE_VERSION.*/Joplin-.+RELEASE_VERSION.*\.AppImage).+DOWNLOAD_TYPE|https://ghproxy.com/https://github.com/laurent22/joplin/releases/download/\1|g' | bash
 
 ### Proxy
 # Tor Browser
