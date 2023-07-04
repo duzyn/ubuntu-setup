@@ -1,0 +1,17 @@
+name: CI
+
+on: push
+
+jobs:
+  test-on-ubuntu:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+    - name: test-on-ubuntu
+      run: bash setup.sh
+  test-on-debian:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+    - name: test-on-debian
+      run: bash setup.sh
