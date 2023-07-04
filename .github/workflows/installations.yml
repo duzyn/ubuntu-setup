@@ -8,10 +8,10 @@ jobs:
     steps:
     - uses: actions/checkout@v3
     - name: test-on-ubuntu
-      run: bash setup.sh
+      run: DEBUG=true APT_MIRROR=http://deb.debian.org CTAN_MIRROR=https://mirror.ctan.org bash setup.sh
   test-on-debian:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v3
     - name: test-on-debian
-      run: bash setup.sh
+      run: DEBUG=true APT_MIRROR=http://deb.debian.org CTAN_MIRROR=https://mirror.ctan.org bash setup.sh

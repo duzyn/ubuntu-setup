@@ -17,7 +17,7 @@ set -o pipefail
 
 ### Configurations
 : "${APT_MIRROR:="https://mirrors.ustc.edu.cn"}"
-: "${CTAN_MIRROR:="https://mirrors.ustc.edu.cn"}"
+: "${CTAN_MIRROR:="https://mirrors.ustc.edu.cn/CTAN"}"
 : "${LOCALE:="zh_CN"}"
 : "${NVM_NODEJS_ORG_MIRROR:="https://npmmirror.com/mirrors/node"}"
 : "${NPM_REGISTRY_MIRROR:="https://registry.npmmirror.com"}"
@@ -42,6 +42,10 @@ function get_package_version() {
     fi
 }
 
+# Check OS version
+[[ "$OS_ID" == "debian" ]] && [[ "$(echo "$OS_VERSION_ID" | tr -d ".")" -lt "12" ]] && echo "Only support Debian 12+" && exit 1
+[[ "$OS_ID" == "ubuntu" ]] && [[ "$(echo "$OS_VERSION_ID" | tr -d ".")" -lt "2204" ]] && echo "Only support Ubuntu 22.04+" && exit 1
+
 ### APT local mirror
 [[ -e /etc/apt/sources.list.backup ]] || sudo cp -f /etc/apt/sources.list /etc/apt/sources.list.backup
 
@@ -54,8 +58,8 @@ deb $APT_MIRROR/$OS_ID $OS_VERSION_CODENAME main non-free-firmware
 deb $APT_MIRROR/$OS_ID $OS_VERSION_CODENAME-updates main non-free-firmware
 # deb-src $APT_MIRROR/$OS_ID $OS_VERSION_CODENAME-updates main non-free-firmware
 
-deb http://security.debian.org/debian-security/ $OS_VERSION_CODENAME-security main non-free-firmware
-# deb-src http://security.debian.org/debian-security/ $OS_VERSION_CODENAME-security main non-free-firmware
+deb $APT_MIRROR/$OS_ID-security/ $OS_VERSION_CODENAME-security main non-free-firmware
+# deb-src $APT_MIRROR/$OS_ID-security/ $OS_VERSION_CODENAME-security main non-free-firmware
 
 # Backports allow you to install newer versions of software made available for this release
 deb $APT_MIRROR/$OS_ID $OS_VERSION_CODENAME-backports main non-free-firmware
@@ -93,7 +97,8 @@ sudo apt-get install -y fonts-droid-fallback fonts-firacode fonts-noto-color-emo
 ### Locale
 [[ "$LOCALE" == "zh_CN" ]] && sudo apt-get install -y fonts-arphic-ukai fonts-arphic-uming fonts-noto-cjk fonts-noto-cjk-extra
 
-sudo update-locale LANG="$LOCALE.UTF-8" LANGUAGE="$LOCALE"
+sudo localectl set-locale LANG="$LOCALE.UTF-8"
+sudo localectl set-locale LANGUAGE="$LOCALE"
 
 # https://gnu-linux.readthedocs.io/zh/latest/Chapter02/46_xdg.user.dirs.html
 # cat ~/.config/user-dirs.dirs
@@ -106,6 +111,10 @@ xdg-user-dirs-update --set PICTURES    "$HOME/Pictures"
 xdg-user-dirs-update --set PUBLICSHARE "$HOME/Public"
 xdg-user-dirs-update --set TEMPLATES   "$HOME/Templates"
 xdg-user-dirs-update --set VIDEOS      "$HOME/Videos"
+
+# IME use Fcitx5
+command -v ibus &>/dev/null && sudo apt-get purge --auto-remove -y ibus* 
+sudo apt-get install -y fcitx5 fcitx5-pinyin
 
 ### Theme
 # Window Manager theme: Materia https://github.com/nana-4/materia-theme
@@ -210,13 +219,14 @@ command -v code &>/dev/null || {
 
 ### TeX
 command -v latex &>/dev/null || {
-    wget -P "$TEMP_DIR/" "$CTAN_MIRROR/CTAN/systems/texlive/tlnet/install-tl-unx.tar.gz"
+    wget -P "$TEMP_DIR/" "$CTAN_MIRROR/systems/texlive/tlnet/install-tl-unx.tar.gz"
+    mkdir -p "$TEMP_DIR/install-tl-unx"
     tar --extract --gz --directory "$TEMP_DIR/install-tl-unx" --file "$TEMP_DIR/install-tl-unx.tar.gz"
     cd "$TEMP_DIR/install-tl-unx" || exit 1
-    perl ./install-tl --no-interaction --scheme=basic --no-doc-install --no-src-install --location "$CTAN_MIRROR/CTAN/systems/texlive/tlnet"
+    perl ./install-tl --no-interaction --scheme=basic --no-doc-install --no-src-install --location "$CTAN_MIRROR/systems/texlive/tlnet"
     #  PATH=/usr/local/texlive/2023/bin/x86_64-linux:$PATH 
 }
-# tlmgr option repository "$CTAN_MIRROR/CTAN/systems/texlive/tlnet"
+# tlmgr option repository "$CTAN_MIRROR/systems/texlive/tlnet"
 # tlmgr update --self --all
 # tlmgr install ctex
 
