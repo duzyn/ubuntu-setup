@@ -89,10 +89,11 @@ sudo apt-get update
 sudo apt-get install -y apt-transport-https binutils build-essential bzip2 ca-certificates coreutils curl desktop-file-utils file g++ gcc gdebi gpg gzip libfuse2 jq make man-db net-tools ntp p7zip-full patch procps sed software-properties-common tar unzip wget zip
 
 ### Drivers
-[[ "$OS_ID" == "ubuntu" ]] && sudo apt-get install -y bcmwl-kernel-source nvidia-driver-530
+[[ "$OS_ID" == "ubuntu" ]] && sudo apt-get install -y bcmwl-kernel-source
+# nvidia-driver-535
 
 ### Fonts
-sudo apt-get install -y fonts-droid-fallback fonts-firacode fonts-noto-color-emoji fonts-open-sans fonts-roboto fonts-stix
+sudo apt-get install -y fonts-droid-fallback fonts-firacode fonts-noto-color-emoji fonts-noto-mono fonts-open-sans fonts-roboto fonts-stix
 
 ### Locale
 [[ "$LOCALE" == "zh_CN" ]] && sudo apt-get install -y fonts-arphic-ukai fonts-arphic-uming fonts-noto-cjk fonts-noto-cjk-extra
@@ -114,7 +115,7 @@ xdg-user-dirs-update --set VIDEOS      "$HOME/Videos"
 
 # IME use Fcitx5
 command -v ibus &>/dev/null && sudo apt-get purge --auto-remove -y ibus* 
-sudo apt-get install -y fcitx5 fcitx5-pinyin
+sudo apt-get install -y fcitx5 fcitx5-chinese-addons
 
 ### Theme
 # Window Manager theme: Materia https://github.com/nana-4/materia-theme
@@ -123,9 +124,9 @@ sudo apt-get install -y materia-gtk-theme papirus-icon-theme
 
 # For GTK3
 command -v gsettings &>/dev/null && {
-    gsettings set org.gnome.desktop.interface gtk-theme  "Materia"
-    gsettings set org.gnome.desktop.wm.preferences theme "Materia"
-    gsettings set org.gnome.desktop.interface icon-theme "Papirus"
+    gsettings set org.gnome.desktop.interface      icon-theme "Papirus"
+    gsettings set org.gnome.desktop.interface      gtk-theme  "Materia"
+    gsettings set org.gnome.desktop.wm.preferences theme      "Materia"
 }
 
 # For GTK2
@@ -219,12 +220,12 @@ command -v code &>/dev/null || {
 
 ### TeX
 command -v latex &>/dev/null || {
-    wget -P "$TEMP_DIR/" "$CTAN_MIRROR/systems/texlive/tlnet/install-tl-unx.tar.gz"
-    mkdir -p "$TEMP_DIR/install-tl-unx"
-    tar --extract --gz --directory "$TEMP_DIR/install-tl-unx" --file "$TEMP_DIR/install-tl-unx.tar.gz"
+    wget -P "$TEMP_DIR" "$CTAN_MIRROR/systems/texlive/tlnet/install-tl-unx.tar.gz"
+    tar --extract --gz --directory "$TEMP_DIR" --file "$TEMP_DIR/install-tl-unx.tar.gz"
     cd "$TEMP_DIR/install-tl-unx" || exit 1
     perl ./install-tl --no-interaction --scheme=basic --no-doc-install --no-src-install --location "$CTAN_MIRROR/systems/texlive/tlnet"
     #  PATH=/usr/local/texlive/2023/bin/x86_64-linux:$PATH 
+    cd "$OLDPWD"
 }
 # tlmgr option repository "$CTAN_MIRROR/systems/texlive/tlnet"
 # tlmgr update --self --all
