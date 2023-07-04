@@ -293,7 +293,7 @@ install_github_releases_apps shiftkey/desktop         github-desktop   "\.deb"
 # It's recommended using Tor Browser to update itself
 function install_tor_browser() {
     wget -q -O "$TEMP_DIR/tor-browser.json" "https://api.github.com/repos/TheTorProject/gettorbrowser/releases"
-    LATEST_VERSION=$(jq -r '.tag_name' "$TEMP_DIR/tor-browser.json" | grep "linux64-" | head -n 1 | cut -f4 -d "\"" | cut -f2 -d "-")
+    LATEST_VERSION=$(jq -r '.[].tag_name' "$TEMP_DIR/tor-browser.json" | grep "linux64-" | head -n 1 | cut -f4 -d "\"" | cut -f2 -d "-")
 
     [[ -e "$HOME/.tor-browser/tor-browser/Browser/start-tor-browser" ]] || {
         grep -Po "https://.+linux64-.+_ALL\.tar\.xz" "$TEMP_DIR/tor-browser.json" | head -n 1 | sed -e "s|https://github.com|https://ghproxy.com/github.com|g" | xargs wget -O "$TEMP_DIR/tor-browser.tar.xz"
