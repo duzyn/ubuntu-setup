@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-# A simple script to setup up a new ubuntu installation.
+# A simple script to setup up a new Ubuntu (22.04+) or Debian (12+) installation.
 # Inspired by https://github.com/trxcllnt/ubuntu-setup/
 
 # Exit on error. Append "|| true" if you expect an error.
@@ -15,88 +15,83 @@ set -o pipefail
 : "${DEBUG:="false"}"
 [[ "$DEBUG" == "true" ]] && set -o xtrace
 
-###  Configurations
+### Configurations
 : "${APT_MIRROR:="https://mirrors.ustc.edu.cn"}"
+: "${CTAN_MIRROR:="https://mirrors.ustc.edu.cn"}"
 : "${LOCALE:="zh_CN"}"
 : "${NVM_NODEJS_ORG_MIRROR:="https://npmmirror.com/mirrors/node"}"
 : "${NPM_REGISTRY_MIRROR:="https://registry.npmmirror.com"}"
 : "${VTOYBOOT:="true"}"
 
-TEMP_DIR="$(mktemp -d)"
 SCRIPT_DIR="$(dirname "$(readlink -f "${0}")")"
+mkdir -p "$SCRIPT_DIR/tmp"
+TEMP_DIR="$SCRIPT_DIR/tmp"
+
+OS_ID=$(awk -F= '$1=="ID" { print $2 ;}' /etc/os-release)
+OS_VERSION_ID=$(awk -F= '$1=="VERSION_ID" { print $2 ;}' /etc/os-release | tr -d '"')
+OS_VERSION_CODENAME=$(awk -F= '$1=="VERSION_CODENAME" { print $2 ;}' /etc/os-release)
 
 export DEBIAN_FRONTEND=noninteractive
 
 ### Functions
 function get_package_version() {
-    if dpkg -s "$1" >/dev/null; then
+    if dpkg -s "$1" &>/dev/null; then
         dpkg -s "$1" | grep "^Version:" | cut -f2 -d " "
     else
         echo "not_installed"
     fi
 }
 
-# Installing 3rd party .deb apps from GitHub Releases
-install_github_releases_apps() {
-    local REPO_NAME PACKAGE_NAME VERSION_LATEST VERSION_INSTALLED API_URL
-    REPO_NAME="$1"
-    PACKAGE_NAME="$2"
-    PATTERN="$3"
-    API_URL="https://api.github.com/repos/$REPO_NAME/releases/latest"
-    VERSION_LATEST="$(wget -qO- --header="Authorization: Bearer $GITHUB_TOKEN" "$API_URL" | jq -r ".tag_name" | tr -d "v")"
-    VERSION_INSTALLED="$(get_package_version "$PACKAGE_NAME")"
-
-    [[ "$VERSION_LATEST" == *"$VERSION_INSTALLED"* || "$VERSION_INSTALLED" == *"$VERSION_LATEST"* ]] || {
-        wget -O- --header="Authorization: Bearer $GITHUB_TOKEN" "$API_URL" | jq -r ".assets[].browser_download_url" | grep "${PATTERN}" | head -n 1 | sed -e "s|https://github.com|https://ghproxy.com/github.com|g" | xargs wget -O "$TEMP_DIR/$PACKAGE_NAME.deb"
-        sudo gdebi -n "$TEMP_DIR/$PACKAGE_NAME.deb"
-    }
-}
-
-
-# Install vim plugin
-function install_vim_plugin() {
-    local REPO_NAME PLUGIN_NAME
-    REPO_NAME="$1"
-    PLUGIN_NAME="$(basename "$REPO_NAME")"
-
-    mkdir -p "$HOME/.vim/bundle"
-    if [[ -d "$HOME/.vim/bundle/$PLUGIN_NAME" ]]; then
-        cd "$HOME/.vim/bundle/$PLUGIN_NAME"
-        git pull
-    else
-        git clone --depth 1 "https://ghproxy.com/https://github.com/$REPO_NAME" "$HOME/.vim/bundle/$PLUGIN_NAME"
-    fi
-}
-
 ### APT local mirror
 [[ -e /etc/apt/sources.list.backup ]] || sudo cp -f /etc/apt/sources.list /etc/apt/sources.list.backup
-sudo tee /etc/apt/sources.list <<EOF
-deb $APT_MIRROR/ubuntu/ $(lsb_release -cs) main restricted universe multiverse
-# deb-src $APT_MIRROR/ubuntu/ $(lsb_release -cs) main restricted universe multiverse
 
-deb $APT_MIRROR/ubuntu/ $(lsb_release -cs)-security main restricted universe multiverse
-# deb-src $APT_MIRROR/ubuntu/ $(lsb_release -cs)-security main restricted universe multiverse
+[[ "$OS_ID" == "debian" ]] && {
+    sudo tee /etc/apt/sources.list <<EOF
+# See https://wiki.debian.org/SourcesList for more information.
+deb $APT_MIRROR/$OS_ID $OS_VERSION_CODENAME main non-free-firmware
+# deb-src $APT_MIRROR/$OS_ID $OS_VERSION_CODENAME main non-free-firmware
 
-deb $APT_MIRROR/ubuntu/ $(lsb_release -cs)-updates main restricted universe multiverse
-# deb-src $APT_MIRROR/ubuntu/ $(lsb_release -cs)-updates main restricted universe multiverse
+deb $APT_MIRROR/$OS_ID $OS_VERSION_CODENAME-updates main non-free-firmware
+# deb-src $APT_MIRROR/$OS_ID $OS_VERSION_CODENAME-updates main non-free-firmware
 
-deb $APT_MIRROR/ubuntu/ $(lsb_release -cs)-backports main restricted universe multiverse
-# deb-src $APT_MIRROR/ubuntu/ $(lsb_release -cs)-backports main restricted universe multiverse
+deb http://security.debian.org/debian-security/ $OS_VERSION_CODENAME-security main non-free-firmware
+# deb-src http://security.debian.org/debian-security/ $OS_VERSION_CODENAME-security main non-free-firmware
+
+# Backports allow you to install newer versions of software made available for this release
+deb $APT_MIRROR/$OS_ID $OS_VERSION_CODENAME-backports main non-free-firmware
+# deb-src $APT_MIRROR/$OS_ID $OS_VERSION_CODENAME-backports main non-free-firmware
 EOF
+}
+
+[[ "$OS_ID" == "ubuntu" ]] && {
+    sudo tee /etc/apt/sources.list <<EOF
+deb $APT_MIRROR/$OS_ID $OS_VERSION_CODENAME main restricted universe multiverse
+# deb-src $APT_MIRROR/$OS_ID $OS_VERSION_CODENAME main restricted universe multiverse
+
+deb $APT_MIRROR/$OS_ID $OS_VERSION_CODENAME-security main restricted universe multiverse
+# deb-src $APT_MIRROR/$OS_ID $OS_VERSION_CODENAME-security main restricted universe multiverse
+
+deb $APT_MIRROR/$OS_ID $OS_VERSION_CODENAME-updates main restricted universe multiverse
+# deb-src $APT_MIRROR/$OS_ID $OS_VERSION_CODENAME-updates main restricted universe multiverse
+
+deb $APT_MIRROR/$OS_ID $OS_VERSION_CODENAME-backports main restricted universe multiverse
+# deb-src $APT_MIRROR/$OS_ID $OS_VERSION_CODENAME-backports main restricted universe multiverse
+EOF
+}
 
 sudo apt-get update
 
 ### Base packages
-sudo apt-get install -y apt-transport-https binutils build-essential bzip2 ca-certificates coreutils curl desktop-file-utils file g++ gcc gdebi gpg gzip libfuse2 lsb-release make man-db net-tools ntp p7zip-full patch procps sed software-properties-common tar unzip wget zip
+sudo apt-get install -y apt-transport-https binutils build-essential bzip2 ca-certificates coreutils curl desktop-file-utils file g++ gcc gdebi gpg gzip libfuse2 jq make man-db net-tools ntp p7zip-full patch procps sed software-properties-common tar unzip wget zip
 
 ### Drivers
-sudo apt-get install -y bcmwl-kernel-source nvidia-driver-530
+[[ "$OS_ID" == "ubuntu" ]] && sudo apt-get install -y bcmwl-kernel-source nvidia-driver-530
 
 ### Fonts
-sudo apt-get install -y fonts-cascadia-code fonts-emojione fonts-droid-fallback fonts-firacode fonts-noto-color-emoji fonts-open-sans fonts-roboto fonts-stix fonts-ubuntu
+sudo apt-get install -y fonts-droid-fallback fonts-firacode fonts-noto-color-emoji fonts-open-sans fonts-roboto fonts-stix
 
 ### Locale
-[[ "$LOCALE" == "zh_CN" ]] && sudo apt-get install -y language-pack-gnome-zh-hans language-pack-zh-hans fonts-arphic-ukai fonts-arphic-uming fonts-noto-cjk fonts-noto-cjk-extra
+[[ "$LOCALE" == "zh_CN" ]] && sudo apt-get install -y fonts-arphic-ukai fonts-arphic-uming fonts-noto-cjk fonts-noto-cjk-extra
 
 sudo update-locale LANG="$LOCALE.UTF-8" LANGUAGE="$LOCALE"
 
@@ -112,63 +107,38 @@ xdg-user-dirs-update --set PUBLICSHARE "$HOME/Public"
 xdg-user-dirs-update --set TEMPLATES   "$HOME/Templates"
 xdg-user-dirs-update --set VIDEOS      "$HOME/Videos"
 
-
 ### Theme
-# Window Manager: Materia: https://github.com/nana-4/materia-theme
-# Icons: Papirus: https://github.com/PapirusDevelopmentTeam/papirus-icon-theme
-dpkg -s materia-gtk-theme >/dev/null || sudo apt-get install -y materia-gtk-theme
-
-dpkg -s papirus-icon-theme >/dev/null || {
-    sudo add-apt-repository -y ppa:papirus/papirus
-    sudo apt-get update
-    sudo apt-get install -y papirus-icon-theme
-}
+# Window Manager theme: Materia https://github.com/nana-4/materia-theme
+# Icon theme: Papirus https://github.com/PapirusDevelopmentTeam/papirus-icon-theme
+sudo apt-get install -y materia-gtk-theme papirus-icon-theme
 
 # For GTK3
-command -v gsettings >/dev/null && {
-    gsettings set org.gnome.desktop.interface gtk-theme "Materia"
+command -v gsettings &>/dev/null && {
+    gsettings set org.gnome.desktop.interface gtk-theme  "Materia"
     gsettings set org.gnome.desktop.wm.preferences theme "Materia"
     gsettings set org.gnome.desktop.interface icon-theme "Papirus"
 }
 
 # For GTK2
-command -v xfconf-query >/dev/null && {
-    xfconf-query -c xsettings -p /Net/ThemeName -s "Materia"
+command -v xfconf-query &>/dev/null && {
+    xfconf-query -c xsettings -p /Net/ThemeName     -s "Materia"
     xfconf-query -c xsettings -p /Net/IconThemeName -s "Papirus"
-    xfconf-query -c xfwm4 -p /general/theme -s "Materia"
-    xfconf-query -c xfce4-notifyd -p /theme -s "Default"
+    xfconf-query -c xfwm4     -p /general/theme     -s "Materia"
 
     # Fonts
-    sudo apt-get install -y fonts-firacode fonts-open-sans
     xfconf-query -c xsettings -p /Gtk/MonospaceFontName -s "Fira Code 10"
-    if [[ "$LOCALE" == "zh_CN" ]]; then
-        sudo apt-get install -y fonts-noto-cjk fonts-noto-cjk-extra
-        xfconf-query -c xsettings -p /Gtk/FontName -s "Noto Sans CJK SC 9"
-        xfconf-query -c xfwm4 -p /general/title_font -s "Noto Sans CJK SC 9"
-    else
-        xfconf-query -c xsettings -p /Gtk/FontName -s "Open Sans 10"
-        xfconf-query -c xfwm4 -p /general/title_font -s "Open Sans 10"
-    fi
+    xfconf-query -c xsettings -p /Gtk/FontName          -s "Open Sans 10"
+    xfconf-query -c xfwm4     -p /general/title_font    -s "Open Sans 10"
+    [[ "$LOCALE" == "zh_CN" ]] && {
+        xfconf-query -c xsettings -p /Gtk/FontName       -s "Noto Sans CJK SC 9"
+        xfconf-query -c xfwm4     -p /general/title_font -s "Noto Sans CJK SC 9"
+    }
 
-    # Plank
-    sudo apt-get install -y plank xfce4-appmenu-plugin
-    [[ -e /etc/xdg/autostart/plank.desktop ]] || sudo cp -f /usr/share/applications/plank.desktop /etc/xdg/autostart
 }
 
-
-### Ulauncher
-command -v ulauncher >/dev/null || {
-    sudo add-apt-repository -y ppa:agornostal/ulauncher
-    sudo apt update
-    sudo apt install -y ulauncher
-}
-
-### CopyQ
-command -v copyq >/dev/null || {
-    sudo add-apt-repository -y ppa:hluk/copyq
-    sudo apt-get update
-    sudo apt-get install -y copyq
-}
+# Plank
+sudo apt-get install -y plank
+[[ -e /etc/xdg/autostart/plank.desktop ]] || sudo cp -f /usr/share/applications/plank.desktop /etc/xdg/autostart
 
 ### Free Download Manager
 function install_fdm() {
@@ -182,27 +152,10 @@ function install_fdm() {
 }
 install_fdm
 
-# repo 在国内连不上，所以直接删掉。通过上述方法从官网安装更新
 [[ -f /etc/apt/sources.list.d/freedownloadmanager.list ]] && sudo rm /etc/apt/sources.list.d/freedownloadmanager.list
 
-### FSearch
-# https://github.com/cboxdoerfer/fsearch
-command -v fsearch >/dev/null || {
-    sudo add-apt-repository -y ppa:christian-boxdoerfer/fsearch-stable
-    sudo apt-get update
-    sudo apt-get install -y fsearch
-}
-
-# Git latest version
-command -v git >/dev/null || {
-    sudo add-apt-repository -y ppa:git-core/ppa
-    sudo apt-get update
-    sudo apt-get install -y git
-}
-
-### Google Chrome
-# https://google.cn/chrome
-command -v google-chrome-stable >/dev/null || {
+### Google Chrome https://google.cn/chrome
+command -v google-chrome-stable &>/dev/null || {
     wget -O "$TEMP_DIR/google-chrome.deb" https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
     sudo gdebi -n "$TEMP_DIR/google-chrome.deb"
 }
@@ -219,17 +172,26 @@ function install_gfie(){
 }
 install_gfie
 
-### Inkscape
-# https://launchpad.net/~inkscape.dev/+archive/ubuntu/stable
-command -v inkscape >/dev/null || {
-    sudo add-apt-repository -y ppa:inkscape.dev/stable
-    sudo apt-get update
-    sudo apt-get install -y inkscape
-}
+### Onedriver: https://github.com/jstaf/onedriver
+function install_onedriver(){
+    wget -q -O "$TEMP_DIR/onedriver.txt" "https://software.opensuse.org/download.html?project=home%3Ajstaf&package=onedriver"
+    DOWNLOAD_URL="$(grep -Pio "https://.+$OS_ID\_\d+.+amd64\.deb" "$TEMP_DIR/onedriver.txt" | sort -r | head -n 1)"
 
+    # Check if have package for current OS version
+    grep -Pioq "https://.+$OS_ID\_$OS_VERSION_ID.+amd64\.deb" "$TEMP_DIR/onedriver.txt" && DOWNLOAD_URL="$(grep -Pio "https://.+$OS_ID\_$OS_VERSION_ID.+amd64\.deb" "$TEMP_DIR/onedriver.txt" | sort -r | head -n 1)"
+
+    LATEST_VESION="$(basename "$DOWNLOAD_URL" | cut -f2 -d "_")"
+    CURRENT_VERSION=$(get_package_version onedriver)
+
+    [[ "$LATEST_VESION" == "$CURRENT_VERSION" ]] || {
+        wget -O "$TEMP_DIR/onedriver.deb" "$DOWNLOAD_URL"
+        sudo gdebi -n "$TEMP_DIR/onedriver.deb"
+    }
+}
+install_onedriver
 
 ### Microsoft Edge: https://www.microsoftedgeinsider.com/en-us/download/?platform=linux-deb
-command -v microsoft-edge-stable >/dev/null || {
+command -v microsoft-edge-stable &>/dev/null || {
     wget -O- https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor >"$TEMP_DIR/microsoft.gpg"
     sudo install -D -o root -g root -m 644 "$TEMP_DIR/microsoft.gpg" /usr/share/keyrings/microsoft.gpg
     echo "deb [arch=amd64 signed-by=/usr/share/keyrings/microsoft.gpg] https://packages.microsoft.com/repos/edge stable main" | sudo tee /etc/apt/sources.list.d/microsoft-edge.list
@@ -237,16 +199,8 @@ command -v microsoft-edge-stable >/dev/null || {
     sudo apt-get install -y microsoft-edge-stable
 }
 
-### Onedriver: https://github.com/jstaf/onedriver
-command -v onedriver >/dev/null || {
-    echo "deb https://download.opensuse.org/repositories/home:/jstaf/xUbuntu_$(lsb_release -rs)/ /" | sudo tee /etc/apt/sources.list.d/home:jstaf.list
-    wget -qO- "https://download.opensuse.org/repositories/home:jstaf/xUbuntu_$(lsb_release -rs)/Release.key" | gpg --dearmor | sudo tee /etc/apt/trusted.gpg.d/home_jstaf.gpg >/dev/null
-    sudo apt-get update
-    sudo apt-get install -y onedriver
-}
-
 ### Visual Studio Code: https://code.visualstudio.com/docs/setup/linux
-command -v code >/dev/null || {
+command -v code &>/dev/null || {
     wget -qO- https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor >"$TEMP_DIR/microsoft.gpg"
     sudo install -D -o root -g root -m 644 "$TEMP_DIR/microsoft.gpg" /usr/share/keyrings/microsoft.gpg
     echo "deb [arch=amd64 signed-by=/usr/share/keyrings/microsoft.gpg] https://packages.microsoft.com/repos/vscode stable main" | sudo tee /etc/apt/sources.list.d/vscode.list
@@ -254,27 +208,17 @@ command -v code >/dev/null || {
     sudo apt-get install -y code
 }
 
-
-# MiKTeX
-# https://miktex.org/download#ubuntu and
-# https://mirrors.ustc.edu.cn/CTAN/systems/win32/miktex/doc/miktex.pdf
-command -v miktex >/dev/null || {
-    wget -qO- "https://keyserver.ubuntu.com/pks/lookup?op=get&search=0xD6BC243565B2087BC3F897C9277A7293F59E4889" | gpg --dearmor | sudo tee /etc/apt/trusted.gpg.d/miktex.gpg >/dev/null
-
-    echo "deb [arch=amd64] https://mirrors.ustc.edu.cn/CTAN/systems/win32/miktex/setup/deb $(lsb_release -cs) universe" | sudo tee /etc/apt/sources.list.d/miktex.list
-    sudo apt-get update
-    sudo apt-get install -y miktex
-
-    # https://docs.miktex.org/manual/miktexsetup.html
-    # Finish with a shared (system-wide) TeX installation. Executables like lualatex will be installed in /usr/local/bin.
-    sudo miktexsetup --shared=yes finish
-
-    # You also may want to enable automatic package installation:
-    sudo initexmf --admin --set-config-value \[MPM\]AutoInstall=1
-
-    # If you don't use mirror, you can comment this.
-    sudo initexmf --admin --set-config-value \[MPM\]RemoteRepository=https://mirrors.ustc.edu.cn/CTAN/systems/win32/miktex/tm/packages/
+### TeX
+command -v latex &>/dev/null || {
+    wget -P "$TEMP_DIR/" "$CTAN_MIRROR/CTAN/systems/texlive/tlnet/install-tl-unx.tar.gz"
+    tar --extract --gz --directory "$TEMP_DIR/install-tl-unx" --file "$TEMP_DIR/install-tl-unx.tar.gz"
+    cd "$TEMP_DIR/install-tl-unx" || exit 1
+    perl ./install-tl --no-interaction --scheme=basic --no-doc-install --no-src-install --location "$CTAN_MIRROR/CTAN/systems/texlive/tlnet"
+    #  PATH=/usr/local/texlive/2023/bin/x86_64-linux:$PATH 
 }
+# tlmgr option repository "$CTAN_MIRROR/CTAN/systems/texlive/tlnet"
+# tlmgr update --self --all
+# tlmgr install ctex
 
 ### Node
 wget -qO- "https://ghproxy.com/raw.githubusercontent.com/nvm-sh/nvm/v0.39.3/install.sh" | sed -e "s|https://raw.githubusercontent.com|https://ghproxy.com/https://raw.githubusercontent.com|g" -e "s|https://github.com|https://ghproxy.com/https://github.com|g" | bash
@@ -293,44 +237,53 @@ touch "$HOME/.npmrc"
 grep -q "registry=" "$HOME/.npmrc" || echo "registry=$NPM_REGISTRY_MIRROR" >>"$HOME/.npmrc"
 
 # sudo chown -R 1000:1000 "$HOME/.npm"
-# command -v nativefier >/dev/null || npm install -g nativefier
+# command -v nativefier &>/dev/null || npm install -g nativefier
 
 npm upgrade -g
 
-
 ### GitHub Releases DEB apps
-# install_github_releases_apps Figma-Linux/figma-linux figma-linux .amd64.deb
-# install_github_releases_apps OpenBoard-org/OpenBoard openboard "$(lsb_release -rs)_*_amd64.deb"
-# install_github_releases_apps vercel/hyper hyper amd64.deb
-# install_github_releases_apps Zettlr/Zettlr zettlr amd64.deb
-install_github_releases_apps dbeaver/dbeaver dbeaver-ce amd64.deb
-install_github_releases_apps flameshot-org/flameshot flameshot "ubuntu-$(lsb_release -rs).amd64.deb"
-install_github_releases_apps jgm/pandoc pandoc amd64.deb
-# install_github_releases_apps bitwarden/clients bitwarden amd64.deb
-# install_github_releases_apps sharkdp/bat bat "bat_*amd64.deb"
-install_github_releases_apps jgraph/drawio-desktop draw.io "amd64*.deb"
-install_github_releases_apps localsend/localsend localsend x86-64.deb
-install_github_releases_apps lyswhut/lx-music-desktop lx-music-desktop x64.deb
-install_github_releases_apps peazip/PeaZip peazip .GTK2-1_amd64.deb
-install_github_releases_apps sharkdp/fd fd-musl amd64.deb
-install_github_releases_apps shiftkey/desktop github-desktop .deb
+# Installing 3rd party .deb apps from GitHub Releases
+install_github_releases_apps() {
+    local REPO_NAME PACKAGE_NAME VERSION_LATEST VERSION_INSTALLED API_URL
+    REPO_NAME="$1"
+    PACKAGE_NAME="$2"
+    PATTERN="$3"
+
+    wget -q -O "$TEMP_DIR/$PACKAGE_NAME.json" "https://api.github.com/repos/$REPO_NAME/releases/latest"
+
+    VERSION_LATEST="$(jq -r ".tag_name" "$TEMP_DIR/$PACKAGE_NAME.json" | tr -d "v")"
+    VERSION_INSTALLED="$(get_package_version "$PACKAGE_NAME")"
+
+    [[ "$VERSION_LATEST" == *"$VERSION_INSTALLED"* || "$VERSION_INSTALLED" == *"$VERSION_LATEST"* ]] || {
+        jq -r ".assets[].browser_download_url" "$TEMP_DIR/$PACKAGE_NAME.json" | grep -P "${PATTERN}" | head -n 1 | sed -e "s|https://github.com|https://ghproxy.com/github.com|g" | xargs wget -O "$TEMP_DIR/$PACKAGE_NAME.deb"
+        sudo gdebi -n "$TEMP_DIR/$PACKAGE_NAME.deb"
+    }
+}
+
+# install_github_releases_apps vercel/hyper hyper "amd64\.deb"
+# install_github_releases_apps Zettlr/Zettlr zettlr "amd64\.deb"
+install_github_releases_apps dbeaver/dbeaver          dbeaver-ce       "amd64\.deb"
+install_github_releases_apps jgm/pandoc               pandoc           "amd64\.deb"
+install_github_releases_apps jgraph/drawio-desktop    draw.io          "amd64.*\.deb"
+install_github_releases_apps localsend/localsend      localsend        "x86-64\.deb"
+install_github_releases_apps lyswhut/lx-music-desktop lx-music-desktop "x64\.deb"
+install_github_releases_apps peazip/PeaZip            peazip           "GTK2-1_amd64\.deb"
+install_github_releases_apps sharkdp/fd               fd-musl          "amd64\.deb"
+install_github_releases_apps shiftkey/desktop         github-desktop   "\.deb"
 
 ### GitHub Releases AppImage apps
 # Joplin
-# 使用 Joplin 官方提供的安装、升级脚本，但是改良两点：
-# 1. 使用 GitHub Token 来访问 api 地址，降低访问失败的风险
-# 2. 将下载链接替换为代理地址，使得在中国可以访问
+wget -qO- https://ghproxy.com/https://raw.githubusercontent.com/laurent22/joplin/dev/Joplin_install_and_update.sh | sed -E 's|https://objects\.joplinusercontent\.com/(v\$\{RELEASE_VERSION\}/Joplin-\$\{RELEASE_VERSION\}\.AppImage)\?source=LinuxInstallScript\&type=\$DOWNLOAD_TYPE|https://ghproxy.com/https://github.com/laurent22/joplin/releases/download/\1|g' | bash
 
-wget -qO- https://ghproxy.com/https://raw.githubusercontent.com/laurent22/joplin/dev/Joplin_install_and_update.sh | sed -E -e 's|https://objects\.joplinusercontent\.com/(v\$\{RELEASE_VERSION\}/Joplin-\$\{RELEASE_VERSION\}\.AppImage)\?source=LinuxInstallScript\&type=\$DOWNLOAD_TYPE|https://ghproxy.com/https://github.com/laurent22/joplin/releases/download/\1|g' -e "s|(\"?https://api\.github\.com)|--header=\"Authorization: Bearer $GITHUB_TOKEN\" \1|g" | bash
-
-
-### Tor Browser
+### Proxy
+# Tor Browser
 # It's recommended using Tor Browser to update itself
 function install_tor_browser() {
-    LATEST_VERSION=$(wget -qO- --header="Authorization: Bearer $GITHUB_TOKEN" "https://api.github.com/repos/TheTorProject/gettorbrowser/releases" | grep tag_name | grep "linux64-" | head -n 1 | cut -f4 -d "\"" | cut -f2 -d "-")
+    wget -q -O "$TEMP_DIR/tor-browser.json" "https://api.github.com/repos/TheTorProject/gettorbrowser/releases"
+    LATEST_VERSION=$(jq -r '.tag_name' "$TEMP_DIR/tor-browser.json" | grep "linux64-" | head -n 1 | cut -f4 -d "\"" | cut -f2 -d "-")
 
     [[ -e "$HOME/.tor-browser/tor-browser/Browser/start-tor-browser" ]] || {
-        wget -qO- --header="Authorization: Bearer $GITHUB_TOKEN" "$API_URL" | grep -Po "https://.+linux64-.+_ALL\.tar\.xz" | head -n 1 | sed -e "s|https://github.com|https://ghproxy.com/github.com|g" | xargs wget -O "$TEMP_DIR/tor-browser.tar.xz"
+        grep -Po "https://.+linux64-.+_ALL\.tar\.xz" "$TEMP_DIR/tor-browser.json" | head -n 1 | sed -e "s|https://github.com|https://ghproxy.com/github.com|g" | xargs wget -O "$TEMP_DIR/tor-browser.tar.xz"
 
         mkdir -p "$HOME/.tor-browser"
         tar --extract --xz --directory "$HOME/.tor-browser" --file "$TEMP_DIR/tor-browser.tar.xz"
@@ -342,16 +295,29 @@ install_tor_browser
 mkdir -p "$HOME/.config/autostart"
 [[ -e "$HOME/.config/autostart/start-tor-browser.desktop" ]] || cp -f "$HOME/.local/share/applications/start-tor-browser.desktop" "$HOME/.config/autostart"
 
-command -v proxychains4 >/dev/null || sudo apt-get install -y proxychains4
-
 # Use Tor with proxychains4
-grep -P "^socks5\s*127\.0\.0\.1\s*9150" /etc/proxychains4.conf && sudo sed -i -e "s|^socks5.*$|socks5  127.0.0.1 9150|g" /etc/proxychains4.conf
+sudo apt-get install -y proxychains4
+grep -P "^socks5\s*127\.0\.0\.1\s*9150" /etc/proxychains4.conf || sudo sed -i -e "s|^socks.*$|socks5  127.0.0.1 9150|g" /etc/proxychains4.conf
 
 ### GVim
-sudo apt-get install -y vim vim-gtk
+sudo apt-get install -y git vim vim-gtk3
 
 mkdir -p "$HOME/.vim/autoload"
 [[ -f "$HOME/.vim/autoload/pathogen.vim" ]] || wget -O "$HOME/.vim/autoload/pathogen.vim" https://ghproxy.com/https://github.com/tpope/vim-pathogen/raw/master/autoload/pathogen.vim
+
+function install_vim_plugin() {
+    local REPO_NAME PLUGIN_NAME
+    REPO_NAME="$1"
+    PLUGIN_NAME="$(basename "$REPO_NAME")"
+
+    mkdir -p "$HOME/.vim/bundle"
+    if [[ -d "$HOME/.vim/bundle/$PLUGIN_NAME" ]]; then
+        cd "$HOME/.vim/bundle/$PLUGIN_NAME"
+        git pull
+    else
+        git clone --depth 1 "https://ghproxy.com/https://github.com/$REPO_NAME" "$HOME/.vim/bundle/$PLUGIN_NAME"
+    fi
+}
 
 install_vim_plugin yianwillis/vimcdoc
 install_vim_plugin sheerun/vim-polyglot
@@ -361,7 +327,7 @@ install_vim_plugin dracula/vim
 cd "$SCRIPT_DIR" || exit 1
 
 # vimrc
-cat >"$HOME/.vimrc" <<"EOF"
+tee "$HOME/.vimrc" <<"EOF"
 execute pathogen#infect()
 syntax on
 colorscheme dracula
@@ -383,16 +349,16 @@ set langmenu=zh_CN.UTF-8
 source $VIMRUNTIME/delmenu.vim
 source $VIMRUNTIME/menu.vim
 if has("mac") || has("macunix")
-    set gfn=Fira\ Code:h9,Source\ Code\ Pro:h9,Menlo:h9
+  set gfn=Fira\ Code:h9,Source\ Code\ Pro:h9,Menlo:h9
 elseif has("win16") || has("win32")
-    set gfn=Fira\ Code:h9,Source\ Code\ Pro:h9,Courier\ New:h9
+  set gfn=Fira\ Code:h9,Source\ Code\ Pro:h9,Courier\ New:h9
 endif
 set wildmenu
 set wildignore=*.o,*~,*.pyc
 if has("win16") || has("win32")
-    set wildignore+=*/.git/*,*/.hg/*,*/.svn/*,*/.DS_Store
+  set wildignore+=*/.git/*,*/.hg/*,*/.svn/*,*/.DS_Store
 else
-    set wildignore+=.git\*,.hg\*,.svn\*
+  set wildignore+=.git\*,.hg\*,.svn\*
 endif
 set ruler
 set cmdheight=1
@@ -416,9 +382,9 @@ set t_vb=
 set tm=500
 set foldcolumn=1
 if has("gui_running")
-    set guioptions-=T
-    set guioptions-=e
-    set guitablabel=%M\ %t
+  set guioptions-=T
+  set guioptions-=e
+  set guitablabel=%M\ %t
 endif
 set ffs=unix,dos,mac
 set nobackup
@@ -461,7 +427,8 @@ let g:airline#extensions#disable_rtp_load=1
 EOF
 
 ### Extras
-sudo apt-get install -y android-sdk-platform-tools ffmpeg filezilla ghostscript gimp libvips-tools mupdf mupdf-tools neofetch network-manager-openvpn-gnome openvpn pdfarranger scrcpy scribus vlc
+sudo apt-get install -y android-sdk-platform-tools copyq ffmpeg filezilla flameshot ghostscript gimp inkscape libvips-tools mupdf mupdf-tools neofetch network-manager-openvpn-gnome openvpn pdfarranger scribus vlc
+# sudo apt-get install -y scrcpy
 
 
 ### Cleaning
@@ -471,17 +438,18 @@ sudo apt-get upgrade -y
 
 # Used for Ventoy VDisk boot
 function install_vtoyboot() {
-    LATEST_VERSION=$(wget -qO- --header="Authorization: Bearer $GITHUB_TOKEN" https://api.github.com/repos/ventoy/vtoyboot/releases/latest | jq -r ".tag_name" | tr -d "v")
+    wget -q -O "$TEMP_DIR/vtoyboot.json" "https://api.github.com/repos/TheTorProject/gettorbrowser/releases"
+    LATEST_VERSION=$(jq -r ".tag_name" "$TEMP_DIR/vtoyboot.json" | tr -d "v")
 
     INSTALLED_VERSION=not_installed
-    find "$HOME/.vtoyboot/" -maxdepth 1 -type d -name "vtoyboot-*" >/dev/null && INSTALLED_VERSION=$(find "$HOME/.vtoyboot/" -maxdepth 1 -type d -name "vtoyboot-*" | grep -Po "vtoyboot-.*" | cut -f2 -d "-")
+    find "$HOME/.vtoyboot/" -maxdepth 1 -type d -name "vtoyboot-*" &>/dev/null && INSTALLED_VERSION=$(find "$HOME/.vtoyboot/" -maxdepth 1 -type d -name "vtoyboot-*" | grep -Po "vtoyboot-.*" | cut -f2 -d "-")
 
     [[ "$INSTALLED_VERSION" == "$LATEST_VERSION" ]] || {
         # Remove old version.
         [[ -d "$HOME/.vtoyboot" ]] && rm -rf "$HOME/.vtoyboot"
 
         # Install new version.
-        wget -qO- --header="Authorization: Bearer $GITHUB_TOKEN" https://api.github.com/repos/ventoy/vtoyboot/releases/latest | jq -r ".assets[].browser_download_url" | grep .iso | head -n 1 | sed -e "s|https://github.com|https://ghproxy.com/github.com|g" | xargs wget -O "$TEMP_DIR/vtoyboot.iso"
+        jq -r ".assets[].browser_download_url" "$TEMP_DIR/vtoyboot.json" | grep .iso | head -n 1 | sed -e "s|https://github.com|https://ghproxy.com/github.com|g" | xargs wget -O "$TEMP_DIR/vtoyboot.iso"
 
         7z x -o"$TEMP_DIR" "$TEMP_DIR/vtoyboot.iso"
         mkdir -p "$HOME/.vtoyboot"
