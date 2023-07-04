@@ -223,7 +223,7 @@ command -v latex &>/dev/null || {
     wget -P "$TEMP_DIR" "$CTAN_MIRROR/systems/texlive/tlnet/install-tl-unx.tar.gz"
     tar --extract --gz --directory "$TEMP_DIR" --file "$TEMP_DIR/install-tl-unx.tar.gz"
     tree "$TEMP_DIR"
-    cd "$TEMP_DIR/install-tl-unx" || exit 1
+    cd "$(find "$TEMP_DIR" -maxdepth 1 -type d -name "install-tl*")" || exit 1
     perl ./install-tl --no-interaction --scheme=basic --no-doc-install --no-src-install --location "$CTAN_MIRROR/systems/texlive/tlnet"
     #  PATH=/usr/local/texlive/2023/bin/x86_64-linux:$PATH 
     cd "$OLDPWD"
