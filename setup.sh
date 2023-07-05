@@ -312,7 +312,11 @@ if [[ ! -e "$HOME/.local/texlive/bin/x86_64-linux/tex" ]]; then
         --texdir="$HOME/.local/texlive" --texuserdir="$HOME/.texlive" \
         --location "$CTAN_MIRROR/systems/texlive/tlnet"
     cd "$OLDPWD"
-    echo PATH=$HOME/.local/texlive/bin/x86_64-linux:$PATH 
+
+    export PATH=$HOME/.local/texlive/bin/x86_64-linux:$PATH
+    if ! grep -Pq "PATH=.*\$HOME/\.local/texlive/bin/x86_64-linux:" "$HOME/.bashrc"; then
+        echo "export PATH=$HOME/.local/texlive/bin/x86_64-linux:$PATH" >>"$HOME/.bashrc"
+    fi
 fi
 # tlmgr option repository "$CTAN_MIRROR/systems/texlive/tlnet"
 # tlmgr update --self --all
