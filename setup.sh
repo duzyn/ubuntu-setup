@@ -640,7 +640,7 @@ fi
 echo "Restart computer for you? (y/n)"
 IFS= read -r restart_computer
 if [[ "$restart_computer" == "y" || "$restart_computer" == "Y" ]]; then
-	sudo shutdown -r 60
+	sudo shutdown -r 0
 else
 	echo "Completed."
     exit 0
