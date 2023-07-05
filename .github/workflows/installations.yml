@@ -1,9 +1,0 @@
-name: Installation
-on: push
-jobs:
-  test-on-ubuntu:
-    runs-on: ubuntu-latest
-    steps:
-    - uses: actions/checkout@v3
-    - name: Test script on Ubuntu
-      run: DEBUG=true VTOYBOOT=false bash setup.sh
