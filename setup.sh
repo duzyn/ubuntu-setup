@@ -451,7 +451,7 @@ sudo apt-get upgrade -y
 
 # Used for Ventoy VDisk boot
 function install_vtoyboot() {
-    wget -q -O "$TEMP_DIR/vtoyboot.json" "https://api.github.com/repos/TheTorProject/gettorbrowser/releases"
+    wget -q -O "$TEMP_DIR/vtoyboot.json" "https://api.github.com/repos/ventoy/vtoyboot/releases/latest"
     LATEST_VERSION=$(jq -r ".tag_name" "$TEMP_DIR/vtoyboot.json" | tr -d "v")
 
     INSTALLED_VERSION=not_installed
@@ -472,7 +472,7 @@ function install_vtoyboot() {
     cd "$HOME/.vtoyboot/vtoyboot-$LATEST_VERSION" || exit 1
     sudo bash "./vtoyboot.sh"
     cd "$OLDPWD" || exit 1
-    echo "Completed!" && exit 0
 }
 
 [[ "$VTOYBOOT" == "true" ]] && install_vtoyboot
+echo "Completed!" && exit 0
