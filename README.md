@@ -1,5 +1,7 @@
 # ubuntu-setup
 
 ```bash
-wget -qO- https://ghproxy.com/https://github.com/duzyn/ubuntu-setup/raw/main/setup.sh | bash
+curl -s https://ghproxy.com/https://raw.githubusercontent.com/duzyn/ubuntu-setup/main/setup.sh | bash
+# or
+wget -qO- https://ghproxy.com/https://raw.githubusercontent.com/duzyn/ubuntu-setup/main/setup.sh | bash
 ```

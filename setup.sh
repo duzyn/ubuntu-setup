@@ -23,7 +23,7 @@ fi
 : "${LOCALE:="zh_CN"}"
 : "${NVM_NODEJS_ORG_MIRROR:="https://npmmirror.com/mirrors/node"}"
 : "${NPM_REGISTRY_MIRROR:="https://registry.npmmirror.com"}"
-: "${VTOYBOOT:="true"}"
+: "${VTOYBOOT:="false"}"
 
 SCRIPT_DIR="$(dirname "$(readlink -f "${0}")")"
 mkdir -p "$SCRIPT_DIR/tmp"
@@ -223,6 +223,7 @@ fi
 
 ### Free Download Manager
 function install_fdm() {
+    local LATEST_VERSION CURRENT_VERSION
     LATEST_VERSION=$(wget -qO- "https://www.freedownloadmanager.org/board/viewtopic.php?f=1&t=17900" | \
         grep -Po "([\d.]+)\s*\[\w+.*?STABLE" | head -n 1 | cut -f1 -d " ")
     CURRENT_VERSION=$(get_package_version freedownloadmanager)
@@ -245,7 +246,8 @@ if ! command -v google-chrome-stable &>/dev/null; then
 fi
 
 ### Greenfish Icon Editor Pro
-function install_gfie(){
+function install_gfie() {
+    local LATEST_VERSION CURRENT_VERSION
     LATEST_VESION="$(wget -qO- "http://greenfishsoftware.org/gfie.php#apage" | \
         grep -Po "Latest.+stable.+release\s\([\d.]+\)" | grep -Po "[\d.]+")"
     CURRENT_VERSION=$(get_package_version gfie)
@@ -258,7 +260,8 @@ function install_gfie(){
 install_gfie
 
 ### Onedriver: https://github.com/jstaf/onedriver
-function install_onedriver(){
+function install_onedriver() {
+    local DOWNLOAD_URL LATEST_VERSION CURRENT_VERSION
     wget -q -O "$TEMP_DIR/onedriver.txt" "https://software.opensuse.org/download.html?project=home%3Ajstaf&package=onedriver"
 
     # Check if have package for current OS version
@@ -354,7 +357,9 @@ install_github_releases_apps() {
     PACKAGE_NAME="$2"
     PATTERN="$3"
 
-    wget -q -O "$TEMP_DIR/$PACKAGE_NAME.json" "https://api.github.com/repos/$REPO_NAME/releases/latest"
+    if [[ ! -e "$TEMP_DIR/$PACKAGE_NAME.json" ]]; then
+        wget -qO "$TEMP_DIR/$PACKAGE_NAME.json" "https://api.github.com/repos/$REPO_NAME/releases/latest"
+    fi
 
     VERSION_LATEST="$(jq -r ".tag_name" "$TEMP_DIR/$PACKAGE_NAME.json" | tr -d "v")"
     VERSION_INSTALLED="$(get_package_version "$PACKAGE_NAME")"
@@ -390,7 +395,10 @@ wget -qO- https://ghproxy.com/https://raw.githubusercontent.com/laurent22/joplin
 # Tor Browser
 # It's recommended using Tor Browser to update itself
 function install_tor_browser() {
-    wget -q -O "$TEMP_DIR/tor-browser.json" "https://api.github.com/repos/TheTorProject/gettorbrowser/releases"
+    local LATEST_VERSION
+    if [[ ! -e "$TEMP_DIR/tor-browser.json" ]]; then
+        wget -qO "$TEMP_DIR/tor-browser.json" "https://api.github.com/repos/TheTorProject/gettorbrowser/releases"
+    fi
     LATEST_VERSION=$(jq -r '.[].tag_name' "$TEMP_DIR/tor-browser.json" | \
         grep "linux64-" | head -n 1 | cut -f4 -d "\"" | cut -f2 -d "-")
 
@@ -422,7 +430,7 @@ sudo apt-get install -y vim vim-gtk3
 
 mkdir -p "$HOME/.vim/autoload"
 if [[ ! -f "$HOME/.vim/autoload/pathogen.vim" ]]; then
-    wget -O "$HOME/.vim/autoload/pathogen.vim" https://ghproxy.com/https://github.com/tpope/vim-pathogen/raw/master/autoload/pathogen.vim
+    wget -O "$HOME/.vim/autoload/pathogen.vim" https://ghproxy.com/https://raw.githubusercontent.com/tpope/vim-pathogen/master/autoload/pathogen.vim
 fi
 
 function install_vim_plugin() {
@@ -563,9 +571,10 @@ sudo apt-get install -y \
     network-manager-openvpn-gnome \
     openvpn \
     pdfarranger \
-    scrcpy \
     scribus \
     vlc
+# TODO scrcpy is not in Debian 12 repo.
+# scrcpy \
 
 ### Cleaning
 sudo apt-get clean -y
@@ -574,17 +583,20 @@ sudo apt-get upgrade -y
 
 # Used for Ventoy VDisk boot
 function install_vtoyboot() {
-    wget -qO "$TEMP_DIR/vtoyboot.json" "https://api.github.com/repos/ventoy/vtoyboot/releases/latest"
+    local LATEST_VERSION CURRENT_VERSION
+    if [[ ! -e "$TEMP_DIR/vtoyboot.json" ]]; then
+        wget -qO "$TEMP_DIR/vtoyboot.json" "https://api.github.com/repos/ventoy/vtoyboot/releases/latest"
+    fi
     LATEST_VERSION=$(jq -r ".tag_name" "$TEMP_DIR/vtoyboot.json" | tr -d "v")
 
     if find "$HOME/.vtoyboot/" -maxdepth 1 -type d -name "vtoyboot-*" &>/dev/null; then
-        INSTALLED_VERSION=$(find "$HOME/.vtoyboot/" -maxdepth 1 -type d -name "vtoyboot-*" | \
+        CURRENT_VERSION=$(find "$HOME/.vtoyboot/" -maxdepth 1 -type d -name "vtoyboot-*" | \
             grep -Po "vtoyboot-.*" | cut -f2 -d "-")
     else
-        INSTALLED_VERSION=not_installed
+        CURRENT_VERSION=not_installed
     fi
 
-    if [[ "$INSTALLED_VERSION" != "$LATEST_VERSION" ]]; then
+    if [[ "$CURRENT_VERSION" != "$LATEST_VERSION" ]]; then
         # Remove old version.
         if [[ -d "$HOME/.vtoyboot" ]]; then
             rm -rf "$HOME/.vtoyboot"
