@@ -299,16 +299,15 @@ if ! command -v code &>/dev/null; then
 fi
 
 ### TeX
-if ! command -v latex &>/dev/null; then
+if [[ ! -e "$HOME/.local/texlive/bin/x86_64-linux/tex" ]]; then
     wget -P "$TEMP_DIR" "$CTAN_MIRROR/systems/texlive/tlnet/install-tl-unx.tar.gz"
     tar --extract --gz --directory "$TEMP_DIR" --file "$TEMP_DIR/install-tl-unx.tar.gz"
-    # tree "$TEMP_DIR"
     cd "$(find "$TEMP_DIR" -maxdepth 1 -type d -name "install-tl*")" || exit 1
-    perl ./install-tl --no-interaction --scheme=scheme-minimal  --no-doc-install --no-src-install \
+    perl ./install-tl --no-interaction --scheme=scheme-small  --no-doc-install --no-src-install \
         --texdir="$HOME/.local/texlive" --texuserdir="$HOME/.texlive" \
         --location "$CTAN_MIRROR/systems/texlive/tlnet"
-    #  PATH=/usr/local/texlive/2023/bin/x86_64-linux:$PATH 
     cd "$OLDPWD"
+    echo PATH=$HOME/.local/texlive/bin/x86_64-linux:$PATH 
 fi
 # tlmgr option repository "$CTAN_MIRROR/systems/texlive/tlnet"
 # tlmgr update --self --all
