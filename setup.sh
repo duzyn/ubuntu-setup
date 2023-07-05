@@ -361,7 +361,7 @@ npm upgrade -g
 ### GitHub Releases DEB apps
 # Installing 3rd party .deb apps from GitHub Releases
 install_github_releases_apps() {
-    local REPO_NAME PACKAGE_NAME VERSION_LATEST VERSION_INSTALLED
+    local REPO_NAME PACKAGE_NAME VERSION_LATEST CURRENT_VERSION
     REPO_NAME="$1"
     PACKAGE_NAME="$2"
     PATTERN="$3"
@@ -371,9 +371,9 @@ install_github_releases_apps() {
     fi
 
     VERSION_LATEST="$(jq -r ".tag_name" "$TEMP_DIR/$PACKAGE_NAME.json" | tr -d "v")"
-    VERSION_INSTALLED="$(get_package_version "$PACKAGE_NAME")"
+    CURRENT_VERSION="$(get_package_version "$PACKAGE_NAME")"
 
-    if [[ "$VERSION_LATEST" == *"$VERSION_INSTALLED"* || "$VERSION_INSTALLED" == *"$VERSION_LATEST"* ]]; then
+    if [[ "$VERSION_LATEST" == *"$CURRENT_VERSION"* || "$CURRENT_VERSION" == *"$VERSION_LATEST"* ]]; then
         echo "You have installed latest version of ."
     else
         jq -r ".assets[].browser_download_url" "$TEMP_DIR/$PACKAGE_NAME.json" | \
@@ -638,9 +638,9 @@ if [[ "$VTOYBOOT" == "true" ]]; then
 fi
 
 echo "Restart computer for you? (y/n)"
-read -r restart_computer
+IFS= read -r restart_computer
 if [[ "$restart_computer" == "y" || "$restart_computer" == "Y" ]]; then
-	sudo shutdown -r 0
+	sudo shutdown -r 60
 else
 	echo "Completed."
     exit 0
