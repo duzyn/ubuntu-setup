@@ -315,7 +315,7 @@ if [[ ! -e "$HOME/.local/texlive/bin/x86_64-linux/tex" ]]; then
 
     export PATH=$HOME/.local/texlive/bin/x86_64-linux:$PATH
     if ! grep -Pq "PATH=.*\$HOME/\.local/texlive/bin/x86_64-linux:" "$HOME/.bashrc"; then
-        echo "export PATH=$HOME/.local/texlive/bin/x86_64-linux:$PATH" >>"$HOME/.bashrc"
+        echo "export PATH=\$HOME/.local/texlive/bin/x86_64-linux:\$PATH" >>"$HOME/.bashrc"
     fi
 fi
 # packages
@@ -430,7 +430,7 @@ fi
 
 # Use Tor with proxychains4
 sudo apt-get install -y proxychains4
-if ! grep -P "^socks5\s*127\.0\.0\.1\s*9150" /etc/proxychains4.conf; then
+if ! grep -Pq "^socks5\s*127\.0\.0\.1\s*9150" /etc/proxychains4.conf; then
     sudo sed -i -e "s|^socks.*$|socks5  127.0.0.1 9150|g" /etc/proxychains4.conf
 fi
 
