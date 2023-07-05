@@ -262,7 +262,9 @@ install_gfie
 ### Onedriver: https://github.com/jstaf/onedriver
 function install_onedriver() {
     local DOWNLOAD_URL LATEST_VERSION CURRENT_VERSION
-    wget -q -O "$TEMP_DIR/onedriver.txt" "https://software.opensuse.org/download.html?project=home%3Ajstaf&package=onedriver"
+    if [[ ! -e "$TEMP_DIR/onedriver.txt" ]]; then
+        wget -q -O "$TEMP_DIR/onedriver.txt" "https://software.opensuse.org/download.html?project=home%3Ajstaf&package=onedriver"
+    fi
 
     # Check if have package for current OS version
     if grep -Pioq "https://.+$OS_ID\_$OS_VERSION_ID.+amd64\.deb" "$TEMP_DIR/onedriver.txt"; then
@@ -572,6 +574,7 @@ sudo apt-get install -y \
     openvpn \
     pdfarranger \
     scribus \
+    simplescreenrecorder \
     vlc
 # TODO scrcpy is not in Debian 12 repo.
 # scrcpy \
@@ -627,5 +630,11 @@ if [[ "$VTOYBOOT" == "true" ]]; then
     install_vtoyboot
 fi
 
-echo "Completed!"
-exit 0
+echo "Restart computer for you? (y/n)"
+read -r restart_computer
+if [[ "$restart_computer" == "y" || "$restart_computer" == "Y" ]]; then
+	sudo shutdown -r 0
+else
+	echo "Okay."
+    exit 0
+fi
