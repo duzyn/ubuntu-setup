@@ -318,9 +318,12 @@ if [[ ! -e "$HOME/.local/texlive/bin/x86_64-linux/tex" ]]; then
         echo "export PATH=$HOME/.local/texlive/bin/x86_64-linux:$PATH" >>"$HOME/.bashrc"
     fi
 fi
+# packages
+# if command -v tlmgr &>/dev/null; then
 # tlmgr option repository "$CTAN_MIRROR/systems/texlive/tlnet"
 # tlmgr update --self --all
 # tlmgr install ctex
+# fi
 
 ### Node
 wget -qO- "https://ghproxy.com/raw.githubusercontent.com/nvm-sh/nvm/v0.39.3/install.sh" | \
@@ -639,6 +642,6 @@ read -r restart_computer
 if [[ "$restart_computer" == "y" || "$restart_computer" == "Y" ]]; then
 	sudo shutdown -r 0
 else
-	echo "Okay."
+	echo "Completed."
     exit 0
 fi
