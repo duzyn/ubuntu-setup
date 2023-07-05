@@ -104,14 +104,16 @@ sudo localectl set-locale LANGUAGE="$LOCALE"
 # https://gnu-linux.readthedocs.io/zh/latest/Chapter02/46_xdg.user.dirs.html
 # cat ~/.config/user-dirs.dirs
 mkdir -p "$HOME/Desktop" "$HOME/Documents" "$HOME/Downloads" "$HOME/Music" "$HOME/Pictures" "$HOME/Public" "$HOME/Templates" "$HOME/Videos"
-xdg-user-dirs-update --set DESKTOP     "$HOME/Desktop"
-xdg-user-dirs-update --set DOCUMENTS   "$HOME/Documents"
-xdg-user-dirs-update --set DOWNLOAD    "$HOME/Downloads"
-xdg-user-dirs-update --set MUSIC       "$HOME/Music"
-xdg-user-dirs-update --set PICTURES    "$HOME/Pictures"
-xdg-user-dirs-update --set PUBLICSHARE "$HOME/Public"
-xdg-user-dirs-update --set TEMPLATES   "$HOME/Templates"
-xdg-user-dirs-update --set VIDEOS      "$HOME/Videos"
+command -v xdg-user-dirs-update &>/dev/null && {
+    xdg-user-dirs-update --set DESKTOP     "$HOME/Desktop"
+    xdg-user-dirs-update --set DOCUMENTS   "$HOME/Documents"
+    xdg-user-dirs-update --set DOWNLOAD    "$HOME/Downloads"
+    xdg-user-dirs-update --set MUSIC       "$HOME/Music"
+    xdg-user-dirs-update --set PICTURES    "$HOME/Pictures"
+    xdg-user-dirs-update --set PUBLICSHARE "$HOME/Public"
+    xdg-user-dirs-update --set TEMPLATES   "$HOME/Templates"
+    xdg-user-dirs-update --set VIDEOS      "$HOME/Videos"
+}
 
 # IME use Fcitx5
 command -v ibus &>/dev/null && sudo apt-get purge --auto-remove -y ibus* 
