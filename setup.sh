@@ -110,7 +110,6 @@ sudo apt-get install -y \
     g++ \
     gcc \
     gdebi \
-    git \
     gpg \
     gzip \
     libfuse2 \
@@ -180,15 +179,25 @@ if command -v xdg-user-dirs-update &>/dev/null; then
 fi
 
 # IME use Fcitx5
-if command -v ibus &>/dev/null; then
-    sudo apt-get purge --auto-remove -y ibus*
-fi
-sudo apt-get install -y fcitx5 fcitx5-chinese-addons
+# if command -v ibus &>/dev/null; then
+#     sudo apt-get purge --auto-remove -y ibus*
+# fi
+# sudo apt-get install -y fcitx5 fcitx5-chinese-addons
 
 ### Theme
 # Window Manager theme: Materia https://github.com/nana-4/materia-theme
 # Icon theme: Papirus https://github.com/PapirusDevelopmentTeam/papirus-icon-theme
-sudo apt-get install -y materia-gtk-theme papirus-icon-theme
+sudo apt-get install -y materia-gtk-theme
+
+if dpkg -s papirus-icon-theme &>/dev/null; then
+    if [[ "$OS_ID" == "ubuntu" ]]; then
+        sudo add-apt-repository -y ppa:papirus/papirus
+        sudo apt-get update
+        sudo apt-get install -y papirus-icon-theme
+    elif [[ "$OS_ID" == "debian" ]]; then
+        sudo apt-get install -y papirus-icon-theme
+    fi
+fi
 
 # For GTK3
 if command -v gsettings &>/dev/null; then
@@ -237,6 +246,39 @@ install_fdm
 
 if [[ -f /etc/apt/sources.list.d/freedownloadmanager.list ]]; then
     sudo rm /etc/apt/sources.list.d/freedownloadmanager.list
+fi
+
+### CopyQ
+if command -v copyq &>/dev/null; then
+    if [[ "$OS_ID" == "ubuntu" ]]; then
+        sudo add-apt-repository -y ppa:hluk/copyq
+        sudo apt-get update
+        sudo apt-get install -y copyq
+    elif [[ "$OS_ID" == "debian" ]]; then
+        sudo apt-get install -y copyq
+    fi
+fi
+
+### Git
+if command -v git &>/dev/null; then
+    if [[ "$OS_ID" == "ubuntu" ]]; then
+        sudo add-apt-repository -y ppa:git-core/git
+        sudo apt-get update
+        sudo apt-get install -y git
+    elif [[ "$OS_ID" == "debian" ]]; then
+        sudo apt-get install -y git
+    fi
+fi
+
+### Inkscape
+if command -v inkscape &>/dev/null; then
+    if [[ "$OS_ID" == "ubuntu" ]]; then
+        sudo add-apt-repository -y ppa:inkscape.dev/stable
+        sudo apt-get update
+        sudo apt-get install -y inkscape
+    elif [[ "$OS_ID" == "debian" ]]; then
+        sudo apt-get install -y inkscape
+    fi
 fi
 
 ### Google Chrome https://google.cn/chrome
@@ -566,13 +608,11 @@ EOF
 ### Extras
 sudo apt-get install -y \
     android-sdk-platform-tools \
-    copyq \
     ffmpeg \
     filezilla \
     flameshot \
     ghostscript \
     gimp \
-    inkscape \
     libvips-tools \
     mupdf \
     mupdf-tools \
@@ -583,8 +623,11 @@ sudo apt-get install -y \
     scribus \
     simplescreenrecorder \
     vlc
+
 # TODO scrcpy is not in Debian 12 repo.
-# scrcpy \
+if [[ "$OS_ID" == "ubuntu" ]]; then
+    sudo apt-get install -y scrcpy
+fi
 
 ### Cleaning
 sudo apt-get clean -y

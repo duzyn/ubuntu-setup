@@ -31,7 +31,7 @@ if [[ "${LATEST_VERSION}" != "${CURRENT_VERSION}" ]]; then
     wget -qO- https://shurufa.sogou.com/linux | grep -Po "https://ime-sec.*?amd64.deb" | \
         xargs wget -O "$TEMP_DIR/sogoupinyin.deb"
     sudo apt-get remove -y fcitx-ui-qimpanel
-    if [[ -z "$(command -v gdebi)" ]]; then
+    if command -v gdebi &>/dev/null; then
         sudo apt-get update
         sudo apt-get install -y gdebi
     fi
