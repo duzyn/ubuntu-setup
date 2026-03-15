@@ -2,9 +2,8 @@
 
 set -e
 
-if command -v audacity &>/dev/null; then
-  exit 0
+if ! command -v audacity &>/dev/null; then
+  sudo apt install -y audacity
 fi
 
 
-sudo apt install -y audacity
