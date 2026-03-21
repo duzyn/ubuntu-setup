@@ -128,5 +128,14 @@
     "github_repo": "CherryHQ/cherry-studio",
     "asset_pattern": "Cherry-Studio-([\\d.]+)-amd64\\.deb$",
     "version_extract": "github_release"
+  },
+  {
+    "name": "fdm",
+    "package_keyword": "freedownloadmanager",
+    "page_url": "https://www.freedownloadmanager.org/download-fdm-for-linux.htm",
+    "download_url_patterns": [],
+    "fallback_url": "https://files2.freedownloadmanager.org/6/latest/freedownloadmanager.deb",
+    "version_extract": "page",
+    "version_pattern": "FDM ([\\d.]+)"
   }
 ]

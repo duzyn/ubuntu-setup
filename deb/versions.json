@@ -82,5 +82,10 @@
     "version": "1.8.2",
     "url": "https://gh-proxy.com/https://github.com/CherryHQ/cherry-studio/releases/download/v1.8.2/Cherry-Studio-1.8.2-amd64.deb",
     "package_keyword": "cherry-studio"
+  },
+  "fdm": {
+    "version": "unknown",
+    "url": "https://files2.freedownloadmanager.org/6/latest/freedownloadmanager.deb",
+    "package_keyword": "freedownloadmanager"
   }
 }
