@@ -14,7 +14,7 @@ CODENAME=$(lsb_release -cs)
 # Parse version number
 MAJOR_VERSION=$(echo "$RELEASE" | cut -d. -f1)
 
-if [ "$DISTRIBUTOR" != "LinuxMint" ]; then
+if [ "$DISTRIBUTOR" != "Linuxmint" ]; then
     echo "Error: This script only supports Linux Mint."
     echo "Detected: $DISTRIBUTOR $RELEASE"
     exit 1
@@ -42,12 +42,10 @@ fi
 # Write Aliyun mirror configuration
 sudo tee "$SOURCES_FILE" > /dev/null << 'EOF'
 deb https://mirrors.aliyun.com/linuxmint-packages zena main upstream import backport
-
 deb http://mirrors.aliyun.com/ubuntu noble main restricted universe multiverse
 deb http://mirrors.aliyun.com/ubuntu noble-updates main restricted universe multiverse
 deb http://mirrors.aliyun.com/ubuntu noble-backports main restricted universe multiverse
-
-deb http://security.ubuntu.com/ubuntu/ noble-security main restricted universe multiverse
+deb http://mirrors.aliyun.com/ubuntu noble-security main restricted universe multiverse
 EOF
 
 echo "Mirror configuration updated to Aliyun."
@@ -68,8 +66,8 @@ sudo apt install -y \
     im-config \
     git
 
-# Install 雾凇拼音 (rime-ice)
-echo "Installing 雾凇拼音 (rime-ice)..."
+# Install rime-ice (rime-ice)
+echo "Installing rime-ice (rime-ice)..."
 RIME_DIR="$HOME/.local/share/fcitx5/rime"
 mkdir -p "$RIME_DIR"
 
@@ -82,7 +80,7 @@ cp -r /tmp/rime-ice/* "$RIME_DIR/"
 # Clean up
 rm -rf /tmp/rime-ice
 
-# Set default schema to 雾凇拼音
+# Set default schema to rime-ice
 cat > "$RIME_DIR/default.custom.yaml" << 'EOF'
 patch:
   schema_list:
@@ -108,6 +106,6 @@ echo "=========================================="
 echo "Changes made:"
 echo "  - Switched to Aliyun mirrors"
 echo "  - Installed Chinese language packs"
-echo "  - Installed Fcitx5 + Rime + 雾凇拼音"
+echo "  - Installed Fcitx5 + Rime + rime-ice"
 echo ""
 echo "Please log out and log back in to activate the changes."

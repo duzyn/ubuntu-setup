@@ -1,13 +1,6 @@
 #!/bin/bash
 set -e
 
-# Source scripts only if they exist
-for script in ./check-version.sh ./set-mirrors.sh ./terminal.sh ./desktop.sh; do
-    if [ -f "$script" ]; then
-        source "$script"
-    fi
-done
-
 # Check if plank is installed and add to autostart
 if command -v plank &>/dev/null; then
     echo "Plank is installed, adding to autostart..."
@@ -29,7 +22,5 @@ X-GNOME-Autostart-enabled=true
 EOF
     
     echo "Plank has been added to autostart."
-else
-    echo "Plank is not installed, skipping autostart configuration."
 fi
 

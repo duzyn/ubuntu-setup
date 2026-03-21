@@ -82,6 +82,7 @@ function_name() {
 - Use color codes consistently: `RED='\033[0;31m'`, `GREEN='\033[0;32m'`, `NC='\033[0m'`
 - Informative echo statements for each operation
 - Error messages to stderr: `echo "Error" >&2`
+- **All scripts and output messages must be in English, no Chinese characters allowed**
 
 ### Python (update_versions.py)
 
@@ -95,7 +96,7 @@ def func() -> Optional[str]:
 
 **Function Structure:**
 - Single responsibility functions
-- Chinese print statements OK (project context)
+- English print statements only (no Chinese characters)
 - Comprehensive try/except error handling
 
 **Environment Variables:**
@@ -132,7 +133,7 @@ def func() -> Optional[str]:
 ### Python
 - Use try/except for all network operations
 - Return `None` for failures, never crash
-- Print errors in Chinese (consistent with codebase)
+- Print errors in English (no Chinese characters)
 
 ## Commit Message Format
 
@@ -149,7 +150,7 @@ Types: `feat`, `fix`, `docs`, `refactor`, `chore`
 ## Important Notes
 
 1. **OS Target**: Linux Mint 22+ only (Ubuntu Noble/24.04 base)
-2. **Mirrors**: Use Aliyun (阿里云) for packages, SJTU for Flathub
+2. **Mirrors**: Use Aliyun (Aliyun) for packages, SJTU for Flathub
 3. **Proxy**: All GitHub URLs MUST use `${GH_PROXY}` environment variable
 4. **Version Files**: Don't manually edit `versions.json` - it's auto-generated
 5. **Script Ordering**: Number prefix (`0-`, `1-`, etc.) indicates execution order

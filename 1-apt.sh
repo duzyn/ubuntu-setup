@@ -23,6 +23,7 @@ PACKAGES=(
   apktool
   jq
   ripgrep
+  fzf
   
   # Multimedia
   audacity

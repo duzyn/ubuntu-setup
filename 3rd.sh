@@ -1,58 +1,117 @@
 #!/bin/bash
 set -euo pipefail
 
-# 颜色输出
+# Color output
 RED='\033[0;31m'
 GREEN='\033[0;32m'
 YELLOW='\033[1;33m'
 NC='\033[0m' # No Color
 
-# 检查依赖
-for cmd in curl jq gearlever; do
-    if ! command -v "$cmd" &>/dev/null; then
-        echo -e "${RED}错误：未找到命令 '$cmd'，请先安装。${NC}"
-        if [ "$cmd" = "jq" ]; then
-            echo -e "${YELLOW}运行: sudo apt install -y jq${NC}"
-        elif [ "$cmd" = "gearlever" ]; then
-            echo -e "${YELLOW}运行: sudo apt install -y gearlever${NC}"
-        fi
-        exit 1
-    fi
-done
-
-# 配置文件
+# Configuration file
 CONFIG_FILE="versions.json"
 DEFAULT_FORMAT="deb"
 
-# 显示用法
-usage() {
-    echo "用法: $0 [选项] [应用名]"
-    echo ""
-    echo "选项:"
-    echo "  --deb <应用名>       安装 deb 包（使用 apt install）"
-    echo "  --appimage <应用名>  安装 AppImage 包（使用 gearlever 集成）"
-    echo "  --list               列出所有可用的应用"
-    echo "  -h, --help           显示此帮助信息"
-    echo ""
-    echo "如果不指定选项，默认以 deb 格式安装"
-    echo ""
-    echo "示例:"
-    echo "  $0 cherry-studio          # 默认以 deb 安装 cherry-studio"
-    echo "  $0 --deb cherry-studio    # 以 deb 安装 cherry-studio"
-    echo "  $0 --appimage aya         # 以 appimage 安装 aya"
-    echo "  $0 --list                 # 列出所有应用"
+# Get GitHub proxy from environment
+GH_PROXY="${GH_PROXY:-}"
+
+# Apply GitHub proxy to URL if it's a GitHub URL
+apply_github_proxy() {
+    local url="$1"
+    if [[ "$url" == *"github.com"* ]] && [[ -n "$GH_PROXY" ]]; then
+        echo "${GH_PROXY}${url}"
+    else
+        echo "$url"
+    fi
 }
 
-# 列出所有应用
-list_apps() {
-    if [ ! -f "$CONFIG_FILE" ]; then
-        echo -e "${RED}错误：未找到配置文件 $CONFIG_FILE${NC}"
+# Auto-install dependencies
+install_dependencies() {
+    local missing_deps=()
+    
+    if ! command -v curl &>/dev/null; then
+        missing_deps+=("curl")
+    fi
+    
+    if ! command -v jq &>/dev/null; then
+        missing_deps+=("jq")
+    fi
+    
+    if [ ${#missing_deps[@]} -gt 0 ]; then
+        echo -e "${YELLOW}Installing missing dependencies: ${missing_deps[*]}${NC}"
+        sudo apt update
+        sudo apt install -y "${missing_deps[@]}"
+    fi
+}
+
+# Install AppImageLauncher from versions.json
+install_appimagelauncher() {
+    if command -v ail-cli &>/dev/null; then
+        return 0
+    fi
+    
+    echo -e "${YELLOW}AppImageLauncher not found, installing...${NC}"
+    
+    # Get AppImageLauncher URL from versions.json
+    local ail_url
+    ail_url=$(jq -r '.appimagelauncher.url // empty' "$CONFIG_FILE")
+    
+    if [ -z "$ail_url" ] || [ "$ail_url" = "null" ]; then
+        echo -e "${RED}Error: AppImageLauncher URL not found in $CONFIG_FILE${NC}"
         exit 1
     fi
     
-    echo "可用的应用列表:"
+    # Apply GitHub proxy
+    ail_url=$(apply_github_proxy "$ail_url")
+    
+    local tmp_dir=$(mktemp -d)
+    
+    echo "Downloading AppImageLauncher..."
+    if ! curl -L -o "$tmp_dir/appimagelauncher.deb" "$ail_url"; then
+        echo -e "${RED}Failed to download AppImageLauncher${NC}"
+        rm -rf "$tmp_dir"
+        exit 1
+    fi
+    
+    echo "Installing AppImageLauncher..."
+    if ! sudo apt install -y "$tmp_dir/appimagelauncher.deb"; then
+        echo -e "${RED}Failed to install AppImageLauncher${NC}"
+        rm -rf "$tmp_dir"
+        exit 1
+    fi
+    
+    rm -rf "$tmp_dir"
+    echo -e "${GREEN}AppImageLauncher installed successfully${NC}"
+}
+
+# Display usage
+usage() {
+    echo "Usage: $0 [options] [app_name]"
     echo ""
-    printf "%-20s %-10s %s\n" "应用名" "格式" "版本"
+    echo "Options:"
+    echo "  --deb <app_name>       Install deb package (using apt install)"
+    echo "  --appimage <app_name>  Install AppImage package (using AppImageLauncher)"
+    echo "  --list                 List all available applications"
+    echo "  -h, --help             Display this help message"
+    echo ""
+    echo "If no option is specified, default to deb format installation"
+    echo ""
+    echo "Examples:"
+    echo "  $0 cherry-studio          # Install cherry-studio with deb (default)"
+    echo "  $0 --deb cherry-studio    # Install cherry-studio with deb"
+    echo "  $0 --appimage aya         # Install aya with appimage"
+    echo "  $0 --list                 # List all applications"
+}
+
+# List all applications
+list_apps() {
+    if [ ! -f "$CONFIG_FILE" ]; then
+        echo -e "${RED}Error: Configuration file $CONFIG_FILE not found${NC}"
+        exit 1
+    fi
+    
+    echo "Available applications list:"
+    echo ""
+    printf "%-20s %-10s %s\n" "App Name" "Format" "Version"
     printf "%s\n" "----------------------------------------"
     
     jq -r 'to_entries[] | [.key, .value.format // "deb", .value.version // "unknown"] | @tsv' "$CONFIG_FILE" | \
@@ -61,13 +120,16 @@ list_apps() {
     done
 }
 
-# 检查配置文件
+# Check configuration file
 if [ ! -f "$CONFIG_FILE" ]; then
-    echo -e "${RED}错误：未找到配置文件 $CONFIG_FILE${NC}"
+    echo -e "${RED}Error: Configuration file $CONFIG_FILE not found${NC}"
     exit 1
 fi
 
-# 解析参数
+# Install dependencies first
+install_dependencies
+
+# Parse arguments
 FORMAT=""
 APP_NAME=""
 
@@ -76,7 +138,7 @@ if [ $# -eq 0 ]; then
     exit 1
 fi
 
-# 解析选项
+# Parse options
 case "$1" in
     -h|--help)
         usage
@@ -89,7 +151,7 @@ case "$1" in
     --deb)
         FORMAT="deb"
         if [ -z "${2:-}" ]; then
-            echo -e "${RED}错误：请指定应用名${NC}"
+            echo -e "${RED}Error: Please specify application name${NC}"
             usage
             exit 1
         fi
@@ -98,94 +160,97 @@ case "$1" in
     --appimage)
         FORMAT="appimage"
         if [ -z "${2:-}" ]; then
-            echo -e "${RED}错误：请指定应用名${NC}"
+            echo -e "${RED}Error: Please specify application name${NC}"
             usage
             exit 1
         fi
         APP_NAME="$2"
         ;;
     -*)
-        echo -e "${RED}错误：未知选项 $1${NC}"
+        echo -e "${RED}Error: Unknown option $1${NC}"
         usage
         exit 1
         ;;
     *)
-        # 无选项，默认 deb 格式
+        # No option, default to deb format
         FORMAT="$DEFAULT_FORMAT"
         APP_NAME="$1"
         ;;
 esac
 
-# 检查应用是否存在
+# Check if application exists
 if ! jq -e "has(\"$APP_NAME\")" "$CONFIG_FILE" &>/dev/null; then
-    echo -e "${RED}错误：未找到应用 '$APP_NAME'${NC}"
-    echo -e "${YELLOW}使用 '$0 --list' 查看所有可用应用${NC}"
+    echo -e "${RED}Error: Application '$APP_NAME' not found${NC}"
+    echo -e "${YELLOW}Use '$0 --list' to view all available applications${NC}"
     exit 1
 fi
 
-# 读取应用配置
+# Read application configuration
 APP_CONFIG=$(jq -r ".\"$APP_NAME\"" "$CONFIG_FILE")
 CONFIG_FORMAT=$(echo "$APP_CONFIG" | jq -r '.format // "deb"')
 PACKAGE_KEYWORD=$(echo "$APP_CONFIG" | jq -r '.package_keyword // ""')
 VERSION=$(echo "$APP_CONFIG" | jq -r '.version // "unknown"')
 URL=$(echo "$APP_CONFIG" | jq -r '.url // ""')
 
-# 如果请求格式与配置格式不匹配，给出警告
+# Apply GitHub proxy to URL
+URL=$(apply_github_proxy "$URL")
+
+# If requested format does not match config format, give warning
 if [ "$FORMAT" != "$CONFIG_FORMAT" ]; then
-    echo -e "${YELLOW}警告：请求格式 '$FORMAT' 与配置格式 '$CONFIG_FORMAT' 不匹配${NC}"
-    echo -e "${YELLOW}将使用配置格式 '$CONFIG_FORMAT'${NC}"
+    echo -e "${YELLOW}Warning: Requested format '$FORMAT' does not match config format '$CONFIG_FORMAT'${NC}"
+    echo -e "${YELLOW}Will use config format '$CONFIG_FORMAT'${NC}"
     FORMAT="$CONFIG_FORMAT"
 fi
 
-# 检查必要字段
+# Check required fields
 if [ -z "$PACKAGE_KEYWORD" ] || [ -z "$URL" ] || [ "$URL" = "null" ]; then
-    echo -e "${RED}错误：应用 '$APP_NAME' 配置不完整${NC}"
+    echo -e "${RED}Error: Application '$APP_NAME' configuration incomplete${NC}"
     exit 1
 fi
 
-echo "====== 安装 ${APP_NAME} ======"
-echo "格式: $FORMAT"
-echo "版本: $VERSION"
-echo "包名: $PACKAGE_KEYWORD"
+echo "====== Installing ${APP_NAME} ======"
+echo "Format: $FORMAT"
+echo "Version: $VERSION"
+echo "Package: $PACKAGE_KEYWORD"
 
-# 安装 deb 包
+# Install deb package
 install_deb() {
     local url="$1"
     local pkg_keyword="$2"
     
-    # 检查是否已安装
+    # Check if already installed
     if dpkg-query -W -f='${Package}\n' 2>/dev/null | grep -qx "$pkg_keyword"; then
         INSTALLED_VER=$(dpkg-query -W -f='${Version}\n' "$pkg_keyword" 2>/dev/null || echo "unknown")
-        echo -e "${GREEN}已安装 $pkg_keyword 版本 $INSTALLED_VER${NC}"
+        echo -e "${GREEN}Installed $pkg_keyword version $INSTALLED_VER${NC}"
         
         if [ "$VERSION" != "unknown" ] && [ "$VERSION" != "latest" ]; then
             if dpkg --compare-versions "$INSTALLED_VER" ge "$VERSION" 2>/dev/null; then
-                echo -e "${GREEN}当前版本已是最新，无需升级${NC}"
+                echo -e "${GREEN}Current version is up to date, no upgrade needed${NC}"
                 return 0
             fi
         fi
-        echo -e "${YELLOW}开始升级...${NC}"
+        echo -e "${YELLOW}Starting upgrade...${NC}"
     else
-        echo -e "${GREEN}开始安装...${NC}"
+        echo -e "${GREEN}Starting installation...${NC}"
     fi
     
-    # 下载并安装
+    # Download and install
     local tmp_dir=$(mktemp -d)
     local deb_file="${tmp_dir}/package.deb"
     
-    echo "下载 $url ..."
+    echo "Downloading $url ..."
     if ! curl -L -o "$deb_file" "$url"; then
-        echo -e "${RED}下载失败${NC}"
+        echo -e "${RED}Download failed${NC}"
         rm -rf "$tmp_dir"
         exit 1
     fi
     
-    echo "使用 apt 安装/升级..."
-    # 使用 apt install 而不是 dpkg -i，自动处理依赖
+    echo "Installing with apt..."
+    # Use apt install instead of dpkg -i to auto-resolve dependencies
     if sudo apt install -y "$deb_file"; then
-        echo -e "${GREEN}安装成功${NC}"
+        echo -e "${GREEN}Installation successful${NC}"
     else
-        echo -e "${RED}安装失败${NC}"
+        echo -e "${RED}Installation failed${NC}"
         rm -rf "$tmp_dir"
         exit 1
     fi
@@ -193,47 +258,42 @@ install_deb() {
     rm -rf "$tmp_dir"
 }
 
-# 安装 AppImage 包
+# Install AppImage package
 install_appimage() {
     local url="$1"
     local app_name="$2"
     
-    # 检查 gearlever 是否安装
-    if ! command -v gearlever &>/dev/null; then
-        echo -e "${YELLOW}gearlever 未安装，正在安装...${NC}"
-        sudo apt install -y gearlever || {
-            echo -e "${RED}安装 gearlever 失败${NC}"
-            exit 1
-        }
-    fi
+    # Ensure AppImageLauncher is installed
+    install_appimagelauncher
     
-    # 检查是否已安装（通过 gearlever list）
-    if gearlever list 2>/dev/null | grep -qi "$app_name"; then
-        echo -e "${GREEN}已安装 $app_name${NC}"
-        echo -e "${YELLOW}如需更新，请先卸载再重新安装${NC}"
+    # Check if already installed (check in ~/Applications)
+    local app_dir="$HOME/Applications"
+    if [ -d "$app_dir" ] && ls "$app_dir" | grep -qi "$app_name"; then
+        echo -e "${GREEN}Installed $app_name${NC}"
+        echo -e "${YELLOW}To update, uninstall first and then reinstall${NC}"
         return 0
     fi
     
-    echo -e "${GREEN}开始安装...${NC}"
+    echo -e "${GREEN}Starting installation...${NC}"
     
-    # 下载 AppImage
+    # Download AppImage
     local tmp_dir=$(mktemp -d)
     local appimage_file="${tmp_dir}/${app_name}.AppImage"
     
-    echo "下载 $url ..."
+    echo "Downloading $url ..."
     if ! curl -L -o "$appimage_file" "$url"; then
-        echo -e "${RED}下载失败${NC}"
+        echo -e "${RED}Download failed${NC}"
         rm -rf "$tmp_dir"
         exit 1
     fi
     
     chmod +x "$appimage_file"
     
-    echo "使用 gearlever 集成到系统..."
-    if gearlever install "$appimage_file"; then
-        echo -e "${GREEN}安装成功${NC}"
+    echo "Installing with AppImageLauncher..."
+    if ail-cli integrate "$appimage_file"; then
+        echo -e "${GREEN}Installation successful${NC}"
     else
-        echo -e "${RED}安装失败${NC}"
+        echo -e "${RED}Installation failed${NC}"
         rm -rf "$tmp_dir"
         exit 1
     fi
@@ -241,7 +301,7 @@ install_appimage() {
     rm -rf "$tmp_dir"
 }
 
-# 执行安装
+# Execute installation
 case "$FORMAT" in
     deb)
         install_deb "$URL" "$PACKAGE_KEYWORD"
@@ -250,9 +310,9 @@ case "$FORMAT" in
         install_appimage "$URL" "$APP_NAME"
         ;;
     *)
-        echo -e "${RED}错误：不支持的格式 '$FORMAT'${NC}"
+        echo -e "${RED}Error: Unsupported format '$FORMAT'${NC}"
         exit 1
         ;;
 esac
 
-echo -e "\n${GREEN}完成！${NC}"
+echo -e "\n${GREEN}Done!${NC}"

@@ -22,7 +22,7 @@ def fetch_url_content(url: str) -> Optional[str]:
         resp.raise_for_status()
         return resp.text
     except Exception as e:
-        print(f"获取 {url} 失败: {e}")
+        print(f"Failed to fetch {url} failed: {e}")
         return None
 
 def resolve_final_url(url: str) -> Optional[str]:
@@ -30,7 +30,7 @@ def resolve_final_url(url: str) -> Optional[str]:
         resp = requests.head(url, timeout=10, allow_redirects=True)
         return resp.url
     except Exception as e:
-        print(f"解析重定向 URL 失败: {e}")
+        print(f"解析重定向 URL failed: {e}")
         return None
 
 def extract_download_url(html: str, patterns: List[str]) -> Optional[str]:
@@ -110,11 +110,11 @@ def fetch_apt_repo_version(apt_repo_url: str, package_name: str) -> Tuple[Option
             download_url = f"{base_url}/{current_file}"
             return current_ver, download_url
             
-        print(f"{package_name}: 在 APT 仓库中未找到")
+        print(f"{package_name}: not found in APT repository")
         return None, None
         
     except Exception as e:
-        print(f"从 APT 仓库获取 {package_name} 失败: {e}")
+        print(f"从 APT 仓库Failed to fetch {package_name} failed: {e}")
         return None, None
 
 def fetch_github_release(repo: str, asset_pattern: str, version_pattern: Optional[str] = None) -> Tuple[Optional[str], Optional[str]]:
@@ -134,7 +134,7 @@ def fetch_github_release(repo: str, asset_pattern: str, version_pattern: Optiona
         tag = data.get('tag_name', '')
         assets = data.get('assets', [])
         if not assets:
-            print(f"{repo}: 没有找到任何资产")
+            print(f"{repo}: no assets found")
             return None, None
 
         matched_asset = None
@@ -145,7 +145,7 @@ def fetch_github_release(repo: str, asset_pattern: str, version_pattern: Optiona
                 matched_asset = asset
                 break
         if not matched_asset:
-            print(f"{repo}: 没有找到匹配资产模式 '{asset_pattern}' 的文件")
+            print(f"{repo}: no files matching asset pattern '{asset_pattern}' 的文件")
             return None, None
 
         download_url = matched_asset['browser_download_url']
@@ -166,11 +166,11 @@ def fetch_github_release(repo: str, asset_pattern: str, version_pattern: Optiona
             version = tag.lstrip('v')
         if not version:
             version = "unknown"
-            print(f"{repo}: 无法提取版本号，使用 'unknown'")
+            print(f"{repo}: cannot extract version，using 'unknown'")
         return version, download_url
 
     except Exception as e:
-        print(f"从 GitHub Releases 获取 {repo} 失败: {e}")
+        print(f"从 GitHub Releases Failed to fetch {repo} failed: {e}")
         return None, None
 
 def fetch_github_release_multi(repo: str, asset_pattern: str, distro_pattern: str,
@@ -192,7 +192,7 @@ def fetch_github_release_multi(repo: str, asset_pattern: str, distro_pattern: st
         tag = data.get('tag_name', '')
         assets = data.get('assets', [])
         if not assets:
-            print(f"{repo}: 没有找到任何资产")
+            print(f"{repo}: no assets found")
             return {}
 
         version = None
@@ -204,7 +204,7 @@ def fetch_github_release_multi(repo: str, asset_pattern: str, distro_pattern: st
             version = tag.lstrip('v')
         if not version:
             version = "unknown"
-            print(f"{repo}: 无法提取版本号，使用 'unknown'")
+            print(f"{repo}: cannot extract version，using 'unknown'")
 
         result = {}
         for asset in assets:
@@ -225,7 +225,7 @@ def fetch_github_release_multi(repo: str, asset_pattern: str, distro_pattern: st
             distro_code = distro_match.group(1)
             distro_key = distro_mapping.get(distro_code)
             if not distro_key:
-                print(f"{repo}: 未映射的发行版代号 '{distro_code}'，跳过")
+                print(f"{repo}: unmapped distro code '{distro_code}'，skipping")
                 continue
             download_url = asset['browser_download_url']
             # Apply GitHub proxy if configured
@@ -237,12 +237,12 @@ def fetch_github_release_multi(repo: str, asset_pattern: str, distro_pattern: st
         return result
 
     except Exception as e:
-        print(f"从 GitHub Releases 获取 {repo} 多发行版失败: {e}")
+        print(f"从 GitHub Releases Failed to fetch {repo} 多发行版failed: {e}")
         return {}
 
 def fetch_app(config: Dict) -> Tuple[str, Any]:
     name = config.get("name", "unknown")
-    pkg_format = config.get("format", "deb")  # 包格式：deb 或 appimage
+    pkg_format = config.get("format", "deb")  # package format：deb 或 appimage
     extract_method = config.get("version_extract")
     package_keyword = config.get("package_keyword", name)
 
@@ -254,7 +254,7 @@ def fetch_app(config: Dict) -> Tuple[str, Any]:
         distro_mapping = config.get("distro_mapping", {})
         version_pattern = config.get("version_pattern")
         if not repo or not asset_pattern or not distro_pattern:
-            print(f"{name}: 多发行版配置缺少必要字段")
+            print(f"{name}: multi-distro config missing required fields")
             return name, {"version": "unknown", "url": "", "package_keyword": package_keyword}
         versions = fetch_github_release_multi(repo, asset_pattern, distro_pattern,
                                               distro_mapping, version_pattern)
@@ -273,7 +273,7 @@ def fetch_app(config: Dict) -> Tuple[str, Any]:
         asset_pattern = config.get("asset_pattern")
         version_pattern = config.get("version_pattern")
         if not repo or not asset_pattern:
-            print(f"{name}: GitHub release 配置缺少 repo 或 asset_pattern")
+            print(f"{name}: GitHub release repo or asset_pattern missing repo 或 asset_pattern")
             return name, {"format": pkg_format, "version": "unknown", "url": "", "package_keyword": package_keyword}
         version, url = fetch_github_release(repo, asset_pattern, version_pattern)
         if version is None or url is None:
@@ -285,14 +285,14 @@ def fetch_app(config: Dict) -> Tuple[str, Any]:
         apt_repo = config.get("apt_repo")
         apt_package = config.get("apt_package")
         if not apt_repo or not apt_package:
-            print(f"{name}: APT 仓库配置缺少 apt_repo 或 apt_package")
+            print(f"{name}: APT 仓库repo or asset_pattern missing apt_repo 或 apt_package")
             return name, {"format": pkg_format, "version": "unknown", "url": "", "package_keyword": package_keyword}
         version, url = fetch_apt_repo_version(apt_repo, apt_package)
         if version is None or url is None:
             return name, {"format": pkg_format, "version": "unknown", "url": "", "package_keyword": package_keyword}
         return name, {"format": pkg_format, "version": version, "url": url, "package_keyword": package_keyword}
 
-    # 原有的网页抓取逻辑
+    # original web scraping logic
     page_url = config.get("page_url")
     fallback_url = config.get("fallback_url")
     patterns = config.get("download_url_patterns", [])
@@ -307,7 +307,7 @@ def fetch_app(config: Dict) -> Tuple[str, Any]:
         download_url = fallback_url
 
     if not download_url:
-        print(f"{name}: 未找到下载链接")
+        print(f"{name}: download link not found")
         return name, {"format": pkg_format, "version": "unknown", "url": "", "package_keyword": package_keyword}
 
     final_url = resolve_final_url(download_url)
@@ -339,7 +339,7 @@ def fetch_app(config: Dict) -> Tuple[str, Any]:
 
     if not version:
         version = "unknown"
-        print(f"{name}: 无法提取版本号，使用 'unknown'")
+        print(f"{name}: cannot extract version，using 'unknown'")
 
     return name, {"format": pkg_format, "version": version, "url": final_url, "package_keyword": package_keyword}
 
@@ -348,11 +348,11 @@ def main(config_file: str = "apps.json", output_dir: str = "."):
         with open(config_file, 'r', encoding='utf-8') as f:
             apps_config = json.load(f)
     except Exception as e:
-        print(f"读取配置文件 {config_file} 失败: {e}")
+        print(f"reading config file {config_file} failed: {e}")
         sys.exit(1)
 
     if not isinstance(apps_config, list):
-        print(f"配置文件 {config_file} 应为 JSON 数组")
+        print(f"配置文件 {config_file} should be JSON array")
         sys.exit(1)
 
     results = {}
@@ -365,7 +365,7 @@ def main(config_file: str = "apps.json", output_dir: str = "."):
     output_file = os.path.join(output_dir, "versions.json")
     with open(output_file, 'w', encoding='utf-8') as f:
         json.dump(results, f, indent=2, ensure_ascii=False)
-    print(f"已生成 {output_file}")
+    print(f"generated {output_file}")
 
 if __name__ == '__main__':
     import argparse
