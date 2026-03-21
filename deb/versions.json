@@ -39,8 +39,8 @@
     "package_keyword": "joplin"
   },
   "clash-verge": {
-    "version": "2.4.7",
-    "url": "https://gh-proxy.com/https://github.com/clash-verge-rev/clash-verge-rev/releases/download/v2.4.7/Clash.Verge_2.4.7_amd64.deb",
+    "version": "2.4.6",
+    "url": "https://gh-proxy.com/https://github.com/clash-verge-rev/clash-verge-rev/releases/download/v2.4.6/Clash.Verge_2.4.6_amd64.deb",
     "package_keyword": "clash-verge"
   },
   "cryptomator": {
@@ -67,5 +67,20 @@
     "version": "5.15.15",
     "url": "https://gh-proxy.com/https://github.com/Ulauncher/Ulauncher/releases/download/5.15.15/ulauncher_5.15.15_all.deb",
     "package_keyword": "ulauncher"
+  },
+  "github-cli": {
+    "version": "2.88.1",
+    "url": "https://gh-proxy.com/https://github.com/cli/cli/releases/download/v2.88.1/gh_2.88.1_linux_amd64.deb",
+    "package_keyword": "gh"
+  },
+  "opencode": {
+    "version": "0.0.55",
+    "url": "https://gh-proxy.com/https://github.com/opencode-ai/opencode/releases/download/v0.0.55/opencode-linux-amd64.deb",
+    "package_keyword": "opencode"
+  },
+  "cherry-studio": {
+    "version": "1.8.2",
+    "url": "https://gh-proxy.com/https://github.com/CherryHQ/cherry-studio/releases/download/v1.8.2/Cherry-Studio-1.8.2-amd64.deb",
+    "package_keyword": "cherry-studio"
   }
 }

@@ -107,5 +107,27 @@
     "asset_pattern": "ulauncher.*all\\.deb",
     "version_pattern": "v?([\\d.]+)",
     "version_extract": "github_release"
+  },
+  {
+    "name": "github-cli",
+    "package_keyword": "gh",
+    "github_repo": "cli/cli",
+    "asset_pattern": "gh_([\\d.]+)_linux_amd64\\.deb$",
+    "version_extract": "github_release"
+  },
+  {
+    "name": "opencode",
+    "package_keyword": "opencode",
+    "github_repo": "opencode-ai/opencode",
+    "asset_pattern": "opencode-linux-amd64\\.deb$",
+    "version_pattern": "v?([\\d.]+)",
+    "version_extract": "github_release"
+  },
+  {
+    "name": "cherry-studio",
+    "package_keyword": "cherry-studio",
+    "github_repo": "CherryHQ/cherry-studio",
+    "asset_pattern": "Cherry-Studio-([\\d.]+)-amd64\\.deb$",
+    "version_extract": "github_release"
   }
 ]
