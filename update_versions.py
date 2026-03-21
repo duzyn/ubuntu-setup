@@ -146,12 +146,20 @@ def fetch_github_release_multi(repo: str, asset_pattern: str, distro_pattern: st
         result = {}
         for asset in assets:
             name = asset['name']
-            if not re.search(asset_pattern, name):
+            asset_match = re.search(asset_pattern, name)
+            if not asset_match:
                 continue
-            match = re.search(distro_pattern, name)
-            if not match:
+            
+            # Try to extract version from asset_pattern capture group
+            if asset_match.groups():
+                asset_version = asset_match.group(1)
+            else:
+                asset_version = version
+            
+            distro_match = re.search(distro_pattern, name)
+            if not distro_match:
                 continue
-            distro_code = match.group(1)
+            distro_code = distro_match.group(1)
             distro_key = distro_mapping.get(distro_code)
             if not distro_key:
                 print(f"{repo}: 未映射的发行版代号 '{distro_code}'，跳过")
@@ -160,7 +168,7 @@ def fetch_github_release_multi(repo: str, asset_pattern: str, distro_pattern: st
             # Apply gh-proxy
             download_url = download_url.replace('https://github.com', 'https://gh-proxy.com/https://github.com')
             result[distro_key] = {
-                "version": version,
+                "version": asset_version,
                 "url": download_url
             }
         return result

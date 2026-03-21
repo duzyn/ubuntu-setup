@@ -45,15 +45,14 @@
     "name": "ghostty",
     "package_keyword": "ghostty",
     "github_repo": "mkasberg/ghostty-ubuntu",
-    "asset_pattern": "amd64\\.deb$",
-    "distro_pattern": "~([a-z]+)_amd64\\.deb",
+    "asset_pattern": "ghostty_([\\d.]+)-.*_amd64_([\\d.]+)\\.deb$",
+    "distro_pattern": "_amd64_([\\d.]+)\\.deb$",
     "distro_mapping": {
-      "focal": "20.04",
-      "jammy": "22.04",
-      "noble": "24.04",
-      "oracular": "24.10"
+      "20.04": "20.04",
+      "22.04": "22.04",
+      "24.04": "24.04",
+      "24.10": "24.10"
     },
-    "version_pattern": "v?([\\d.]+)",
     "version_extract": "github_release",
     "multi_distro": true
   },
@@ -98,8 +97,7 @@
     "name": "switchhosts",
     "package_keyword": "switchhosts",
     "github_repo": "oldj/SwitchHosts",
-    "asset_pattern": "SwitchHosts.*amd64\\.deb",
-    "version_pattern": "v?([\\d.]+)",
+    "asset_pattern": "SwitchHosts_linux_amd64_([\\d.]+)\\.deb$",
     "version_extract": "github_release"
   },
   {
