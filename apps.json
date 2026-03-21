@@ -35,11 +35,9 @@
   {
     "name": "chrome",
     "package_keyword": "google-chrome-stable",
-    "page_url": null,
-    "download_url_patterns": [],
-    "fallback_url": "https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb",
-    "version_extract": "filename",
-    "version_pattern": "current"
+    "apt_repo": "https://dl.google.com/linux/chrome/deb/dists/stable/main/binary-amd64/Packages.gz",
+    "apt_package": "google-chrome-stable",
+    "version_extract": "apt_repo"
   },
   {
     "name": "ghostty",

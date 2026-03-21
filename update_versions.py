@@ -54,6 +54,59 @@ def extract_version_from_header(url: str, pattern: str) -> Optional[str]:
     except Exception:
         return None
 
+def fetch_apt_repo_version(apt_repo_url: str, package_name: str) -> Tuple[Optional[str], Optional[str]]:
+    """Fetch version and download URL from APT repository Packages.gz."""
+    try:
+        # Download and decompress Packages.gz
+        resp = requests.get(apt_repo_url, timeout=15)
+        resp.raise_for_status()
+        
+        # Decompress gzip
+        import gzip
+        from io import BytesIO
+        packages_data = gzip.decompress(resp.content).decode('utf-8')
+        
+        # Parse Packages file to find the package
+        # Format: Package: name\nVersion: version\n...\n\n
+        current_pkg = None
+        current_ver = None
+        current_file = None
+        
+        for line in packages_data.split('\n'):
+            line = line.strip()
+            if line.startswith('Package: '):
+                current_pkg = line[9:]
+            elif line.startswith('Version: '):
+                current_ver = line[9:]
+            elif line.startswith('Filename: '):
+                current_file = line[10:]
+            elif line == '' and current_pkg:
+                # End of package record
+                if current_pkg == package_name:
+                    # Found the package
+                    # Build download URL
+                    # apt_repo_url is like: https://.../dists/stable/main/binary-amd64/Packages.gz
+                    base_url = apt_repo_url.rsplit('/dists/', 1)[0]
+                    download_url = f"{base_url}/{current_file}"
+                    return current_ver, download_url
+                # Reset for next package
+                current_pkg = None
+                current_ver = None
+                current_file = None
+        
+        # Check last package if file doesn't end with blank line
+        if current_pkg == package_name and current_ver and current_file:
+            base_url = apt_repo_url.rsplit('/dists/', 1)[0]
+            download_url = f"{base_url}/{current_file}"
+            return current_ver, download_url
+            
+        print(f"{package_name}: 在 APT 仓库中未找到")
+        return None, None
+        
+    except Exception as e:
+        print(f"从 APT 仓库获取 {package_name} 失败: {e}")
+        return None, None
+
 def fetch_github_release(repo: str, asset_pattern: str, version_pattern: Optional[str] = None) -> Tuple[Optional[str], Optional[str]]:
     """Fetch release info from GitHub API with optional token authentication."""
     api_url = f"https://api.github.com/repos/{repo}/releases/latest"
@@ -211,6 +264,18 @@ def fetch_app(config: Dict) -> Tuple[str, Any]:
             print(f"{name}: GitHub release 配置缺少 repo 或 asset_pattern")
             return name, {"version": "unknown", "url": "", "package_keyword": package_keyword}
         version, url = fetch_github_release(repo, asset_pattern, version_pattern)
+        if version is None or url is None:
+            return name, {"version": "unknown", "url": "", "package_keyword": package_keyword}
+        return name, {"version": version, "url": url, "package_keyword": package_keyword}
+
+    # APT Repository
+    if extract_method == "apt_repo":
+        apt_repo = config.get("apt_repo")
+        apt_package = config.get("apt_package")
+        if not apt_repo or not apt_package:
+            print(f"{name}: APT 仓库配置缺少 apt_repo 或 apt_package")
+            return name, {"version": "unknown", "url": "", "package_keyword": package_keyword}
+        version, url = fetch_apt_repo_version(apt_repo, apt_package)
         if version is None or url is None:
             return name, {"version": "unknown", "url": "", "package_keyword": package_keyword}
         return name, {"version": version, "url": url, "package_keyword": package_keyword}
