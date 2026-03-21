@@ -1,0 +1,62 @@
+{
+  "wps": {
+    "version": "12.1.2.25838.",
+    "url": "https://wps-linux-personal.wpscdn.cn/wps/download/ep/Linux2023/25838/wps-office_12.1.2.25838.AK.preread.sw_648473_amd64.deb",
+    "package_keyword": "wps-office"
+  },
+  "wechat": {
+    "version": "4.1.1",
+    "url": "https://dldir1v6.qq.com/weixin/Universal/Linux/WeChatLinux_x86_64.deb",
+    "package_keyword": "wechat"
+  },
+  "vscode": {
+    "version": "1.112.0",
+    "url": "https://vscode.download.prss.microsoft.com/dbazure/download/stable/07ff9d6178ede9a1bd12ad3399074d726ebe6e43/code_1.112.0-1773778351_amd64.deb",
+    "package_keyword": "code"
+  },
+  "chrome": {
+    "version": "latest",
+    "url": "https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb",
+    "package_keyword": "google-chrome-stable"
+  },
+  "ghostty": {
+    "version": "unknown",
+    "url": "",
+    "package_keyword": "ghostty"
+  },
+  "joplin": {
+    "version": "unknown",
+    "url": "",
+    "package_keyword": "joplin"
+  },
+  "clash-verge": {
+    "version": "unknown",
+    "url": "",
+    "package_keyword": "clash-verge"
+  },
+  "cryptomator": {
+    "version": "1.19.2",
+    "url": "https://gh-proxy.com/https://github.com/cryptomator/cryptomator/releases/download/1.19.2/cryptomator_1.19.2-0ppa1_amd64.deb",
+    "package_keyword": "cryptomator"
+  },
+  "localsend": {
+    "version": "unknown",
+    "url": "",
+    "package_keyword": "localsend"
+  },
+  "lx-music": {
+    "version": "2.12.1",
+    "url": "https://gh-proxy.com/https://github.com/lyswhut/lx-music-desktop/releases/download/v2.12.1/lx-music-desktop_2.12.1_amd64.deb",
+    "package_keyword": "lx-music-desktop"
+  },
+  "switchhosts": {
+    "version": "unknown",
+    "url": "",
+    "package_keyword": "switchhosts"
+  },
+  "ulauncher": {
+    "version": "5.15.15",
+    "url": "https://gh-proxy.com/https://github.com/Ulauncher/Ulauncher/releases/download/5.15.15/ulauncher_5.15.15_all.deb",
+    "package_keyword": "ulauncher"
+  }
+}
