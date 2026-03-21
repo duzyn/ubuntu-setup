@@ -25,13 +25,13 @@
     "package_keyword": "ghostty"
   },
   "joplin": {
-    "version": "unknown",
-    "url": "",
+    "version": "3.5.13",
+    "url": "https://gh-proxy.com/https://github.com/laurent22/joplin/releases/download/v3.5.13/Joplin-3.5.13.deb",
     "package_keyword": "joplin"
   },
   "clash-verge": {
-    "version": "unknown",
-    "url": "",
+    "version": "2.4.7",
+    "url": "https://gh-proxy.com/https://github.com/clash-verge-rev/clash-verge-rev/releases/download/v2.4.7/Clash.Verge_2.4.7_amd64.deb",
     "package_keyword": "clash-verge"
   },
   "cryptomator": {
@@ -40,8 +40,8 @@
     "package_keyword": "cryptomator"
   },
   "localsend": {
-    "version": "unknown",
-    "url": "",
+    "version": "1.17.0",
+    "url": "https://gh-proxy.com/https://github.com/localsend/localsend/releases/download/v1.17.0/LocalSend-1.17.0-linux-x86-64.deb",
     "package_keyword": "localsend"
   },
   "lx-music": {
