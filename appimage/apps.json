@@ -1,0 +1,26 @@
+[
+  {
+    "name": "aya",
+    "package_keyword": "aya",
+    "github_repo": "liriliri/aya",
+    "asset_pattern": "AYA-([\\d.]+)-linux-x86_64\\.AppImage$",
+    "version_extract": "github_release"
+  },
+  {
+    "name": "todoist",
+    "package_keyword": "todoist",
+    "page_url": null,
+    "download_url_patterns": [],
+    "fallback_url": "https://todoist.com/linux_app/appimage",
+    "version_extract": "filename",
+    "version_pattern": "Todoist-linux-([\\d.]+)-x86_64"
+  },
+  {
+    "name": "losslesscut",
+    "package_keyword": "losslesscut",
+    "github_repo": "mifi/lossless-cut",
+    "asset_pattern": "LosslessCut-linux-x86_64\\.AppImage$",
+    "version_pattern": "v?([\\d.]+)",
+    "version_extract": "github_release"
+  }
+]

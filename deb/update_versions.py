@@ -331,7 +331,7 @@ def fetch_app(config: Dict) -> Tuple[str, Any]:
 
     return name, {"version": version, "url": final_url, "package_keyword": package_keyword}
 
-def main(config_file: str = "apps.json"):
+def main(config_file: str = "apps.json", output_dir: str = "."):
     try:
         with open(config_file, 'r', encoding='utf-8') as f:
             apps_config = json.load(f)
@@ -348,11 +348,17 @@ def main(config_file: str = "apps.json"):
         name, data = fetch_app(config)
         results[name] = data
 
-    output_file = "versions.json"
+    # Ensure output directory exists
+    os.makedirs(output_dir, exist_ok=True)
+    output_file = os.path.join(output_dir, "versions.json")
     with open(output_file, 'w', encoding='utf-8') as f:
         json.dump(results, f, indent=2, ensure_ascii=False)
     print(f"已生成 {output_file}")
 
 if __name__ == '__main__':
-    config_file = sys.argv[1] if len(sys.argv) > 1 else "apps.json"
-    main(config_file)
+    import argparse
+    parser = argparse.ArgumentParser(description='Fetch application versions')
+    parser.add_argument('config_file', nargs='?', default='apps.json', help='Path to apps.json config file')
+    parser.add_argument('--output-dir', '-o', default='.', help='Output directory for versions.json')
+    args = parser.parse_args()
+    main(args.config_file, args.output_dir)

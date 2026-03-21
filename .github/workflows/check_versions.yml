@@ -1,0 +1,63 @@
+name: Update Package Versions
+
+on:
+  schedule:
+    - cron: '0 * * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  update:
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
+
+      - name: Install dependencies
+        run: pip install requests
+
+      - name: Fetch and generate DEB versions
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: python deb/update_versions.py deb/apps.json --output-dir deb
+
+      - name: Fetch and generate AppImage versions
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: python deb/update_versions.py appimage/apps.json --output-dir appimage
+
+      - name: Check for changes
+        id: check_changes
+        run: |
+          # Check for changes in both directories
+          deb_status=$(git status --porcelain deb/versions.json 2>/dev/null || true)
+          appimage_status=$(git status --porcelain appimage/versions.json 2>/dev/null || true)
+          
+          echo "DEB status: '$deb_status'"
+          echo "AppImage status: '$appimage_status'"
+          
+          if [ -n "$deb_status" ] || [ -n "$appimage_status" ]; then
+            echo "changed=true" >> $GITHUB_OUTPUT
+            echo "Files have changes"
+          else
+            echo "changed=false" >> $GITHUB_OUTPUT
+            echo "No changes detected"
+          fi
+
+      - name: Commit and push if changed
+        if: steps.check_changes.outputs.changed == 'true'
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add deb/versions.json appimage/versions.json
+          git commit -m "Update package versions: $(date -u +'%Y-%m-%d %H:%M:%S')"
+          git push
