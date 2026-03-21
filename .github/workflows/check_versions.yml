@@ -28,7 +28,7 @@ jobs:
       - name: Fetch and generate versions
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: python deb/update_versions.py apps.json
+        run: python update_versions.py apps.json
 
       - name: Check for changes
         id: check_changes
