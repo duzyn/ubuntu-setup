@@ -61,16 +61,14 @@
     "name": "joplin",
     "package_keyword": "joplin",
     "github_repo": "laurent22/joplin",
-    "asset_pattern": "joplin.*amd64\\.deb",
-    "version_pattern": "v?([\\d.]+)",
+    "asset_pattern": "Joplin-([\\d.]+)\\.deb$",
     "version_extract": "github_release"
   },
   {
     "name": "clash-verge",
     "package_keyword": "clash-verge",
     "github_repo": "clash-verge-rev/clash-verge-rev",
-    "asset_pattern": "clash-verge.*amd64\\.deb",
-    "version_pattern": "v?([\\d.]+)",
+    "asset_pattern": "Clash\\.Verge_([\\d.]+)_amd64\\.deb$",
     "version_extract": "github_release"
   },
   {
@@ -85,8 +83,7 @@
     "name": "localsend",
     "package_keyword": "localsend",
     "github_repo": "localsend/localsend",
-    "asset_pattern": "LocalSend.*amd64\\.deb",
-    "version_pattern": "v?([\\d.]+)",
+    "asset_pattern": "LocalSend-([\\d.]+)-linux-x86-64\\.deb$",
     "version_extract": "github_release"
   },
   {

@@ -75,8 +75,10 @@ def fetch_github_release(repo: str, asset_pattern: str, version_pattern: Optiona
             return None, None
 
         matched_asset = None
+        asset_match = None
         for asset in assets:
-            if re.search(asset_pattern, asset['name']):
+            asset_match = re.search(asset_pattern, asset['name'])
+            if asset_match:
                 matched_asset = asset
                 break
         if not matched_asset:
@@ -87,7 +89,10 @@ def fetch_github_release(repo: str, asset_pattern: str, version_pattern: Optiona
         # Apply gh-proxy
         download_url = download_url.replace('https://github.com', 'https://gh-proxy.com/https://github.com')
         
-        if version_pattern:
+        # Try to extract version from asset_pattern capture group first
+        if asset_match and asset_match.groups():
+            version = asset_match.group(1)
+        elif version_pattern:
             version_match = re.search(version_pattern, tag)
             if version_match:
                 version = version_match.group(1)
