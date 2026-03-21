@@ -73,8 +73,8 @@ echo "Installing 雾凇拼音 (rime-ice)..."
 RIME_DIR="$HOME/.local/share/fcitx5/rime"
 mkdir -p "$RIME_DIR"
 
-# Clone rime-ice with gh-proxy
-git clone --depth 1 "https://gh-proxy.com/https://github.com/iDvel/rime-ice.git" /tmp/rime-ice
+# Clone rime-ice with optional GH_PROXY
+git clone --depth 1 "${GH_PROXY}https://github.com/iDvel/rime-ice.git" /tmp/rime-ice
 
 # Copy configuration files
 cp -r /tmp/rime-ice/* "$RIME_DIR/"

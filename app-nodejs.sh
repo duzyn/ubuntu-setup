@@ -12,7 +12,7 @@ if [ ! -d "$NVM_DIR" ]; then
   
   cd /tmp
   
-  NVM_URL="https://gh-proxy.com/https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.1/install.sh"
+  NVM_URL="${GH_PROXY}https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.1/install.sh"
   
   if wget -O install.sh "$NVM_URL"; then
     echo "Download completed"

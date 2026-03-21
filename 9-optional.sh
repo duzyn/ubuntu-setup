@@ -14,6 +14,7 @@ PACKAGES=(
   vlc
   gimp
   pdfarranger
+  handbrake
 )
 
 echo "Installing apt packages..."

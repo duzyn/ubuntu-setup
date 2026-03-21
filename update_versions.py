@@ -6,6 +6,16 @@ import requests
 import sys
 from typing import Dict, List, Optional, Tuple, Any
 
+# Get GitHub proxy from environment variable, default to empty string
+def get_github_proxy() -> str:
+    return os.environ.get('GH_PROXY', '')
+
+def apply_github_proxy(url: str) -> str:
+    proxy = get_github_proxy()
+    if proxy and 'https://github.com' in url:
+        return url.replace('https://github.com', f'{proxy}https://github.com')
+    return url
+
 def fetch_url_content(url: str) -> Optional[str]:
     try:
         resp = requests.get(url, timeout=10)
@@ -139,8 +149,8 @@ def fetch_github_release(repo: str, asset_pattern: str, version_pattern: Optiona
             return None, None
 
         download_url = matched_asset['browser_download_url']
-        # Apply gh-proxy
-        download_url = download_url.replace('https://github.com', 'https://gh-proxy.com/https://github.com')
+        # Apply GitHub proxy if configured
+        download_url = apply_github_proxy(download_url)
         
         # Try to extract version from asset_pattern capture group first
         if asset_match and asset_match.groups():
@@ -218,8 +228,8 @@ def fetch_github_release_multi(repo: str, asset_pattern: str, distro_pattern: st
                 print(f"{repo}: 未映射的发行版代号 '{distro_code}'，跳过")
                 continue
             download_url = asset['browser_download_url']
-            # Apply gh-proxy
-            download_url = download_url.replace('https://github.com', 'https://gh-proxy.com/https://github.com')
+            # Apply GitHub proxy if configured
+            download_url = apply_github_proxy(download_url)
             result[distro_key] = {
                 "version": asset_version,
                 "url": download_url
