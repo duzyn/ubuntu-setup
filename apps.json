@@ -180,5 +180,13 @@
     "asset_pattern": "LosslessCut-linux-x86_64\\.AppImage$",
     "version_pattern": "v?([\\d.]+)",
     "version_extract": "github_release"
+  },
+  {
+    "name": "fastfetch",
+    "format": "deb",
+    "package_keyword": "fastfetch",
+    "github_repo": "fastfetch-cli/fastfetch",
+    "asset_pattern": "fastfetch-linux-amd64\\.deb$",
+    "version_extract": "github_release"
   }
 ]
