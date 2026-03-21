@@ -188,5 +188,21 @@
     "github_repo": "fastfetch-cli/fastfetch",
     "asset_pattern": "fastfetch-linux-amd64\\.deb$",
     "version_extract": "github_release"
+  },
+  {
+    "name": "appmanager",
+    "format": "appimage",
+    "package_keyword": "appmanager",
+    "github_repo": "kem-a/AppManager",
+    "asset_pattern": "AppManager-([\\d.]+)-anylinux-x86_64\\.AppImage$",
+    "version_extract": "github_release"
+  },
+  {
+    "name": "ghostty-appimage",
+    "format": "appimage",
+    "package_keyword": "ghostty",
+    "github_repo": "pkgforge-dev/ghostty-appimage",
+    "asset_pattern": "Ghostty-([\\d.]+)-x86_64\\.AppImage$",
+    "version_extract": "github_release"
   }
 ]
