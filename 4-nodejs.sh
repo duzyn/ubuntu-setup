@@ -53,4 +53,14 @@ nvm alias default 'lts/*'
 echo "Setting npm registry to https://registry.npmmirror.com..."
 npm config set registry https://registry.npmmirror.com
 
+# Install or update opencode globally
+echo "Checking opencode installation..."
+if command -v opencode &>/dev/null; then
+  echo "opencode is already installed, updating..."
+  npm update -g opencode
+else
+  echo "Installing opencode..."
+  npm install -g opencode
+fi
+
 echo "Node.js installation completed"
