@@ -33,10 +33,13 @@ jobs:
       - name: Check for changes
         id: check_changes
         run: |
-          if git diff --quiet versions.json; then
-            echo "changed=false" >> $GITHUB_OUTPUT
-          else
+          # Check if file is modified (tracked) or new (untracked)
+          if git status --porcelain versions.json | grep -q '^[ MADRC]'; then
             echo "changed=true" >> $GITHUB_OUTPUT
+            echo "File versions.json has changes"
+          else
+            echo "changed=false" >> $GITHUB_OUTPUT
+            echo "No changes to versions.json"
           fi
 
       - name: Commit and push if changed
