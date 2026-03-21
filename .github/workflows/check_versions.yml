@@ -26,6 +26,8 @@ jobs:
         run: pip install requests
 
       - name: Fetch and generate versions.json
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: python update_versions.py apps.json
 
       - name: Check for changes

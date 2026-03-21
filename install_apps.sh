@@ -66,6 +66,10 @@ install_or_upgrade() {
     if [ -z "$installed_version" ]; then
         echo -e "${GREEN}开始安装 $name ...${NC}"
         do_install "$download_url"
+    elif [ "$target_version" = "latest" ]; then
+        # 对于 always-latest URL（如 Chrome），总是尝试升级
+        echo -e "${GREEN}检查 $name 更新（总是获取最新版本）...${NC}"
+        do_install "$download_url"
     else
         # 比较版本号（使用 dpkg 原生的比较工具）
         if dpkg --compare-versions "$installed_version" lt "$target_version"; then

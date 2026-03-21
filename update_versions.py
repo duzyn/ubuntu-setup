@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 import re
 import json
+import os
 import requests
 import sys
 from typing import Dict, List, Optional, Tuple, Any
@@ -54,9 +55,17 @@ def extract_version_from_header(url: str, pattern: str) -> Optional[str]:
         return None
 
 def fetch_github_release(repo: str, asset_pattern: str, version_pattern: Optional[str] = None) -> Tuple[Optional[str], Optional[str]]:
+    """Fetch release info from GitHub API with optional token authentication."""
     api_url = f"https://api.github.com/repos/{repo}/releases/latest"
+    headers = {}
+    
+    # Use GitHub token if available (increases rate limit from 60 to 5000/hour)
+    token = os.environ.get('GITHUB_TOKEN')
+    if token:
+        headers['Authorization'] = f'token {token}'
+    
     try:
-        resp = requests.get(api_url, timeout=10)
+        resp = requests.get(api_url, timeout=10, headers=headers)
         resp.raise_for_status()
         data = resp.json()
         tag = data.get('tag_name', '')
@@ -75,6 +84,9 @@ def fetch_github_release(repo: str, asset_pattern: str, version_pattern: Optiona
             return None, None
 
         download_url = matched_asset['browser_download_url']
+        # Apply gh-proxy
+        download_url = download_url.replace('https://github.com', 'https://gh-proxy.com/https://github.com')
+        
         if version_pattern:
             version_match = re.search(version_pattern, tag)
             if version_match:
@@ -96,9 +108,17 @@ def fetch_github_release(repo: str, asset_pattern: str, version_pattern: Optiona
 def fetch_github_release_multi(repo: str, asset_pattern: str, distro_pattern: str,
                                 distro_mapping: Dict[str, str],
                                 version_pattern: Optional[str] = None) -> Dict[str, Dict[str, str]]:
+    """Fetch multi-distro release info from GitHub API with optional token authentication."""
     api_url = f"https://api.github.com/repos/{repo}/releases/latest"
+    headers = {}
+    
+    # Use GitHub token if available
+    token = os.environ.get('GITHUB_TOKEN')
+    if token:
+        headers['Authorization'] = f'token {token}'
+    
     try:
-        resp = requests.get(api_url, timeout=10)
+        resp = requests.get(api_url, timeout=10, headers=headers)
         resp.raise_for_status()
         data = resp.json()
         tag = data.get('tag_name', '')
@@ -131,9 +151,12 @@ def fetch_github_release_multi(repo: str, asset_pattern: str, distro_pattern: st
             if not distro_key:
                 print(f"{repo}: 未映射的发行版代号 '{distro_code}'，跳过")
                 continue
+            download_url = asset['browser_download_url']
+            # Apply gh-proxy
+            download_url = download_url.replace('https://github.com', 'https://gh-proxy.com/https://github.com')
             result[distro_key] = {
                 "version": version,
-                "url": asset['browser_download_url']
+                "url": download_url
             }
         return result
 
@@ -203,10 +226,17 @@ def fetch_app(config: Dict) -> Tuple[str, Any]:
 
     version = None
     if extract_method == "filename":
-        patterns = [config.get("version_pattern")]
-        if "version_pattern_fallback" in config:
-            patterns.append(config["version_pattern_fallback"])
-        version = extract_version_from_filename(final_url, patterns)
+        ver_pattern = config.get("version_pattern")
+        # Special case: "current" means the URL always points to latest version
+        if ver_pattern == "current":
+            version = "latest"
+        else:
+            patterns: List[str] = [ver_pattern] if ver_pattern else []
+            if "version_pattern_fallback" in config:
+                fallback = config["version_pattern_fallback"]
+                if fallback:
+                    patterns.append(fallback)
+            version = extract_version_from_filename(final_url, patterns)
 
     elif extract_method == "page" and html:
         version = extract_version_from_text(html, config.get("version_pattern", ""))
