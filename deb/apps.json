@@ -118,9 +118,8 @@
   {
     "name": "opencode",
     "package_keyword": "opencode",
-    "github_repo": "opencode-ai/opencode",
-    "asset_pattern": "opencode-linux-amd64\\.deb$",
-    "version_pattern": "v?([\\d.]+)",
+    "github_repo": "anomalyco/opencode",
+    "asset_pattern": "opencode-desktop-linux-amd64\\.deb$",
     "version_extract": "github_release"
   },
   {

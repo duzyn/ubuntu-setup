@@ -39,8 +39,8 @@
     "package_keyword": "joplin"
   },
   "clash-verge": {
-    "version": "2.4.6",
-    "url": "https://gh-proxy.com/https://github.com/clash-verge-rev/clash-verge-rev/releases/download/v2.4.6/Clash.Verge_2.4.6_amd64.deb",
+    "version": "2.4.7",
+    "url": "https://gh-proxy.com/https://github.com/clash-verge-rev/clash-verge-rev/releases/download/v2.4.7/Clash.Verge_2.4.7_amd64.deb",
     "package_keyword": "clash-verge"
   },
   "cryptomator": {
@@ -74,8 +74,8 @@
     "package_keyword": "gh"
   },
   "opencode": {
-    "version": "0.0.55",
-    "url": "https://gh-proxy.com/https://github.com/opencode-ai/opencode/releases/download/v0.0.55/opencode-linux-amd64.deb",
+    "version": "1.2.27",
+    "url": "https://gh-proxy.com/https://github.com/anomalyco/opencode/releases/download/v1.2.27/opencode-desktop-linux-amd64.deb",
     "package_keyword": "opencode"
   },
   "cherry-studio": {
