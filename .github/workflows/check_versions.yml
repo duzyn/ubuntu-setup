@@ -25,29 +25,20 @@ jobs:
       - name: Install dependencies
         run: pip install requests
 
-      - name: Fetch and generate DEB versions
+      - name: Fetch and generate versions
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: python deb/update_versions.py deb/apps.json --output-dir deb
-
-      - name: Fetch and generate AppImage versions
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: python deb/update_versions.py appimage/apps.json --output-dir appimage
+        run: python deb/update_versions.py apps.json
 
       - name: Check for changes
         id: check_changes
         run: |
-          # Check for changes in both directories
-          deb_status=$(git status --porcelain deb/versions.json 2>/dev/null || true)
-          appimage_status=$(git status --porcelain appimage/versions.json 2>/dev/null || true)
+          status=$(git status --porcelain versions.json 2>/dev/null || true)
+          echo "Status: '$status'"
           
-          echo "DEB status: '$deb_status'"
-          echo "AppImage status: '$appimage_status'"
-          
-          if [ -n "$deb_status" ] || [ -n "$appimage_status" ]; then
+          if [ -n "$status" ]; then
             echo "changed=true" >> $GITHUB_OUTPUT
-            echo "Files have changes"
+            echo "versions.json has changes"
           else
             echo "changed=false" >> $GITHUB_OUTPUT
             echo "No changes detected"
@@ -58,6 +49,6 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add deb/versions.json appimage/versions.json
+          git add versions.json
           git commit -m "Update package versions: $(date -u +'%Y-%m-%d %H:%M:%S')"
           git push

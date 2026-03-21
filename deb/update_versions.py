@@ -232,6 +232,7 @@ def fetch_github_release_multi(repo: str, asset_pattern: str, distro_pattern: st
 
 def fetch_app(config: Dict) -> Tuple[str, Any]:
     name = config.get("name", "unknown")
+    pkg_format = config.get("format", "deb")  # 包格式：deb 或 appimage
     extract_method = config.get("version_extract")
     package_keyword = config.get("package_keyword", name)
 
@@ -248,8 +249,9 @@ def fetch_app(config: Dict) -> Tuple[str, Any]:
         versions = fetch_github_release_multi(repo, asset_pattern, distro_pattern,
                                               distro_mapping, version_pattern)
         if not versions:
-            return name, {"version": "unknown", "url": "", "package_keyword": package_keyword}
+            return name, {"format": pkg_format, "version": "unknown", "url": "", "package_keyword": package_keyword}
         return name, {
+            "format": pkg_format,
             "multi": True,
             "versions": versions,
             "package_keyword": package_keyword
@@ -262,11 +264,11 @@ def fetch_app(config: Dict) -> Tuple[str, Any]:
         version_pattern = config.get("version_pattern")
         if not repo or not asset_pattern:
             print(f"{name}: GitHub release 配置缺少 repo 或 asset_pattern")
-            return name, {"version": "unknown", "url": "", "package_keyword": package_keyword}
+            return name, {"format": pkg_format, "version": "unknown", "url": "", "package_keyword": package_keyword}
         version, url = fetch_github_release(repo, asset_pattern, version_pattern)
         if version is None or url is None:
-            return name, {"version": "unknown", "url": "", "package_keyword": package_keyword}
-        return name, {"version": version, "url": url, "package_keyword": package_keyword}
+            return name, {"format": pkg_format, "version": "unknown", "url": "", "package_keyword": package_keyword}
+        return name, {"format": pkg_format, "version": version, "url": url, "package_keyword": package_keyword}
 
     # APT Repository
     if extract_method == "apt_repo":
@@ -274,11 +276,11 @@ def fetch_app(config: Dict) -> Tuple[str, Any]:
         apt_package = config.get("apt_package")
         if not apt_repo or not apt_package:
             print(f"{name}: APT 仓库配置缺少 apt_repo 或 apt_package")
-            return name, {"version": "unknown", "url": "", "package_keyword": package_keyword}
+            return name, {"format": pkg_format, "version": "unknown", "url": "", "package_keyword": package_keyword}
         version, url = fetch_apt_repo_version(apt_repo, apt_package)
         if version is None or url is None:
-            return name, {"version": "unknown", "url": "", "package_keyword": package_keyword}
-        return name, {"version": version, "url": url, "package_keyword": package_keyword}
+            return name, {"format": pkg_format, "version": "unknown", "url": "", "package_keyword": package_keyword}
+        return name, {"format": pkg_format, "version": version, "url": url, "package_keyword": package_keyword}
 
     # 原有的网页抓取逻辑
     page_url = config.get("page_url")
@@ -296,7 +298,7 @@ def fetch_app(config: Dict) -> Tuple[str, Any]:
 
     if not download_url:
         print(f"{name}: 未找到下载链接")
-        return name, {"version": "unknown", "url": "", "package_keyword": package_keyword}
+        return name, {"format": pkg_format, "version": "unknown", "url": "", "package_keyword": package_keyword}
 
     final_url = resolve_final_url(download_url)
     if not final_url:
@@ -329,7 +331,7 @@ def fetch_app(config: Dict) -> Tuple[str, Any]:
         version = "unknown"
         print(f"{name}: 无法提取版本号，使用 'unknown'")
 
-    return name, {"version": version, "url": final_url, "package_keyword": package_keyword}
+    return name, {"format": pkg_format, "version": version, "url": final_url, "package_keyword": package_keyword}
 
 def main(config_file: str = "apps.json", output_dir: str = "."):
     try:

@@ -1,0 +1,184 @@
+[
+  {
+    "name": "wps",
+    "format": "deb",
+    "package_keyword": "wps-office",
+    "page_url": "https://www.wps.cn/product/wpslinux/",
+    "download_url_patterns": [
+      "href=\"(https://[^\"]+amd64\\.deb)\""
+    ],
+    "fallback_url": null,
+    "version_extract": "filename",
+    "version_pattern": "wps-office_([\\d.]+)",
+    "version_pattern_fallback": "(\\d+\\.\\d+\\.\\d+\\.\\d+)"
+  },
+  {
+    "name": "wechat",
+    "format": "deb",
+    "package_keyword": "wechat",
+    "page_url": "https://linux.weixin.qq.com/",
+    "download_url_patterns": [
+      "href=\"(https://[^\"]*x86[^\"]*\\.deb)\"",
+      "href=\"(https://[^\"]+\\.deb)\""
+    ],
+    "fallback_url": "https://dldir1v6.qq.com/weixin/Universal/Linux/WeChatLinux_x86_64.deb",
+    "version_extract": "page",
+    "version_pattern": "main-section__bd-version[^>]*>([\\d.]+)"
+  },
+  {
+    "name": "vscode",
+    "format": "deb",
+    "package_keyword": "code",
+    "page_url": null,
+    "download_url_patterns": [],
+    "fallback_url": "https://code.visualstudio.com/sha/download?build=stable&os=linux-deb-x64",
+    "version_extract": "filename",
+    "version_pattern": "code_([\\d.]+)-[\\d]+_amd64\\.deb"
+  },
+  {
+    "name": "chrome",
+    "format": "deb",
+    "package_keyword": "google-chrome-stable",
+    "apt_repo": "https://dl.google.com/linux/chrome/deb/dists/stable/main/binary-amd64/Packages.gz",
+    "apt_package": "google-chrome-stable",
+    "version_extract": "apt_repo"
+  },
+  {
+    "name": "ghostty",
+    "format": "deb",
+    "package_keyword": "ghostty",
+    "github_repo": "mkasberg/ghostty-ubuntu",
+    "asset_pattern": "ghostty_([\\d.]+)-.*_amd64_([\\d.]+)\\.deb$",
+    "distro_pattern": "_amd64_([\\d.]+)\\.deb$",
+    "distro_mapping": {
+      "20.04": "20.04",
+      "22.04": "22.04",
+      "24.04": "24.04",
+      "24.10": "24.10",
+      "25.04": "25.04",
+      "25.10": "25.10"
+    },
+    "version_extract": "github_release",
+    "multi_distro": true
+  },
+  {
+    "name": "joplin",
+    "format": "deb",
+    "package_keyword": "joplin",
+    "github_repo": "laurent22/joplin",
+    "asset_pattern": "Joplin-([\\d.]+)\\.deb$",
+    "version_extract": "github_release"
+  },
+  {
+    "name": "clash-verge",
+    "format": "deb",
+    "package_keyword": "clash-verge",
+    "github_repo": "clash-verge-rev/clash-verge-rev",
+    "asset_pattern": "Clash\\.Verge_([\\d.]+)_amd64\\.deb$",
+    "version_extract": "github_release"
+  },
+  {
+    "name": "cryptomator",
+    "format": "deb",
+    "package_keyword": "cryptomator",
+    "github_repo": "cryptomator/cryptomator",
+    "asset_pattern": "cryptomator.*amd64\\.deb",
+    "version_pattern": "v?([\\d.]+)",
+    "version_extract": "github_release"
+  },
+  {
+    "name": "localsend",
+    "format": "deb",
+    "package_keyword": "localsend",
+    "github_repo": "localsend/localsend",
+    "asset_pattern": "LocalSend-([\\d.]+)-linux-x86-64\\.deb$",
+    "version_extract": "github_release"
+  },
+  {
+    "name": "lx-music",
+    "format": "deb",
+    "package_keyword": "lx-music-desktop",
+    "github_repo": "lyswhut/lx-music-desktop",
+    "asset_pattern": "lx-music-desktop.*amd64\\.deb",
+    "version_pattern": "v?([\\d.]+)",
+    "version_extract": "github_release"
+  },
+  {
+    "name": "switchhosts",
+    "format": "deb",
+    "package_keyword": "switchhosts",
+    "github_repo": "oldj/SwitchHosts",
+    "asset_pattern": "SwitchHosts_linux_amd64_([\\d.]+)\\.deb$",
+    "version_extract": "github_release"
+  },
+  {
+    "name": "ulauncher",
+    "format": "deb",
+    "package_keyword": "ulauncher",
+    "github_repo": "Ulauncher/Ulauncher",
+    "asset_pattern": "ulauncher.*all\\.deb",
+    "version_pattern": "v?([\\d.]+)",
+    "version_extract": "github_release"
+  },
+  {
+    "name": "github-cli",
+    "format": "deb",
+    "package_keyword": "gh",
+    "github_repo": "cli/cli",
+    "asset_pattern": "gh_([\\d.]+)_linux_amd64\\.deb$",
+    "version_extract": "github_release"
+  },
+  {
+    "name": "opencode",
+    "format": "deb",
+    "package_keyword": "opencode",
+    "github_repo": "anomalyco/opencode",
+    "asset_pattern": "opencode-desktop-linux-amd64\\.deb$",
+    "version_extract": "github_release"
+  },
+  {
+    "name": "cherry-studio",
+    "format": "deb",
+    "package_keyword": "cherry-studio",
+    "github_repo": "CherryHQ/cherry-studio",
+    "asset_pattern": "Cherry-Studio-([\\d.]+)-amd64\\.deb$",
+    "version_extract": "github_release"
+  },
+  {
+    "name": "fdm",
+    "format": "deb",
+    "package_keyword": "freedownloadmanager",
+    "page_url": "https://www.freedownloadmanager.org/download-fdm-for-linux.htm",
+    "download_url_patterns": [],
+    "fallback_url": "https://files2.freedownloadmanager.org/6/latest/freedownloadmanager.deb",
+    "version_extract": "page",
+    "version_pattern": "FDM ([\\d.]+)"
+  },
+  {
+    "name": "aya",
+    "format": "appimage",
+    "package_keyword": "aya",
+    "github_repo": "liriliri/aya",
+    "asset_pattern": "AYA-([\\d.]+)-linux-x86_64\\.AppImage$",
+    "version_extract": "github_release"
+  },
+  {
+    "name": "todoist",
+    "format": "appimage",
+    "package_keyword": "todoist",
+    "page_url": null,
+    "download_url_patterns": [],
+    "fallback_url": "https://todoist.com/linux_app/appimage",
+    "version_extract": "filename",
+    "version_pattern": "Todoist-linux-([\\d.]+)-x86_64"
+  },
+  {
+    "name": "losslesscut",
+    "format": "appimage",
+    "package_keyword": "losslesscut",
+    "github_repo": "mifi/lossless-cut",
+    "asset_pattern": "LosslessCut-linux-x86_64\\.AppImage$",
+    "version_pattern": "v?([\\d.]+)",
+    "version_extract": "github_release"
+  }
+]
