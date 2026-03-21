@@ -8,7 +8,7 @@ YELLOW='\033[1;33m'
 NC='\033[0m' # No Color
 
 # 默认配置文件
-CONFIG_FILE="${1:-versions.json}"
+CONFIG_FILE="${1:-deb/versions.json}"
 
 # 检查 root 权限
 if [ "$EUID" -ne 0 ]; then
