@@ -1,7 +1,7 @@
 {
   "aya": {
     "version": "1.14.2",
-    "url": "https://github.com/liriliri/aya/releases/download/v1.14.2/AYA-1.14.2-linux-x86_64.AppImage",
+    "url": "https://gh-proxy.com/https://github.com/liriliri/aya/releases/download/v1.14.2/AYA-1.14.2-linux-x86_64.AppImage",
     "package_keyword": "aya"
   },
   "todoist": {
@@ -11,7 +11,7 @@
   },
   "losslesscut": {
     "version": "3.68.0",
-    "url": "https://github.com/mifi/lossless-cut/releases/download/v3.68.0/LosslessCut-linux-x86_64.AppImage",
+    "url": "https://gh-proxy.com/https://github.com/mifi/lossless-cut/releases/download/v3.68.0/LosslessCut-linux-x86_64.AppImage",
     "package_keyword": "losslesscut"
   }
 }
