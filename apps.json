@@ -1,5 +1,13 @@
 [
   {
+    "name": "gear-lever-appimage",
+    "format": "appimage",
+    "package_keyword": "gear-lever",
+    "github_repo": "pkgforge-dev/Gear-Lever-AppImage",
+    "asset_pattern": "Gear_Lever-([\\d.]+-[\\d]+)-anylinux-x86_64\\.AppImage$",
+    "version_extract": "github_release"
+  },
+  {
     "name": "wps",
     "format": "deb",
     "package_keyword": "wps-office",

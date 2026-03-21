@@ -43,44 +43,75 @@ install_dependencies() {
     fi
 }
 
-# Install AppImageLauncher from versions.json
-install_appimagelauncher() {
-    if command -v ail-cli &>/dev/null; then
+# Install gear-lever AppImage to ~/.local/bin
+install_gear_lever() {
+    local bindir="${XDG_BIN_HOME:-$HOME/.local/bin}"
+    local appimage_path="$bindir/GearLever.AppImage"
+    local symlink_path="$bindir/gear-lever"
+
+    if [ -x "$appimage_path" ]; then
         return 0
     fi
-    
-    echo -e "${YELLOW}AppImageLauncher not found, installing...${NC}"
-    
-    # Get AppImageLauncher URL from versions.json
-    local ail_url
-    ail_url=$(jq -r '.appimagelauncher.url // empty' "$CONFIG_FILE")
-    
-    if [ -z "$ail_url" ] || [ "$ail_url" = "null" ]; then
-        echo -e "${RED}Error: AppImageLauncher URL not found in $CONFIG_FILE${NC}"
+
+    echo -e "${YELLOW}gear-lever not found, installing...${NC}"
+
+    # Create bin directory
+    mkdir -p "$bindir"
+
+    # Try to get download URL from versions.json first
+    local gear_lever_url=""
+    if [ -f "$CONFIG_FILE" ]; then
+        gear_lever_url=$(jq -r '."gear-lever-appimage".url // ""' "$CONFIG_FILE")
+    fi
+
+    # Fallback to gh CLI if versions.json doesn't have valid URL
+    if [ -z "$gear_lever_url" ] || [ "$gear_lever_url" = "" ] || [ "$gear_lever_url" = "null" ]; then
+        echo "Fetching gear-lever URL from GitHub..."
+        gear_lever_url=$(gh release view --repo pkgforge-dev/Gear-Lever-AppImage --json assets 2>/dev/null | \
+            jq -r '.assets[] | select(.name | contains("x86_64.AppImage")) | select(.name | contains(".zsync") | not) | .url' | head -1)
+    else
+        echo "Using gear-lever URL from versions.json"
+    fi
+
+    if [ -z "$gear_lever_url" ]; then
+        echo -e "${RED}Failed to find gear-lever download URL${NC}"
+        echo -e "${YELLOW}Make sure 'gh' CLI is installed and authenticated, or versions.json has gear-lever-appimage entry${NC}"
         exit 1
     fi
-    
-    # Apply GitHub proxy
-    ail_url=$(apply_github_proxy "$ail_url")
-    
-    local tmp_dir=$(mktemp -d)
-    
-    echo "Downloading AppImageLauncher..."
-    if ! curl -L -o "$tmp_dir/appimagelauncher.deb" "$ail_url"; then
-        echo -e "${RED}Failed to download AppImageLauncher${NC}"
-        rm -rf "$tmp_dir"
+
+    gear_lever_url=$(apply_github_proxy "$gear_lever_url")
+
+    echo "Downloading gear-lever..."
+    if ! curl -L -o "$appimage_path" "$gear_lever_url"; then
+        echo -e "${RED}Failed to download gear-lever${NC}"
         exit 1
     fi
-    
-    echo "Installing AppImageLauncher..."
-    if ! sudo apt install -y "$tmp_dir/appimagelauncher.deb"; then
-        echo -e "${RED}Failed to install AppImageLauncher${NC}"
-        rm -rf "$tmp_dir"
+
+    chmod +x "$appimage_path"
+
+    # Create symlink for easier access
+    ln -sf "$appimage_path" "$symlink_path"
+
+    echo -e "${GREEN}gear-lever installed successfully to $appimage_path${NC}"
+}
+
+# Ensure gear-lever is installed and return its path
+ensure_gear_lever() {
+    local bindir="${XDG_BIN_HOME:-$HOME/.local/bin}"
+    local symlink_path="$bindir/gear-lever"
+    local appimage_path="$bindir/GearLever.AppImage"
+
+    if [ ! -x "$appimage_path" ]; then
+        install_gear_lever
+    fi
+
+    # Return the path
+    if [ -x "$appimage_path" ]; then
+        echo "$appimage_path"
+    else
+        echo -e "${RED}Error: gear-lever installation failed${NC}" >&2
         exit 1
     fi
-    
-    rm -rf "$tmp_dir"
-    echo -e "${GREEN}AppImageLauncher installed successfully${NC}"
 }
 
 # Display usage
@@ -89,7 +120,7 @@ usage() {
     echo ""
     echo "Options:"
     echo "  --deb <app_name>       Install deb package (using apt install)"
-    echo "  --appimage <app_name>  Install AppImage package (using AppImageLauncher)"
+    echo "  --appimage <app_name>  Install AppImage package (using gear-lever)"
     echo "  --list                 List all available applications"
     echo "  -h, --help             Display this help message"
     echo ""
@@ -119,15 +150,6 @@ list_apps() {
         printf "%-20s %-10s %s\n" "$name" "$format" "$version"
     done
 }
-
-# Check configuration file
-if [ ! -f "$CONFIG_FILE" ]; then
-    echo -e "${RED}Error: Configuration file $CONFIG_FILE not found${NC}"
-    exit 1
-fi
-
-# Install dependencies first
-install_dependencies
 
 # Parse arguments
 FORMAT=""
@@ -177,6 +199,15 @@ case "$1" in
         APP_NAME="$1"
         ;;
 esac
+
+# Check configuration file
+if [ ! -f "$CONFIG_FILE" ]; then
+    echo -e "${RED}Error: Configuration file $CONFIG_FILE not found${NC}"
+    exit 1
+fi
+
+# Install dependencies first
+install_dependencies
 
 # Check if application exists
 if ! jq -e "has(\"$APP_NAME\")" "$CONFIG_FILE" &>/dev/null; then
@@ -258,46 +289,40 @@ install_deb() {
     rm -rf "$tmp_dir"
 }
 
-# Install AppImage package
+# Install AppImage package using gear-lever
 install_appimage() {
     local url="$1"
     local app_name="$2"
-    
-    # Ensure AppImageLauncher is installed
-    install_appimagelauncher
-    
-    # Check if already installed (check in ~/Applications)
-    local app_dir="$HOME/Applications"
-    if [ -d "$app_dir" ] && ls "$app_dir" | grep -qi "$app_name"; then
-        echo -e "${GREEN}Installed $app_name${NC}"
-        echo -e "${YELLOW}To update, uninstall first and then reinstall${NC}"
-        return 0
-    fi
-    
+
+    # Ensure gear-lever is installed and get its path
+    local gear_lever
+    gear_lever=$(ensure_gear_lever)
+
     echo -e "${GREEN}Starting installation...${NC}"
-    
+
     # Download AppImage
-    local tmp_dir=$(mktemp -d)
+    local tmp_dir
+    tmp_dir=$(mktemp -d)
     local appimage_file="${tmp_dir}/${app_name}.AppImage"
-    
+
     echo "Downloading $url ..."
     if ! curl -L -o "$appimage_file" "$url"; then
         echo -e "${RED}Download failed${NC}"
         rm -rf "$tmp_dir"
         exit 1
     fi
-    
+
     chmod +x "$appimage_file"
-    
-    echo "Installing with AppImageLauncher..."
-    if ail-cli integrate "$appimage_file"; then
+
+    echo "Installing with gear-lever..."
+    if echo "y" | "$gear_lever" --integrate "$appimage_file" 2>/dev/null; then
         echo -e "${GREEN}Installation successful${NC}"
     else
         echo -e "${RED}Installation failed${NC}"
         rm -rf "$tmp_dir"
         exit 1
     fi
-    
+
     rm -rf "$tmp_dir"
 }
 

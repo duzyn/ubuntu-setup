@@ -1,5 +1,9 @@
 # Agent Instructions for ubuntu-setup
 
+**Generated:** 2026-03-22 06:02:40  
+**Commit:** f573f2e  
+**Branch:** main
+
 This repository contains automated setup scripts for Ubuntu/Linux Mint systems, with a focus on Chinese users (Aliyun mirrors, Chinese input methods).
 
 ## Project Structure
@@ -8,6 +12,26 @@ This repository contains automated setup scripts for Ubuntu/Linux Mint systems, 
 - **Python**: `update_versions.py` - Version tracking utility
 - **JSON**: `apps.json` - App metadata; `versions.json` - Current versions
 - **GitHub Actions**: `.github/workflows/` - Automated version checking
+- **Entry Point**: No central orchestrator - scripts must be run manually in sequence
+
+## Execution Model
+
+**No unified entry point.** Each script is standalone and must be run manually:
+
+```bash
+# 1. Generate versions.json first
+export GITHUB_TOKEN=<token>  # Optional, for API rate limits
+python3 update_versions.py apps.json
+
+# 2. Run setup scripts in sequence (most require sudo)
+bash 0-chinese.sh      # First: Aliyun mirrors, Chinese input
+bash 1-apt.sh         # Second: APT packages (sudo required)
+bash 3rd.sh            # Third: Third-party apps from versions.json
+bash 4-nodejs.sh       # Fourth: Node.js via nvm
+bash 9-optional.sh     # Fifth: Optional packages (sudo required)
+```
+
+**Note:** `setup.sh` is NOT a main runner - it only configures plank dock autostart.
 
 ## Build/Test Commands
 
@@ -21,6 +45,9 @@ bash <script>.sh
 
 # Test JSON validity
 python3 -m json.tool apps.json > /dev/null && echo "Valid JSON"
+
+# Run gear-lever test
+bash test_gear_lever.sh
 ```
 
 ### Python
@@ -146,6 +173,33 @@ def func() -> Optional[str]:
 ```
 
 Types: `feat`, `fix`, `docs`, `refactor`, `chore`
+
+## CI/CD Configuration
+
+**Workflow:** `.github/workflows/check_versions.yml`
+- Runs hourly (`0 * * * *`) - checks for updated package versions
+- Auto-commits changes to `versions.json` if detected
+- Uses `ubuntu-24.04` runner (non-standard - consider `ubuntu-latest`)
+- Requires `secrets.GITHUB_TOKEN` for API access
+
+## Known Issues / Deviation Warnings
+
+⚠️ **The following files deviate from documented conventions:**
+
+1. **Shell error handling inconsistency** - These scripts use `set -e` only (missing `u` and `pipefail`):
+   - `0-chinese.sh`
+   - `4-nodejs.sh`
+   - `setup.sh`
+   - `grub2-theme.sh`
+
+2. **Python Chinese characters** - `update_versions.py` contains Chinese text in error messages (violates English-only rule)
+
+3. **Non-standard script names** - These don't follow `N-*.sh` pattern:
+   - `3rd.sh` (should be `2-*.sh` or `3-*.sh`?)
+   - `grub2-theme.sh`
+   - `test_gear_lever.sh`
+
+4. **Incorrect header comment** - `9-optional.sh` header says "apt.sh" and "Usage: sudo ./1-apt.sh" (copy-paste error)
 
 ## Important Notes
 

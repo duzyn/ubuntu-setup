@@ -56,7 +56,20 @@ sudo apt update
 echo "Installing Chinese language packs..."
 sudo apt install -y \
     language-pack-zh-hans \
-    language-pack-gnome-zh-hans
+    language-pack-gnome-zh-hans \
+    language-pack-kde-zh-hans
+
+if command -v firefox &>/dev/null; then
+    sudo apt install -y firefox-locale-zh-hans
+fi
+
+if command -v thunderbird &>/dev/null; then
+    sudo apt install -y thunderbird-locale-zh-hans
+fi
+
+if command -v libreoffice &>/dev/null; then
+    sudo apt install -y libreoffice-l10n-zh-cn
+fi
 
 # Install Fcitx5 and Rime
 echo "Installing Fcitx5 and Rime..."
