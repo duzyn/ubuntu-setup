@@ -1,0 +1,120 @@
+[
+  {
+    "name": "wps",
+    "package_keyword": "wps-office",
+    "page_url": "https://www.wps.cn/product/wpslinux/",
+    "download_url_patterns": [
+      "href=\"(https://[^\"]+amd64\\.deb)\""
+    ],
+    "fallback_url": null,
+    "version_extract": "filename",
+    "version_pattern": "wps-office_([\\d.]+)",
+    "version_pattern_fallback": "(\\d+\\.\\d+\\.\\d+\\.\\d+)"
+  },
+  {
+    "name": "wechat",
+    "package_keyword": "wechat",
+    "page_url": "https://linux.weixin.qq.com/",
+    "download_url_patterns": [
+      "href=\"(https://[^\"]*x86[^\"]*\\.deb)\"",
+      "href=\"(https://[^\"]+\\.deb)\""
+    ],
+    "fallback_url": "https://dldir1v6.qq.com/weixin/Universal/Linux/WeChatLinux_x86_64.deb",
+    "version_extract": "page",
+    "version_pattern": "版本[：:]\\s*([\\d.]+)",
+    "version_extract_fallback": "header",
+    "version_header_pattern": "wechat[_-]([\\d.]+)"
+  },
+  {
+    "name": "vscode",
+    "package_keyword": "code",
+    "page_url": "https://code.visualstudio.com/",
+    "download_url_patterns": [
+      "href=\"(https://[^\"]+amd64\\.deb)\""
+    ],
+    "fallback_url": null,
+    "version_extract": "filename",
+    "version_pattern": "code_([\\d.]+)_amd64\\.deb"
+  },
+  {
+    "name": "chrome",
+    "package_keyword": "google-chrome-stable",
+    "page_url": null,
+    "download_url_patterns": [],
+    "fallback_url": "https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb",
+    "version_extract": "filename",
+    "version_pattern": "google-chrome-stable_([\\d.]+)_amd64\\.deb"
+  },
+  {
+    "name": "ghostty",
+    "package_keyword": "ghostty",
+    "github_repo": "mkasberg/ghostty-ubuntu",
+    "asset_pattern": "amd64\\.deb$",
+    "distro_pattern": "~([a-z]+)_amd64\\.deb",
+    "distro_mapping": {
+      "focal": "20.04",
+      "jammy": "22.04",
+      "noble": "24.04",
+      "oracular": "24.10"
+    },
+    "version_pattern": "v?([\\d.]+)",
+    "version_extract": "github_release",
+    "multi_distro": true
+  },
+  {
+    "name": "joplin",
+    "package_keyword": "joplin",
+    "github_repo": "laurent22/joplin",
+    "asset_pattern": "joplin.*amd64\\.deb",
+    "version_pattern": "v?([\\d.]+)",
+    "version_extract": "github_release"
+  },
+  {
+    "name": "clash-verge",
+    "package_keyword": "clash-verge",
+    "github_repo": "clash-verge-rev/clash-verge-rev",
+    "asset_pattern": "clash-verge.*amd64\\.deb",
+    "version_pattern": "v?([\\d.]+)",
+    "version_extract": "github_release"
+  },
+  {
+    "name": "cryptomator",
+    "package_keyword": "cryptomator",
+    "github_repo": "cryptomator/cryptomator",
+    "asset_pattern": "cryptomator.*amd64\\.deb",
+    "version_pattern": "v?([\\d.]+)",
+    "version_extract": "github_release"
+  },
+  {
+    "name": "localsend",
+    "package_keyword": "localsend",
+    "github_repo": "localsend/localsend",
+    "asset_pattern": "LocalSend.*amd64\\.deb",
+    "version_pattern": "v?([\\d.]+)",
+    "version_extract": "github_release"
+  },
+  {
+    "name": "lx-music",
+    "package_keyword": "lx-music-desktop",
+    "github_repo": "lyswhut/lx-music-desktop",
+    "asset_pattern": "lx-music-desktop.*amd64\\.deb",
+    "version_pattern": "v?([\\d.]+)",
+    "version_extract": "github_release"
+  },
+  {
+    "name": "switchhosts",
+    "package_keyword": "switchhosts",
+    "github_repo": "oldj/SwitchHosts",
+    "asset_pattern": "SwitchHosts.*amd64\\.deb",
+    "version_pattern": "v?([\\d.]+)",
+    "version_extract": "github_release"
+  },
+  {
+    "name": "ulauncher",
+    "package_keyword": "ulauncher",
+    "github_repo": "Ulauncher/Ulauncher",
+    "asset_pattern": "ulauncher.*all\\.deb",
+    "version_pattern": "v?([\\d.]+)",
+    "version_extract": "github_release"
+  }
+]
