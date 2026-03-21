@@ -48,18 +48,8 @@
     "format": "deb",
     "package_keyword": "ghostty",
     "github_repo": "mkasberg/ghostty-ubuntu",
-    "asset_pattern": "ghostty_([\\d.]+)-.*_amd64_([\\d.]+)\\.deb$",
-    "distro_pattern": "_amd64_([\\d.]+)\\.deb$",
-    "distro_mapping": {
-      "20.04": "20.04",
-      "22.04": "22.04",
-      "24.04": "24.04",
-      "24.10": "24.10",
-      "25.04": "25.04",
-      "25.10": "25.10"
-    },
-    "version_extract": "github_release",
-    "multi_distro": true
+    "asset_pattern": "ghostty_([\\d.]+)-.*_amd64_24\\.04\\.deb$",
+    "version_extract": "github_release"
   },
   {
     "name": "joplin",
