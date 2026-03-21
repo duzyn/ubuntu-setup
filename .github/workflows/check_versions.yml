@@ -33,8 +33,13 @@ jobs:
       - name: Check for changes
         id: check_changes
         run: |
-          # Check if file is modified (tracked) or new (untracked)
-          if git status --porcelain versions.json | grep -q '^[ MADRC]'; then
+          # Check if file exists and has any changes (modified tracked or new untracked)
+          # git status --porcelain codes:
+          #   M = modified (tracked), A = added, D = deleted, R = renamed, C = copied, U = updated
+          #   ? = untracked (new file)
+          status=$(git status --porcelain versions.json 2>/dev/null || true)
+          echo "File status: '$status'"
+          if [ -n "$status" ]; then
             echo "changed=true" >> $GITHUB_OUTPUT
             echo "File versions.json has changes"
           else
