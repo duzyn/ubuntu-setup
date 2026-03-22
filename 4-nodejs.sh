@@ -66,4 +66,16 @@ else
   npm install -g opencode-ai
 fi
 
+echo "Checking oh-my-opencode installation..."
+if [ ! -f "$HOME/.config/opencode/oh-my-opencode.json" ] && [ ! -f "$HOME/.config/opencode/oh-my-opencode.jsonc" ]; then
+  echo "Installing oh-my-opencode..."
+  npx oh-my-opencode install --no-tui --claude=no --gemini=no --copilot=no
+fi
+
+
 echo "Node.js installation completed"
+echo ""
+echo "Next steps:"
+echo "  1. Run 'source ~/.bashrc' to reload shell configuration"
+echo "  2. Run 'opencode auth login' to authenticate"
+echo "  3. Run 'opencode' to start using oh-my-opencode"
