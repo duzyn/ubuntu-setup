@@ -42,15 +42,18 @@ fi
 # Write Aliyun mirror configuration
 sudo tee "$SOURCES_FILE" > /dev/null << 'EOF'
 deb https://mirrors.aliyun.com/linuxmint-packages zena main upstream import backport
-deb http://mirrors.aliyun.com/ubuntu noble main restricted universe multiverse
-deb http://mirrors.aliyun.com/ubuntu noble-updates main restricted universe multiverse
-deb http://mirrors.aliyun.com/ubuntu noble-backports main restricted universe multiverse
-deb http://mirrors.aliyun.com/ubuntu noble-security main restricted universe multiverse
+deb https://mirrors.aliyun.com/ubuntu noble main restricted universe multiverse
+deb https://mirrors.aliyun.com/ubuntu noble-updates main restricted universe multiverse
+deb https://mirrors.aliyun.com/ubuntu noble-backports main restricted universe multiverse
+deb https://mirrors.aliyun.com/ubuntu noble-security main restricted universe multiverse
 EOF
 
 echo "Mirror configuration updated to Aliyun."
 echo "Updating package lists..."
 sudo apt update
+
+# Remove backup files to avoid apt warnings about invalid extensions
+sudo rm -f "${SOURCES_FILE}".backup.*
 
 # Install Chinese language packs
 echo "Installing Chinese language packs..."
@@ -85,6 +88,7 @@ RIME_DIR="$HOME/.local/share/fcitx5/rime"
 mkdir -p "$RIME_DIR"
 
 # Clone rime-ice with optional GH_PROXY
+rm -rf /tmp/rime-ice
 git clone --depth 1 "${GH_PROXY}https://github.com/iDvel/rime-ice.git" /tmp/rime-ice
 
 # Copy configuration files
@@ -112,6 +116,12 @@ echo "Deploying Rime schema..."
 if command -v fcitx5-remote &>/dev/null; then
     fcitx5-remote -r 2>/dev/null || true
 fi
+
+fconf-query -c xsettings -p /Gtk/FontName -s "Noto Sans CJK SC 10" 2>/dev/null || \
+    xfconf-query -c xsettings -p /Gtk/FontName -n -t string -s "Noto Sans CJK SC 10"
+
+xfconf-query -c xsettings -p /Gtk/MonospaceFontName -s "Noto Sans Mono CJK SC 10" 2>/dev/null || \
+    xfconf-query -c xsettings -p /Gtk/MonospaceFontName -n -t string -s "Noto Sans Mono CJK SC 10"
 
 echo "=========================================="
 echo "Chinese input method setup completed!"
