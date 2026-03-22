@@ -17,6 +17,11 @@ GH_PROXY="${GH_PROXY:-}"
 # Apply GitHub proxy to URL if it's a GitHub URL
 apply_github_proxy() {
     local url="$1"
+    # Check if URL already has proxy prefix
+    if [[ "$url" == "${GH_PROXY}"* ]]; then
+        echo "$url"
+        return
+    fi
     if [[ "$url" == *"github.com"* ]] && [[ -n "$GH_PROXY" ]]; then
         echo "${GH_PROXY}${url}"
     else
@@ -293,6 +298,7 @@ install_deb() {
 install_appimage() {
     local url="$1"
     local app_name="$2"
+    local pkg_keyword="$3"
 
     # Ensure gear-lever is installed and get its path
     local gear_lever
@@ -315,15 +321,18 @@ install_appimage() {
     chmod +x "$appimage_file"
 
     echo "Installing with gear-lever..."
-    if echo "y" | "$gear_lever" --integrate "$appimage_file" 2>/dev/null; then
+    echo "y" | "$gear_lever" --integrate "$appimage_file" 2>/dev/null || true
+    
+    # Check if integration was successful by looking for the AppImage in ~/AppImages/
+    # gear-lever uses package_keyword as the filename
+    if [ -f "$HOME/AppImages/${pkg_keyword}.appimage" ]; then
         echo -e "${GREEN}Installation successful${NC}"
+        rm -rf "$tmp_dir"
     else
         echo -e "${RED}Installation failed${NC}"
         rm -rf "$tmp_dir"
         exit 1
     fi
-
-    rm -rf "$tmp_dir"
 }
 
 # Execute installation
@@ -332,7 +341,7 @@ case "$FORMAT" in
         install_deb "$URL" "$PACKAGE_KEYWORD"
         ;;
     appimage)
-        install_appimage "$URL" "$APP_NAME"
+        install_appimage "$URL" "$APP_NAME" "$PACKAGE_KEYWORD"
         ;;
     *)
         echo -e "${RED}Error: Unsupported format '$FORMAT'${NC}"
