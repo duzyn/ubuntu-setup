@@ -7,15 +7,6 @@ import sys
 from typing import Dict, List, Optional, Tuple, Any
 
 # Get GitHub proxy from environment variable, default to empty string
-def get_github_proxy() -> str:
-    return os.environ.get('GH_PROXY', '')
-
-def apply_github_proxy(url: str) -> str:
-    proxy = get_github_proxy()
-    if proxy and 'https://github.com' in url:
-        return url.replace('https://github.com', f'{proxy}https://github.com')
-    return url
-
 def fetch_url_content(url: str) -> Optional[str]:
     try:
         resp = requests.get(url, timeout=10)
@@ -118,7 +109,67 @@ def fetch_apt_repo_version(apt_repo_url: str, package_name: str) -> Tuple[Option
         return None, None
 
 def fetch_github_release(repo: str, asset_pattern: str, version_pattern: Optional[str] = None) -> Tuple[Optional[str], Optional[str]]:
-    """Fetch release info from GitHub API with optional token authentication."""
+    """Fetch release info from GitHub using gh CLI (avoids API rate limits)."""
+    import subprocess
+    
+    try:
+        # Use gh CLI to get release info (no rate limit when authenticated)
+        result = subprocess.run(
+            ['gh', 'release', 'view', '--repo', repo, '--json', 'assets,tagName'],
+            capture_output=True,
+            text=True,
+            timeout=30
+        )
+        
+        if result.returncode != 0:
+            # Fallback to API if gh CLI fails
+            print(f"{repo}: gh CLI failed, falling back to API")
+            return fetch_github_release_api(repo, asset_pattern, version_pattern)
+        
+        data = json.loads(result.stdout)
+        tag = data.get('tagName', '')
+        assets = data.get('assets', [])
+        
+        if not assets:
+            print(f"{repo}: no assets found")
+            return None, None
+
+        matched_asset = None
+        asset_match = None
+        for asset in assets:
+            asset_match = re.search(asset_pattern, asset['name'])
+            if asset_match:
+                matched_asset = asset
+                break
+        if not matched_asset:
+            print(f"{repo}: no files matching asset pattern '{asset_pattern}'")
+            return None, None
+
+        download_url = matched_asset['url']
+        
+        # Try to extract version from asset_pattern capture group first
+        if asset_match and asset_match.groups():
+            version = asset_match.group(1)
+        elif version_pattern:
+            version_match = re.search(version_pattern, tag)
+            if version_match:
+                version = version_match.group(1)
+            else:
+                version_match = re.search(version_pattern, matched_asset['name'])
+                version = version_match.group(1) if version_match else None
+        else:
+            version = tag.lstrip('v')
+        if not version:
+            version = "unknown"
+            print(f"{repo}: cannot extract version, using 'unknown'")
+        return version, download_url
+
+    except Exception as e:
+        print(f"{repo}: gh CLI error: {e}, falling back to API")
+        return fetch_github_release_api(repo, asset_pattern, version_pattern)
+
+def fetch_github_release_api(repo: str, asset_pattern: str, version_pattern: Optional[str] = None) -> Tuple[Optional[str], Optional[str]]:
+    """Fallback: Fetch release info from GitHub API (may hit rate limits)."""
     api_url = f"https://api.github.com/repos/{repo}/releases/latest"
     headers = {}
     
@@ -149,8 +200,6 @@ def fetch_github_release(repo: str, asset_pattern: str, version_pattern: Optiona
             return None, None
 
         download_url = matched_asset['browser_download_url']
-        # Apply GitHub proxy if configured
-        download_url = apply_github_proxy(download_url)
         
         # Try to extract version from asset_pattern capture group first
         if asset_match and asset_match.groups():
@@ -176,7 +225,79 @@ def fetch_github_release(repo: str, asset_pattern: str, version_pattern: Optiona
 def fetch_github_release_multi(repo: str, asset_pattern: str, distro_pattern: str,
                                 distro_mapping: Dict[str, str],
                                 version_pattern: Optional[str] = None) -> Dict[str, Dict[str, str]]:
-    """Fetch multi-distro release info from GitHub API with optional token authentication."""
+    """Fetch multi-distro release info from GitHub using gh CLI (avoids API rate limits)."""
+    import subprocess
+    
+    try:
+        # Use gh CLI to get release info (no rate limit when authenticated)
+        result = subprocess.run(
+            ['gh', 'release', 'view', '--repo', repo, '--json', 'assets,tagName'],
+            capture_output=True,
+            text=True,
+            timeout=30
+        )
+        
+        if result.returncode != 0:
+            print(f"{repo}: gh CLI failed for multi-distro, falling back to API")
+            return fetch_github_release_multi_api(repo, asset_pattern, distro_pattern,
+                                                  distro_mapping, version_pattern)
+        
+        data = json.loads(result.stdout)
+        tag = data.get('tagName', '')
+        assets = data.get('assets', [])
+        
+        if not assets:
+            print(f"{repo}: no assets found")
+            return {}
+
+        version = None
+        if version_pattern:
+            match = re.search(version_pattern, tag)
+            if match:
+                version = match.group(1)
+        if not version:
+            version = tag.lstrip('v')
+        if not version:
+            version = "unknown"
+            print(f"{repo}: cannot extract version, using 'unknown'")
+
+        result = {}
+        for asset in assets:
+            name = asset['name']
+            asset_match = re.search(asset_pattern, name)
+            if not asset_match:
+                continue
+            
+            # Try to extract version from asset_pattern capture group
+            if asset_match.groups():
+                asset_version = asset_match.group(1)
+            else:
+                asset_version = version
+            
+            distro_match = re.search(distro_pattern, name)
+            if not distro_match:
+                continue
+            distro_code = distro_match.group(1)
+            distro_key = distro_mapping.get(distro_code)
+            if not distro_key:
+                print(f"{repo}: unmapped distro code '{distro_code}', skipping")
+                continue
+            download_url = asset['url']
+            result[distro_key] = {
+                "version": asset_version,
+                "url": download_url
+            }
+        return result
+
+    except Exception as e:
+        print(f"{repo}: gh CLI error for multi-distro: {e}, falling back to API")
+        return fetch_github_release_multi_api(repo, asset_pattern, distro_pattern,
+                                              distro_mapping, version_pattern)
+
+def fetch_github_release_multi_api(repo: str, asset_pattern: str, distro_pattern: str,
+                                    distro_mapping: Dict[str, str],
+                                    version_pattern: Optional[str] = None) -> Dict[str, Dict[str, str]]:
+    """Fallback: Fetch multi-distro release info from GitHub API (may hit rate limits)."""
     api_url = f"https://api.github.com/repos/{repo}/releases/latest"
     headers = {}
     
@@ -228,8 +349,6 @@ def fetch_github_release_multi(repo: str, asset_pattern: str, distro_pattern: st
                 print(f"{repo}: unmapped distro code '{distro_code}'，skipping")
                 continue
             download_url = asset['browser_download_url']
-            # Apply GitHub proxy if configured
-            download_url = apply_github_proxy(download_url)
             result[distro_key] = {
                 "version": asset_version,
                 "url": download_url
