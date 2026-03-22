@@ -97,7 +97,7 @@
   },
   "fdm": {
     "format": "deb",
-    "version": "unknown",
+    "version": "6.33.1",
     "url": "https://files2.freedownloadmanager.org/6/latest/freedownloadmanager.deb",
     "package_keyword": "freedownloadmanager"
   },
