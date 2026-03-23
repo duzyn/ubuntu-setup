@@ -25,8 +25,8 @@
   },
   "chrome": {
     "format": "deb",
-    "version": "146.0.7680.153-1",
-    "url": "https://dl.google.com/linux/chrome/deb/pool/main/g/google-chrome-stable/google-chrome-stable_146.0.7680.153-1_amd64.deb",
+    "version": "146.0.7680.164-1",
+    "url": "https://dl.google.com/linux/chrome/deb/pool/main/g/google-chrome-stable/google-chrome-stable_146.0.7680.164-1_amd64.deb",
     "package_keyword": "google-chrome-stable"
   },
   "ghostty": {
