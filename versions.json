@@ -19,8 +19,8 @@
   },
   "vscode": {
     "format": "deb",
-    "version": "1.112.0",
-    "url": "https://vscode.download.prss.microsoft.com/dbazure/download/stable/07ff9d6178ede9a1bd12ad3399074d726ebe6e43/code_1.112.0-1773778351_amd64.deb",
+    "version": "1.113.0",
+    "url": "https://vscode.download.prss.microsoft.com/dbazure/download/stable/cfbea10c5ffb233ea9177d34726e6056e89913dc/code_1.113.0-1774364744_amd64.deb",
     "package_keyword": "code"
   },
   "chrome": {
