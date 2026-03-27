@@ -91,8 +91,8 @@
   },
   "cherry-studio": {
     "format": "deb",
-    "version": "1.8.3",
-    "url": "https://github.com/CherryHQ/cherry-studio/releases/download/v1.8.3/Cherry-Studio-1.8.3-amd64.deb",
+    "version": "1.8.4",
+    "url": "https://github.com/CherryHQ/cherry-studio/releases/download/v1.8.4/Cherry-Studio-1.8.4-amd64.deb",
     "package_keyword": "cherry-studio"
   },
   "fdm": {
