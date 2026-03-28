@@ -13,7 +13,7 @@
   },
   "wechat": {
     "format": "deb",
-    "version": "4.1.1",
+    "version": "unknown",
     "url": "https://dldir1v6.qq.com/weixin/Universal/Linux/WeChatLinux_x86_64.deb",
     "package_keyword": "wechat"
   },
