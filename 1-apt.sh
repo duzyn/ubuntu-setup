@@ -1,16 +1,12 @@
 #!/bin/bash
 set -euo pipefail
 
-# apt.sh - Install applications from Ubuntu apt repositories
-# Usage: sudo ./1-apt.sh
-
-# Define packages to install
-# Add new package names here
 PACKAGES=(
   # Must have
   curl
   wget
   git
+  aria2
   
   # Archive
   7zip
@@ -44,9 +40,9 @@ PACKAGES=(
   
   # System & Utilities
   filezilla
-  plank
   ghostscript
   rclone
+  rclone-browser
   
   # Fonts
   fonts-noto-cjk
@@ -56,12 +52,4 @@ PACKAGES=(
   papirus-icon-theme
 )
 
-echo "Installing apt packages..."
-
-# Update package list
-sudo apt-get update
-
-# Install all packages
 sudo apt-get install -y "${PACKAGES[@]}"
-
-echo "All packages installed successfully!"
