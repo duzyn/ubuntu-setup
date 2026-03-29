@@ -202,5 +202,17 @@
     "github_repo": "TheAssassin/AppImageLauncher",
     "asset_pattern": "appimagelauncher_([\\d.]+(?:-beta-[\\d]+)?)-.*_amd64\\.deb$",
     "version_extract": "github_release"
+  },
+  {
+    "name": "lunacy",
+    "format": "deb",
+    "package_keyword": "lunacy",
+    "page_url": "https://icons8.com/lunacy-download",
+    "download_url_patterns": [
+      "href=\"(https://lcdn\\.icons8\\.com/setup/Lunacy\\.deb)\""
+    ],
+    "fallback_url": "https://lcdn.icons8.com/setup/Lunacy.deb",
+    "version_extract": "page",
+    "version_pattern": "lunacy-download-section__release[^>]*>([\\d.]+)"
   }
 ]

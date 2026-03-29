@@ -136,5 +136,11 @@
     "version": "3.0.0-beta-2",
     "url": "https://github.com/TheAssassin/AppImageLauncher/releases/download/v3.0.0-beta-3/appimagelauncher_3.0.0-beta-2-gha287.96cb937_amd64.deb",
     "package_keyword": "appimagelauncher"
+  },
+  "lunacy": {
+    "format": "deb",
+    "version": "13.0.0.0",
+    "url": "https://lcdn.icons8.com/setup/Lunacy.deb",
+    "package_keyword": "lunacy"
   }
 }

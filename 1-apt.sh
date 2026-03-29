@@ -20,6 +20,8 @@ PACKAGES=(
   jq
   ripgrep
   fzf
+  micro
+  tmux
   
   # Multimedia
   audacity
