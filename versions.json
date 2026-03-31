@@ -7,8 +7,8 @@
   },
   "chrome": {
     "format": "deb",
-    "version": "146.0.7680.164-1",
-    "url": "https://dl.google.com/linux/chrome/deb/pool/main/g/google-chrome-stable/google-chrome-stable_146.0.7680.164-1_amd64.deb",
+    "version": "146.0.7680.177-1",
+    "url": "https://dl.google.com/linux/chrome/deb/pool/main/g/google-chrome-stable/google-chrome-stable_146.0.7680.177-1_amd64.deb",
     "package_keyword": "google-chrome-stable"
   },
   "clash-verge": {
@@ -31,7 +31,7 @@
   },
   "fdm": {
     "format": "deb",
-    "version": "unknown",
+    "version": "6.33.2",
     "url": "https://files2.freedownloadmanager.org/6/latest/freedownloadmanager.deb",
     "package_keyword": "freedownloadmanager"
   },
