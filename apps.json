@@ -1,47 +1,11 @@
 [
   {
-    "name": "gear-lever-appimage",
-    "format": "appimage",
-    "package_keyword": "gear-lever",
-    "github_repo": "pkgforge-dev/Gear-Lever-AppImage",
-    "asset_pattern": "Gear_Lever-([\\d.]+-[\\d]+)-anylinux-x86_64\\.AppImage$",
+    "name": "cherry-studio",
+    "format": "deb",
+    "package_keyword": "cherry-studio",
+    "github_repo": "CherryHQ/cherry-studio",
+    "asset_pattern": "Cherry-Studio-([\\d.]+)-amd64\\.deb$",
     "version_extract": "github_release"
-  },
-  {
-    "name": "wps",
-    "format": "deb",
-    "package_keyword": "wps-office",
-    "page_url": "https://www.wps.cn/product/wpslinux/",
-    "download_url_patterns": [
-      "href=\"(https://[^\"]+amd64\\.deb)\""
-    ],
-    "fallback_url": null,
-    "version_extract": "filename",
-    "version_pattern": "wps-office_([\\d.]+)",
-    "version_pattern_fallback": "(\\d+\\.\\d+\\.\\d+\\.\\d+)"
-  },
-  {
-    "name": "wechat",
-    "format": "deb",
-    "package_keyword": "wechat",
-    "page_url": "https://linux.weixin.qq.com/",
-    "download_url_patterns": [
-      "href=\"(https://[^\"]*x86[^\"]*\\.deb)\"",
-      "href=\"(https://[^\"]+\\.deb)\""
-    ],
-    "fallback_url": "https://dldir1v6.qq.com/weixin/Universal/Linux/WeChatLinux_x86_64.deb",
-    "version_extract": "page",
-    "version_pattern": "main-section__bd-version[^>]*>([\\d.]+)"
-  },
-  {
-    "name": "vscode",
-    "format": "deb",
-    "package_keyword": "code",
-    "page_url": null,
-    "download_url_patterns": [],
-    "fallback_url": "https://code.visualstudio.com/sha/download?build=stable&os=linux-deb-x64",
-    "version_extract": "filename",
-    "version_pattern": "code_([\\d.]+)-[\\d]+_amd64\\.deb"
   },
   {
     "name": "chrome",
@@ -50,22 +14,6 @@
     "apt_repo": "https://dl.google.com/linux/chrome/deb/dists/stable/main/binary-amd64/Packages.gz",
     "apt_package": "google-chrome-stable",
     "version_extract": "apt_repo"
-  },
-  {
-    "name": "ghostty",
-    "format": "deb",
-    "package_keyword": "ghostty",
-    "github_repo": "mkasberg/ghostty-ubuntu",
-    "asset_pattern": "ghostty_([\\d.]+)-.*_amd64_24\\.04\\.deb$",
-    "version_extract": "github_release"
-  },
-  {
-    "name": "joplin",
-    "format": "deb",
-    "package_keyword": "joplin",
-    "github_repo": "laurent22/joplin",
-    "asset_pattern": "Joplin-([\\d.]+)\\.deb$",
-    "version_extract": "github_release"
   },
   {
     "name": "clash-verge",
@@ -85,6 +33,48 @@
     "version_extract": "github_release"
   },
   {
+    "name": "fastfetch",
+    "format": "deb",
+    "package_keyword": "fastfetch",
+    "github_repo": "fastfetch-cli/fastfetch",
+    "asset_pattern": "fastfetch-linux-amd64\\.deb$",
+    "version_extract": "github_release"
+  },
+  {
+    "name": "fdm",
+    "format": "deb",
+    "package_keyword": "freedownloadmanager",
+    "page_url": "https://www.freedownloadmanager.org/download-fdm-for-linux.htm",
+    "download_url_patterns": [],
+    "fallback_url": "https://files2.freedownloadmanager.org/6/latest/freedownloadmanager.deb",
+    "version_extract": "page",
+    "version_pattern": "FDM ([\\d.]+)"
+  },
+  {
+    "name": "ghostty",
+    "format": "deb",
+    "package_keyword": "ghostty",
+    "github_repo": "mkasberg/ghostty-ubuntu",
+    "asset_pattern": "ghostty_([\\d.]+)-.*_amd64_24\\.04\\.deb$",
+    "version_extract": "github_release"
+  },
+  {
+    "name": "github-cli",
+    "format": "deb",
+    "package_keyword": "gh",
+    "github_repo": "cli/cli",
+    "asset_pattern": "gh_([\\d.]+)_linux_amd64\\.deb$",
+    "version_extract": "github_release"
+  },
+  {
+    "name": "joplin",
+    "format": "deb",
+    "package_keyword": "joplin",
+    "github_repo": "laurent22/joplin",
+    "asset_pattern": "Joplin-([\\d.]+)\\.deb$",
+    "version_extract": "github_release"
+  },
+  {
     "name": "localsend",
     "format": "deb",
     "package_keyword": "localsend",
@@ -93,12 +83,32 @@
     "version_extract": "github_release"
   },
   {
+    "name": "lunacy",
+    "format": "deb",
+    "package_keyword": "lunacy",
+    "page_url": "https://icons8.com/lunacy-download",
+    "download_url_patterns": [
+      "href=\"(https://lcdn\\.icons8\\.com/setup/Lunacy\\.deb)\""
+    ],
+    "fallback_url": "https://lcdn.icons8.com/setup/Lunacy.deb",
+    "version_extract": "page",
+    "version_pattern": "lunacy-download-section__release[^>]*>([\\d.]+)"
+  },
+  {
     "name": "lx-music",
     "format": "deb",
     "package_keyword": "lx-music-desktop",
     "github_repo": "lyswhut/lx-music-desktop",
     "asset_pattern": "lx-music-desktop.*amd64\\.deb",
     "version_pattern": "v?([\\d.]+)",
+    "version_extract": "github_release"
+  },
+  {
+    "name": "rclone",
+    "format": "deb",
+    "package_keyword": "rclone",
+    "github_repo": "rclone/rclone",
+    "asset_pattern": "rclone-v([\\d.]+)-linux-amd64\\.deb$",
     "version_extract": "github_release"
   },
   {
@@ -119,38 +129,40 @@
     "version_extract": "github_release"
   },
   {
-    "name": "github-cli",
+    "name": "vscode",
     "format": "deb",
-    "package_keyword": "gh",
-    "github_repo": "cli/cli",
-    "asset_pattern": "gh_([\\d.]+)_linux_amd64\\.deb$",
-    "version_extract": "github_release"
-  },
-  {
-    "name": "opencode",
-    "format": "deb",
-    "package_keyword": "opencode",
-    "github_repo": "anomalyco/opencode",
-    "asset_pattern": "opencode-desktop-linux-amd64\\.deb$",
-    "version_extract": "github_release"
-  },
-  {
-    "name": "cherry-studio",
-    "format": "deb",
-    "package_keyword": "cherry-studio",
-    "github_repo": "CherryHQ/cherry-studio",
-    "asset_pattern": "Cherry-Studio-([\\d.]+)-amd64\\.deb$",
-    "version_extract": "github_release"
-  },
-  {
-    "name": "fdm",
-    "format": "deb",
-    "package_keyword": "freedownloadmanager",
-    "page_url": "https://www.freedownloadmanager.org/download-fdm-for-linux.htm",
+    "package_keyword": "code",
+    "page_url": null,
     "download_url_patterns": [],
-    "fallback_url": "https://files2.freedownloadmanager.org/6/latest/freedownloadmanager.deb",
+    "fallback_url": "https://code.visualstudio.com/sha/download?build=stable&os=linux-deb-x64",
+    "version_extract": "filename",
+    "version_pattern": "code_([\\d.]+)-[\\d]+_amd64\\.deb"
+  },
+  {
+    "name": "wechat",
+    "format": "deb",
+    "package_keyword": "wechat",
+    "page_url": "https://linux.weixin.qq.com/",
+    "download_url_patterns": [
+      "href=\"(https://[^\"]*x86[^\"]*\\.deb)\"",
+      "href=\"(https://[^\"]+\\.deb)\""
+    ],
+    "fallback_url": "https://dldir1v6.qq.com/weixin/Universal/Linux/WeChatLinux_x86_64.deb",
     "version_extract": "page",
-    "version_pattern": "FDM ([\\d.]+)"
+    "version_pattern": "main-section__bd-version[^>]*>([\\d.]+)"
+  },
+  {
+    "name": "wps",
+    "format": "deb",
+    "package_keyword": "wps-office",
+    "page_url": "https://www.wps.cn/product/wpslinux/",
+    "download_url_patterns": [
+      "href=\"(https://[^\"]+amd64\\.deb)\""
+    ],
+    "fallback_url": null,
+    "version_extract": "filename",
+    "version_pattern": "wps-office_([\\d.]+)",
+    "version_pattern_fallback": "(\\d+\\.\\d+\\.\\d+\\.\\d+)"
   },
   {
     "name": "aya",
@@ -161,14 +173,12 @@
     "version_extract": "github_release"
   },
   {
-    "name": "todoist",
+    "name": "gear-lever-appimage",
     "format": "appimage",
-    "package_keyword": "todoist",
-    "page_url": null,
-    "download_url_patterns": [],
-    "fallback_url": "https://todoist.com/linux_app/appimage",
-    "version_extract": "filename",
-    "version_pattern": "Todoist-linux-([\\d.]+)-x86_64"
+    "package_keyword": "gear-lever",
+    "github_repo": "pkgforge-dev/Gear-Lever-AppImage",
+    "asset_pattern": "Gear_Lever-([\\d.]+-[\\d]+)-anylinux-x86_64\\.AppImage$",
+    "version_extract": "github_release"
   },
   {
     "name": "losslesscut",
@@ -180,39 +190,13 @@
     "version_extract": "github_release"
   },
   {
-    "name": "fastfetch",
-    "format": "deb",
-    "package_keyword": "fastfetch",
-    "github_repo": "fastfetch-cli/fastfetch",
-    "asset_pattern": "fastfetch-linux-amd64\\.deb$",
-    "version_extract": "github_release"
-  },
-  {
-    "name": "ghostty-appimage",
+    "name": "todoist",
     "format": "appimage",
-    "package_keyword": "ghostty",
-    "github_repo": "pkgforge-dev/ghostty-appimage",
-    "asset_pattern": "Ghostty-([\\d.]+)-x86_64\\.AppImage$",
-    "version_extract": "github_release"
-  },
-  {
-    "name": "appimagelauncher",
-    "format": "deb",
-    "package_keyword": "appimagelauncher",
-    "github_repo": "TheAssassin/AppImageLauncher",
-    "asset_pattern": "appimagelauncher_([\\d.]+(?:-beta-[\\d]+)?)-.*_amd64\\.deb$",
-    "version_extract": "github_release"
-  },
-  {
-    "name": "lunacy",
-    "format": "deb",
-    "package_keyword": "lunacy",
-    "page_url": "https://icons8.com/lunacy-download",
-    "download_url_patterns": [
-      "href=\"(https://lcdn\\.icons8\\.com/setup/Lunacy\\.deb)\""
-    ],
-    "fallback_url": "https://lcdn.icons8.com/setup/Lunacy.deb",
-    "version_extract": "page",
-    "version_pattern": "lunacy-download-section__release[^>]*>([\\d.]+)"
+    "package_keyword": "todoist",
+    "page_url": null,
+    "download_url_patterns": [],
+    "fallback_url": "https://todoist.com/linux_app/appimage",
+    "version_extract": "filename",
+    "version_pattern": "Todoist-linux-([\\d.]+)-x86_64"
   }
 ]
