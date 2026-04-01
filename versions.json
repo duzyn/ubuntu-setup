@@ -91,8 +91,8 @@
   },
   "vscode": {
     "format": "deb",
-    "version": "1.113.0",
-    "url": "https://vscode.download.prss.microsoft.com/dbazure/download/stable/cfbea10c5ffb233ea9177d34726e6056e89913dc/code_1.113.0-1774364744_amd64.deb",
+    "version": "1.114.0",
+    "url": "https://vscode.download.prss.microsoft.com/dbazure/download/stable/e7fb5e96c0730b9deb70b33781f98e2f35975036/code_1.114.0-1775036290_amd64.deb",
     "package_keyword": "code"
   },
   "wechat": {
@@ -116,7 +116,7 @@
   "gear-lever-appimage": {
     "format": "appimage",
     "version": "4.4.8-1",
-    "url": "https://github.com/pkgforge-dev/Gear-Lever-AppImage/releases/download/4.4.8-1%402026-03-21_1774083563/Gear_Lever-4.4.8-1-anylinux-x86_64.AppImage",
+    "url": "https://github.com/pkgforge-dev/Gear-Lever-AppImage/releases/download/4.4.8-1%402026-04-01_1775040753/Gear_Lever-4.4.8-1-anylinux-x86_64.AppImage",
     "package_keyword": "gear-lever"
   },
   "losslesscut": {
