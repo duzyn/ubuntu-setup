@@ -1,6 +1,9 @@
 #!/bin/bash
 set -euo pipefail
 
+# Get script path for self-references
+SCRIPT_PATH="${BASH_SOURCE[0]}"
+
 # Color output
 RED='\033[0;31m'
 GREEN='\033[0;32m'
@@ -37,8 +40,8 @@ apply_github_proxy() {
 install_dependencies() {
   local missing_deps=()
   
-  if ! command -v curl &>/dev/null; then
-    missing_deps+=("curl")
+  if ! command -v wget &>/dev/null; then
+    missing_deps+=("wget")
   fi
   
   if ! command -v jq &>/dev/null; then
@@ -91,7 +94,7 @@ install_gear_lever() {
   gear_lever_url=$(apply_github_proxy "$gear_lever_url")
 
   echo "Downloading gear-lever..."
-  if ! curl -L -o "$appimage_path" "$gear_lever_url"; then
+  if ! wget -O "$appimage_path" "$gear_lever_url"; then
     echo -e "${RED}Failed to download gear-lever${NC}"
     exit 1
   fi
@@ -250,9 +253,9 @@ check_all_updates() {
         local app_format
         app_format=$(jq -r ".\"$app\".format // \"deb\"" "$CONFIG_FILE")
         if [ "$app_format" = "deb" ]; then
-          "$0" install --deb "$app"
+          "$SCRIPT_PATH" install --deb "$app"
         elif [ "$app_format" = "appimage" ]; then
-          "$0" install --appimage "$app"
+          "$SCRIPT_PATH" install --appimage "$app"
         fi
       done
     else
@@ -652,7 +655,7 @@ case "$COMMAND" in
       
       if [ "$DRY_RUN" = true ]; then
         echo -e "${BLUE}[DRY-RUN] Download URL: $url${NC}"
-        echo -e "${BLUE}[DRY-RUN] Would run: curl -L -o /tmp/package.deb $url${NC}"
+        echo -e "${BLUE}[DRY-RUN] Would run: wget -O /tmp/package.deb $url${NC}"
         echo -e "${BLUE}[DRY-RUN] Would run: sudo apt install -y /tmp/package.deb${NC}"
         return 0
       fi
@@ -662,7 +665,7 @@ case "$COMMAND" in
       local deb_file="${tmp_dir}/package.deb"
       
       echo "Downloading $url ..."
-      if ! curl -L -o "$deb_file" "$url"; then
+      if ! wget -O "$deb_file" "$url"; then
         echo -e "${RED}Download failed${NC}"
         rm -rf "$tmp_dir"
         exit 1
@@ -709,7 +712,7 @@ case "$COMMAND" in
       local appimage_file="${tmp_dir}/${app_name}.AppImage"
     
       echo "Downloading $url ..."
-      if ! curl -L -o "$appimage_file" "$url"; then
+      if ! wget -O "$appimage_file" "$url"; then
         echo -e "${RED}Download failed${NC}"
         rm -rf "$tmp_dir"
         exit 1

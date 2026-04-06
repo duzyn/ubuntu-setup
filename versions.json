@@ -77,6 +77,12 @@
     "url": "https://github.com/rclone/rclone/releases/download/v1.73.3/rclone-v1.73.3-linux-amd64.deb",
     "package_keyword": "rclone"
   },
+  "sublime-text": {
+    "format": "deb",
+    "version": "4200",
+    "url": "https://download.sublimetext.com/sublime-text_build-4200_amd64.deb",
+    "package_keyword": "sublime-text"
+  },
   "switchhosts": {
     "format": "deb",
     "version": "4.2.0.6119",

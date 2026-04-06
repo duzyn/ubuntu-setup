@@ -112,6 +112,18 @@
     "version_extract": "github_release"
   },
   {
+    "name": "sublime-text",
+    "format": "deb",
+    "package_keyword": "sublime-text",
+    "page_url": "https://www.sublimetext.com/download",
+    "download_url_patterns": [
+      "href=\"(https://download\\.sublimetext\\.com/sublime-text_build-[\\d]+_amd64\\.deb)\""
+    ],
+    "fallback_url": "https://download.sublimetext.com/sublime-text_build-4200_amd64.deb",
+    "version_extract": "filename",
+    "version_pattern": "sublime-text_build-([\\d]+)_amd64\\.deb"
+  },
+  {
     "name": "switchhosts",
     "format": "deb",
     "package_keyword": "switchhosts",

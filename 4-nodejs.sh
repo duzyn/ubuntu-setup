@@ -59,19 +59,20 @@ echo "Updating npm"
 npm update -g npm
 
 # Install or update opencode globally
-# echo "Checking opencode installation..."
-# if command -v opencode &>/dev/null; then
-#   echo "opencode is already installed, updating..."
-#   npm update -g opencode-ai
-# else
-#   echo "Installing opencode..."
-#   npm install -g opencode-ai
-# fi
+echo "Checking opencode installation..."
+if command -v opencode &>/dev/null; then
+  echo "opencode is already installed, updating..."
+  npm update -g opencode-ai
+else
+  echo "Installing opencode..."
+  npm install -g opencode-ai
+fi
 
-echo "Checking oh-my-opencode installation..."
-if [ ! -f "$HOME/.config/opencode/oh-my-opencode.json" ] && [ ! -f "$HOME/.config/opencode/oh-my-opencode.jsonc" ]; then
-  echo "Installing oh-my-opencode..."
-  npx oh-my-opencode install --no-tui --claude=no --gemini=no --copilot=no
+echo "Checking oh-my-openagent installation..."
+if [ ! -f "$HOME/.config/opencode/oh-my-openagent.json" ] && [ ! -f "$HOME/.config/opencode/oh-my-openagent.jsonc" ]; then
+  echo "Installing oh-my-openagent..."
+  npm install -g oh-my-openagent-linux-x64
+  oh-my-openagent install --no-tui --claude=no --gemini=no --copilot=no
 fi
 
 echo "Node.js installation completed"

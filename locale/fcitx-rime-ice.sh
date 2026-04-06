@@ -18,7 +18,11 @@ RIME_DIR="$HOME/.local/share/fcitx5/rime"
 cat > "$RIME_DIR/default.custom.yaml" << 'EOF'
 patch:
   schema_list:
-  - schema: rime_ice
+    - schema: rime_ice
+  switches:
+    - name: ascii_mode
+      reset: 1
+      states: ["中文", "英文"]
 EOF
 
 # Set Fcitx5 as default input method

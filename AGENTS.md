@@ -1,48 +1,97 @@
 # AGENTS.md
 
-一个用于初始化设置 Linux Mint 的脚本软件。
+**Generated:** 2025-04-05
+**Commit:** 0d69894
+**Branch:** main
 
-## 安装 APT 中没有的第三方 DEB 和 AppImage 包
+Linux Mint 初始化设置脚本集 - 自动化安装 DEB、AppImage 包及系统配置。
 
-文件的作用：
+## STRUCTURE
 
-- apps.json: 用于配置要安装的 DEB 和 AppImage 包，需配置包名、获取软件版本的方式
-- versions.json：记录软件最新版本的信息记录，用于后续更新 app 用
-- update_version.py：解析 apps.json 后获得的软件最新版本的信息
-  记录，生成 versions.json
-- 3rd.sh: 解析 versions.json，安装、升级 app
+```
+./
+├── setup.sh           # 主入口：系统初始化编排
+├── 3rd.sh             # 第三方包管理器 (DEB/AppImage)
+├── update_versions.py # 版本抓取器 (apps.json → versions.json)
+├── apps.json          # 包定义配置
+├── versions.json      # 生成的最新版本数据
+├── 0-locale.sh        # 时区/语言设置
+├── 1-apt.sh           # APT 包安装
+├── 2-brew.sh          # Homebrew 安装（阿里云镜像）
+├── 4-nodejs.sh        # Node.js/nvm 安装
+├── 9-optional.sh      # 可选组件
+├── check-version.sh   # 系统版本检查
+├── locale/            # 输入法/语言脚本
+├── terminal/          # 终端工具脚本
+└── themes/            # 主题配置脚本
+```
 
-3rd.sh 用法如下：
+## WHERE TO LOOK
 
-- bash 3rd.sh help：查看帮助
-- bash 3rd.sh install --deb [app]: 显示指定只安装 deb app，如果无，则报错
-- bash 3rd.sh install --appimage [app]: 显示指定只安装 appimage app，如果无，则报错
-- bash 3rd.sh install [app] --dry-run：模拟安装，而不实际下载包，用于测试用，避免流量消耗
-- bash 3rd.shlist: 展示 versions.json 中已收录的所有 app 输出格式如下
+| Task | Location | Notes |
+|------|----------|-------|
+| 安装第三方 DEB/AppImage | `3rd.sh` | 独立入口，不通过 setup.sh |
+| 更新软件版本数据 | `update_versions.py apps.json` | 生成 versions.json |
+| 配置新软件包 | `apps.json` | 定义包名、版本获取方式 |
+| 系统初始化流程 | `setup.sh` | 仅执行基础设置 |
+| 运行测试 | `bash test_3rd.sh` | 自定义测试框架 |
+| 安装测试 (--dry-run) | `bash 3rd.sh install --deb <app> --dry-run` | 避免下载流量 |
 
-    | 软件名 | 类型 | 最新版本 |
-    | ----- | ---- | ------ |
-    | ghostty | DEB | 1.3.1 |
-    | Todoist | AppImage | 1.2.1 |
+## ENTRY POINTS
 
-    其中 DEB 包排前面，AppImage 排后面，每个类别下的软件都按包名以数字、字母顺序排列
+| Script | Purpose |
+|--------|---------|
+| `setup.sh` | 主初始化入口 (check-version + 0-locale) |
+| `3rd.sh` | 第三方包管理 CLI |
+| `update_versions.py` | 版本数据更新工具 |
 
-- bash 3rd.sh list --installed: 展示已安装的 app，排序规则如上
-- bash 3rd.sh list --outdated: 展示已安装的但是不是最新版本 app，排序规则如上
-- bash 3rd.sh upgrade：升级所有不是最新版本的 app
+## CONVENTIONS
 
-错误的用法：
+- **Line endings**: LF (Unix)
+- **Indent**: 2 spaces
+- **Testing**: Shell 脚本需单元测试 (AGENTS.md 指定 bats，实际使用自定义框架)
+- **TDD**: 脚本自测通过才算完成
+- **Dry-run**: 测试安装时使用 `--dry-run` 避免流量消耗
 
-- bash 3rd install [app]：未指定 app 类型
-- bash 3rd.sh command: 不支持的命令。
+## ANTI-PATTERNS (THIS PROJECT)
 
-要安装 AppImage 的包，需要先安装 gear-lever-appimage，然后用 `gear-lever
---integrate [appimage_file]` 来安装 AppImage app 
+| Pattern | Why Forbidden |
+|---------|---------------|
+| `bash 3rd install <app>` | 必须指定 `--deb` 或 `--appimage` |
+| `bash 3rd.sh <unknown-cmd>` | 命令需明确支持 |
+| 直接运行 numbered scripts | 应通过 setup.sh 或按需单独执行 |
 
-## 编码规范
+## COMMANDS
 
-- 所有文件使用 LF 换行
-- 所有文件按 2 空格缩进
-- Shell 脚本要写单元测试脚本，使用 bats 测试框架
-- TTD 开发模式，写完的脚本要自测通过，才能完成任务
-- 测试安装时，使用 --dry-run 参数来避免下载大量的包，耗费流量
+```bash
+# 系统初始化 (Linux Mint 22 only)
+bash setup.sh
+
+# 安装 Homebrew（阿里云镜像）
+bash 2-brew.sh
+
+# 第三方包管理
+bash 3rd.sh help                    # 查看帮助
+bash 3rd.sh list                    # 列出所有可用应用
+bash 3rd.sh list --installed        # 列出已安装
+bash 3rd.sh list --outdated         # 列出可更新
+bash 3rd.sh install --deb <app>     # 安装 DEB 包
+bash 3rd.sh install --appimage <app> # 安装 AppImage
+bash 3rd.sh upgrade                 # 升级所有应用
+
+# 测试 (dry-run 避免下载)
+bash 3rd.sh install --deb cherry-studio --dry-run
+
+# 版本数据更新
+python3 update_versions.py apps.json
+
+# 运行单元测试
+bash test_3rd.sh
+```
+
+## NOTES
+
+- **Dual Workflow**: setup.sh 系统初始化 与 3rd.sh 包管理 是独立的两套流程
+- **CI/CD**: `.github/workflows/check_versions.yml` 每小时自动更新 versions.json
+- **Gear-Lever**: AppImage 安装依赖 gear-lever 工具
+- **测试现状**: AGENTS.md 指定 bats 框架，实际 test_3rd.sh 使用自定义框架
