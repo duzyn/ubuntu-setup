@@ -59,6 +59,14 @@
     "version_extract": "github_release"
   },
   {
+    "name": "github-desktop",
+    "format": "deb",
+    "package_keyword": "github-desktop",
+    "github_repo": "shiftkey/desktop",
+    "asset_pattern": "GitHubDesktop-linux-amd64-([\\d.]+)\\.deb$",
+    "version_extract": "github_release"
+  },
+  {
     "name": "github-cli",
     "format": "deb",
     "package_keyword": "gh",
