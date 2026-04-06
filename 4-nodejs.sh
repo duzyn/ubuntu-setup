@@ -72,8 +72,11 @@ echo "Checking oh-my-openagent installation..."
 if [ ! -f "$HOME/.config/opencode/oh-my-openagent.json" ] && [ ! -f "$HOME/.config/opencode/oh-my-openagent.jsonc" ]; then
   echo "Installing oh-my-openagent..."
   npm install -g oh-my-openagent-linux-x64
-  oh-my-openagent install --no-tui --claude=no --gemini=no --copilot=no
+else
+  echo "Updating oh-my-openagent..."
+  npm update -g oh-my-openagent-linux-x64
 fi
+# oh-my-openagent install --no-tui --claude=no --gemini=no --copilot=no
 
 echo "Node.js installation completed"
 echo ""

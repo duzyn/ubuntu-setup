@@ -300,7 +300,7 @@ list_apps() {
   
   echo "Available applications list:"
   echo ""
-  printf "%-25s %-10s %-12s %-15s\n" "软件名" "类型" "状态" "最新版本"
+  printf "%-25s %-10s %-12s %-15s\n" "Apps" "Type" "Status" "Latest Version"
   printf "%s\n" "-------------------------------------------------------------------------"
   
   # Get sorted DEB apps (excluding gear-lever-appimage)
@@ -407,7 +407,7 @@ list_outdated() {
   
   echo "Apps that need updates:"
   echo ""
-  printf "%-25s %-10s %-35s\n" "软件名" "类型" "版本"
+  printf "%-25s %-10s %-35s\n" "Apps" "Type" "Version"
   printf "%s\n" "----------------------------------------------------------------------"
   
   local has_outdated=0
