@@ -63,7 +63,7 @@
     "format": "deb",
     "package_keyword": "github-desktop",
     "github_repo": "shiftkey/desktop",
-    "asset_pattern": "GitHubDesktop-linux-amd64-([\\d.]+)\\.deb$",
+    "asset_pattern": "GitHubDesktop-linux-amd64-([\\d.]+-linux[\\d]+)\\.deb$",
     "version_extract": "github_release"
   },
   {
