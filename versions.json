@@ -103,8 +103,8 @@
   },
   "vscode": {
     "format": "deb",
-    "version": "1.114.0",
-    "url": "https://vscode.download.prss.microsoft.com/dbazure/download/stable/e7fb5e96c0730b9deb70b33781f98e2f35975036/code_1.114.0-1775036290_amd64.deb",
+    "version": "1.115.0",
+    "url": "https://vscode.download.prss.microsoft.com/dbazure/download/stable/41dd792b5e652393e7787322889ed5fdc58bd75b/code_1.115.0-1775600353_amd64.deb",
     "package_keyword": "code"
   },
   "wechat": {
