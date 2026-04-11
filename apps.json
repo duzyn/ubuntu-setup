@@ -181,8 +181,10 @@
     ],
     "fallback_url": null,
     "version_extract": "filename",
-    "version_pattern": "wps-office_([\\d.]+)",
-    "version_pattern_fallback": "(\\d+\\.\\d+\\.\\d+\\.\\d+)"
+    "version_pattern": "wps-office_([\\d.]+?)(?:\\.AK|_amd64)",
+    "version_pattern_fallback": "(\\d+\\.\\d+\\.\\d+\\.\\d+)",
+    "signed_url": true,
+    "signed_url_secret": "7f8faaaa468174dc1c9cd62e5f218a5b"
   },
   {
     "name": "aya",

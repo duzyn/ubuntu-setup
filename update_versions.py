@@ -4,6 +4,8 @@ import json
 import os
 import requests
 import sys
+import time
+import hashlib
 from typing import Dict, List, Optional, Tuple, Any
 
 # Get GitHub proxy from environment variable, default to empty string
@@ -53,6 +55,36 @@ def extract_version_from_header(url: str, pattern: str) -> Optional[str]:
         match = re.search(pattern, content_disp, re.I)
         return match.group(1) if match else None
     except Exception:
+        return None
+
+def generate_wps_download_url(base_url: str) -> Optional[str]:
+    """Generate WPS download URL with required signature.
+
+    WPS CDN requires a time-based signature:
+    - timestamp10: current Unix timestamp (10 digits)
+    - k: MD5 hash of (secret_key + uri + timestamp10)
+    """
+    try:
+        WPS_SECRET_KEY = "7f8faaaa468174dc1c9cd62e5f218a5b"
+
+        # Parse URL to get URI (path part)
+        parsed = re.match(r'https?://[^/]+(/.*)', base_url)
+        if not parsed:
+            return None
+        uri = parsed.group(1)
+
+        # Generate 10-digit timestamp
+        timestamp10 = int(time.time())
+
+        # Generate MD5 hash
+        hash_input = f"{WPS_SECRET_KEY}{uri}{timestamp10}"
+        md5hash = hashlib.md5(hash_input.encode()).hexdigest()
+
+        # Construct signed URL
+        signed_url = f"{base_url}?t={timestamp10}&k={md5hash}"
+        return signed_url
+    except Exception as e:
+        print(f"Failed to generate WPS signed URL: {e}")
         return None
 
 def fetch_apt_repo_version(apt_repo_url: str, package_name: str) -> Tuple[Optional[str], Optional[str]]:
@@ -459,6 +491,12 @@ def fetch_app(config: Dict) -> Tuple[str, Any]:
     if not version:
         version = "unknown"
         print(f"{name}: cannot extract version，using 'unknown'")
+
+    # Special handling for WPS: generate signed URL
+    if name == "wps":
+        signed_url = generate_wps_download_url(final_url)
+        if signed_url:
+            final_url = signed_url
 
     return name, {"format": pkg_format, "version": version, "url": final_url, "package_keyword": package_keyword}
 

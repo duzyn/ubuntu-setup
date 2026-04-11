@@ -40,8 +40,8 @@ apply_github_proxy() {
 install_dependencies() {
   local missing_deps=()
   
-  if ! command -v wget &>/dev/null; then
-    missing_deps+=("wget")
+  if ! command -v aria2c &>/dev/null; then
+    missing_deps+=("aria2")
   fi
   
   if ! command -v jq &>/dev/null; then
@@ -94,7 +94,7 @@ install_gear_lever() {
   gear_lever_url=$(apply_github_proxy "$gear_lever_url")
 
   echo "Downloading gear-lever..."
-  if ! wget -O "$appimage_path" "$gear_lever_url"; then
+  if ! aria2c -o "$appimage_path" "$gear_lever_url"; then
     echo -e "${RED}Failed to download gear-lever${NC}"
     exit 1
   fi
@@ -655,7 +655,7 @@ case "$COMMAND" in
       
       if [ "$DRY_RUN" = true ]; then
         echo -e "${BLUE}[DRY-RUN] Download URL: $url${NC}"
-        echo -e "${BLUE}[DRY-RUN] Would run: wget -O /tmp/package.deb $url${NC}"
+        echo -e "${BLUE}[DRY-RUN] Would run: aria2c -o /tmp/package.deb $url${NC}"
         echo -e "${BLUE}[DRY-RUN] Would run: sudo apt install -y /tmp/package.deb${NC}"
         return 0
       fi
@@ -665,15 +665,32 @@ case "$COMMAND" in
       local deb_file="${tmp_dir}/package.deb"
       
       echo "Downloading $url ..."
-      if ! wget -O "$deb_file" "$url"; then
+      # Use aria2c with redirect following and proper filename handling
+      if ! aria2c --max-concurrent-downloads=5 --split=5 --min-split-size=1M \
+          --follow-metalink=true --metalink-preferred-protocol=https \
+          --allow-overwrite=true --out="package.deb" --dir="$tmp_dir" "$url"; then
         echo -e "${RED}Download failed${NC}"
         rm -rf "$tmp_dir"
         exit 1
       fi
       
+      # Verify the downloaded file is a valid deb package
+      if [ ! -f "$deb_file" ]; then
+        echo -e "${RED}Downloaded file not found${NC}"
+        rm -rf "$tmp_dir"
+        exit 1
+      fi
+      
+      if ! file "$deb_file" | grep -q "Debian binary package"; then
+        echo -e "${RED}Downloaded file is not a valid deb package${NC}"
+        file "$deb_file"
+        rm -rf "$tmp_dir"
+        exit 1
+      fi
+      
       echo "Installing with apt..."
-      # Use apt install instead of dpkg -i to auto-resolve dependencies
-      if sudo apt install -y "$deb_file"; then
+      # Use apt-get install instead of apt install to handle local files better
+      if sudo apt-get install -y "$deb_file"; then
         echo -e "${GREEN}Installation successful${NC}"
       else
         echo -e "${RED}Installation failed${NC}"
@@ -712,7 +729,7 @@ case "$COMMAND" in
       local appimage_file="${tmp_dir}/${app_name}.AppImage"
     
       echo "Downloading $url ..."
-      if ! wget -O "$appimage_file" "$url"; then
+      if ! aria2c -o "$appimage_file" "$url"; then
         echo -e "${RED}Download failed${NC}"
         rm -rf "$tmp_dir"
         exit 1
