@@ -31,7 +31,7 @@
   },
   "fdm": {
     "format": "deb",
-    "version": "6.33.2",
+    "version": "unknown",
     "url": "https://files2.freedownloadmanager.org/6/latest/freedownloadmanager.deb",
     "package_keyword": "freedownloadmanager"
   },
@@ -127,8 +127,8 @@
   },
   "gear-lever-appimage": {
     "format": "appimage",
-    "version": "4.4.8-1",
-    "url": "https://github.com/pkgforge-dev/Gear-Lever-AppImage/releases/download/4.4.8-1%402026-04-01_1775040753/Gear_Lever-4.4.8-1-anylinux-x86_64.AppImage",
+    "version": "4.4.10-1",
+    "url": "https://github.com/pkgforge-dev/Gear-Lever-AppImage/releases/download/4.4.10-1%402026-04-14_1776165782/Gear_Lever-4.4.10-1-anylinux-x86_64.AppImage",
     "package_keyword": "gear-lever"
   },
   "losslesscut": {
