@@ -139,8 +139,8 @@
   },
   "todoist": {
     "format": "appimage",
-    "version": "9.26.4",
-    "url": "https://electron-dl.todoist.net/linux/Todoist-linux-9.26.4-x86_64-latest.AppImage",
+    "version": "9.27.1",
+    "url": "https://electron-dl.todoist.net/linux/Todoist-linux-9.27.1-x86_64-latest.AppImage",
     "package_keyword": "todoist"
   }
 }
