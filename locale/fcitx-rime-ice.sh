@@ -51,7 +51,7 @@ set_config_value() {
 }
 
 # 设置主题配置（存在则覆盖，不存在则添加）
-set_config_value "$CONF_FILE" "Font" '"Noto Sans CJK SC 24"'
+set_config_value "$CONF_FILE" "Font" "Noto Sans CJK SC 12"
 set_config_value "$CONF_FILE" "Theme" "Material-Color-blue"
 set_config_value "$CONF_FILE" "DarkTheme" "Material-Color-teal"
 
