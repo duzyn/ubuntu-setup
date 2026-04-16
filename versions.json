@@ -49,8 +49,8 @@
   },
   "github-cli": {
     "format": "deb",
-    "version": "2.89.0",
-    "url": "https://github.com/cli/cli/releases/download/v2.89.0/gh_2.89.0_linux_amd64.deb",
+    "version": "2.90.0",
+    "url": "https://github.com/cli/cli/releases/download/v2.90.0/gh_2.90.0_linux_amd64.deb",
     "package_keyword": "gh"
   },
   "joplin": {
@@ -128,7 +128,7 @@
   "gear-lever-appimage": {
     "format": "appimage",
     "version": "4.4.10-1",
-    "url": "https://github.com/pkgforge-dev/Gear-Lever-AppImage/releases/download/4.4.10-1%402026-04-14_1776165782/Gear_Lever-4.4.10-1-anylinux-x86_64.AppImage",
+    "url": "https://github.com/pkgforge-dev/Gear-Lever-AppImage/releases/download/4.4.10-1%402026-04-16_1776365073/Gear_Lever-4.4.10-1-anylinux-x86_64.AppImage",
     "package_keyword": "gear-lever"
   },
   "losslesscut": {
