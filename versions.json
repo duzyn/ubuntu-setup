@@ -79,8 +79,8 @@
   },
   "rclone": {
     "format": "deb",
-    "version": "1.73.4",
-    "url": "https://github.com/rclone/rclone/releases/download/v1.73.4/rclone-v1.73.4-linux-amd64.deb",
+    "version": "1.73.5",
+    "url": "https://github.com/rclone/rclone/releases/download/v1.73.5/rclone-v1.73.5-linux-amd64.deb",
     "package_keyword": "rclone"
   },
   "sublime-text": {
