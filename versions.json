@@ -67,7 +67,7 @@
   },
   "lunacy": {
     "format": "deb",
-    "version": "13.0.0.0",
+    "version": "14.0.0.0",
     "url": "https://lcdn.icons8.com/setup/Lunacy.deb",
     "package_keyword": "lunacy"
   },
