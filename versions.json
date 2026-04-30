@@ -1,8 +1,8 @@
 {
   "cherry-studio": {
     "format": "deb",
-    "version": "1.9.3",
-    "url": "https://github.com/CherryHQ/cherry-studio/releases/download/v1.9.3/Cherry-Studio-1.9.3-amd64.deb",
+    "version": "1.9.4",
+    "url": "https://github.com/CherryHQ/cherry-studio/releases/download/v1.9.4/Cherry-Studio-1.9.4-amd64.deb",
     "package_keyword": "cherry-studio"
   },
   "chrome": {
