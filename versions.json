@@ -73,8 +73,8 @@
   },
   "lx-music": {
     "format": "deb",
-    "version": "2.12.1",
-    "url": "https://github.com/lyswhut/lx-music-desktop/releases/download/v2.12.1/lx-music-desktop_2.12.1_amd64.deb",
+    "version": "2.12.2",
+    "url": "https://github.com/lyswhut/lx-music-desktop/releases/download/v2.12.2/lx-music-desktop_2.12.2_amd64.deb",
     "package_keyword": "lx-music-desktop"
   },
   "rclone": {
