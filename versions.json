@@ -116,7 +116,7 @@
   "wps": {
     "format": "deb",
     "version": "12.1.2.25882",
-    "url": "https://wps-linux-personal.wpscdn.cn/wps/download/ep/Linux2023/25882/wps-office_12.1.2.25882.AK.preread.sw.Personal_662820_amd64.deb?t=1777837456&k=7f044b869996449067064062ffb55ebc",
+    "url": "https://wps-linux-personal.wpscdn.cn/wps/download/ep/Linux2023/25882/wps-office_12.1.2.25882.AK.preread.sw.Personal_662820_amd64.deb?t=1777840240&k=1b251cfc1cf828d3c5bd6df4818c0d84",
     "package_keyword": "wps-office"
   },
   "aya": {
