@@ -115,8 +115,8 @@
   },
   "wps": {
     "format": "deb",
-    "version": "12.1.2.25882",
-    "url": "https://wps-linux-personal.wpscdn.cn/wps/download/ep/Linux2023/25882/wps-office_12.1.2.25882.AK.preread.sw.Personal_662820_amd64.deb?t=1777921825&k=4ccd39d7d8ec824f8234ea4f1d451e87",
+    "version": "unknown",
+    "url": "",
     "package_keyword": "wps-office"
   },
   "aya": {
