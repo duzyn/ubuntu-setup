@@ -128,7 +128,7 @@
   "gear-lever-appimage": {
     "format": "appimage",
     "version": "4.4.10-1",
-    "url": "https://github.com/pkgforge-dev/Gear-Lever-AppImage/releases/download/4.4.10-1%402026-05-04_1777903166/Gear_Lever-4.4.10-1-anylinux-x86_64.AppImage",
+    "url": "https://github.com/pkgforge-dev/Gear-Lever-AppImage/releases/download/4.4.10-1%402026-05-04_1777907467/Gear_Lever-4.4.10-1-anylinux-x86_64.AppImage",
     "package_keyword": "gear-lever"
   },
   "losslesscut": {
