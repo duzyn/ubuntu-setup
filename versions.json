@@ -109,14 +109,14 @@
   },
   "wechat": {
     "format": "deb",
-    "version": "4.1.1",
+    "version": "unknown",
     "url": "https://dldir1v6.qq.com/weixin/Universal/Linux/WeChatLinux_x86_64.deb",
     "package_keyword": "wechat"
   },
   "wps": {
     "format": "deb",
-    "version": "12.1.2.25882",
-    "url": "https://wps-linux-personal.wpscdn.cn/wps/download/ep/Linux2023/25882/wps-office_12.1.2.25882.AK.preread.sw.Personal_662820_amd64.deb?t=1778017872&k=996260ac6ed5719402b79605b37f8e53",
+    "version": "unknown",
+    "url": "",
     "package_keyword": "wps-office"
   },
   "aya": {
